@@ -32,6 +32,10 @@ public abstract class Document {
 		return pageCount;
 	}
 	
+	public void setPageCount(int pageCount) {
+		this.pageCount = pageCount;
+	}
+	
 	public String getDocumentPath() {
 		return documentPath;
 	}
@@ -42,5 +46,9 @@ public abstract class Document {
 	
 	public Bookmark getBookmark() {
 		return bookmark;
+	}
+	
+	public File getFile() {
+		return file;
 	}
 }
