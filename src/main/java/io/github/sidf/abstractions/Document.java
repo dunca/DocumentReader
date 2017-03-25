@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import io.github.sidf.Bookmark;
 import io.github.sidf.exceptions.InvalidDocumentException;
 
-public abstract class Document {
+public abstract class Document implements AutoCloseable {
 	private File file;
 	private int pageCount;
 	private Bookmark bookmark;
@@ -55,4 +55,6 @@ public abstract class Document {
 	public void delete() {
 		file.delete();
 	}
+
+	public abstract void close() throws Exception;
 }
