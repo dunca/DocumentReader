@@ -18,7 +18,9 @@ public class DocumentIterator implements Iterator<Page> {
 
 	public Page next() {
 		try {
-			return document.getNextPage();
+			Page page = document.getNextPage();
+			document.setCurrentPage(page);
+			return page;
 		} catch (IOException e) {
 			// do something about it
 		}

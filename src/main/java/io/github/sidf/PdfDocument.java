@@ -31,8 +31,7 @@ public class PdfDocument extends Document {
 		textStripper.setEndPage(newIndex + 1);
 		
 		Page page = new Page(textStripper.getText(pdfDocument), newIndex + 1);
-		setCurrentPage(page);
-		
+
 		currentIndex = newIndex;
 		return page;
 	}
