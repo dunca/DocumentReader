@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import io.github.sidf.abstractions.Document;
 
-public class DocumentIterator implements Iterator<Page> {
+public class DocumentIterator implements Iterator<DocumentPage> {
 	private Document document;
 	
 	public DocumentIterator(Document document) {
@@ -16,9 +16,9 @@ public class DocumentIterator implements Iterator<Page> {
 		return document.getBookmark().getPage().getIndex() <= document.getPageCount() - 1;
 	}
 
-	public Page next() {
+	public DocumentPage next() {
 		try {
-			Page page = document.getNextPage();
+			DocumentPage page = document.getNextPage();
 			document.getBookmark().setPage(page);
 			return page;
 		} catch (IOException e) {

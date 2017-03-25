@@ -5,15 +5,15 @@ import java.util.Iterator;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
-import io.github.sidf.Page;
-import io.github.sidf.Bookmark;
+import io.github.sidf.DocumentPage;
+import io.github.sidf.DocumentBookmark;
 import io.github.sidf.DocumentIterator;
 import io.github.sidf.exceptions.InvalidDocumentException;
 
-public abstract class Document implements AutoCloseable, Iterable<Page> {
+public abstract class Document implements AutoCloseable, Iterable<DocumentPage> {
 	private File file;
 	private int pageCount;
-	private Bookmark bookmark;
+	private DocumentBookmark bookmark;
 	private String documentPath;
 	private String documentName;
 	
@@ -28,7 +28,7 @@ public abstract class Document implements AutoCloseable, Iterable<Page> {
 		
 		documentPath = filePath;
 		documentName = file.getName();
-		bookmark = new Bookmark(getNextPage(), 0);
+		bookmark = new DocumentBookmark(getNextPage(), 0);
 	}
 	
 	public int getPageCount() {
@@ -47,7 +47,7 @@ public abstract class Document implements AutoCloseable, Iterable<Page> {
 		return documentName;
 	}
 	
-	public Bookmark getBookmark() {
+	public DocumentBookmark getBookmark() {
 		return bookmark;
 	}
 	
@@ -59,10 +59,10 @@ public abstract class Document implements AutoCloseable, Iterable<Page> {
 		file.delete();
 	}
 	
-	public Iterator<Page> iterator() {
+	public Iterator<DocumentPage> iterator() {
 		return new DocumentIterator(this);
 	}
 	
-	public abstract Page getNextPage() throws IOException;
+	public abstract DocumentPage getNextPage() throws IOException;
 	public abstract void close() throws Exception;
 }

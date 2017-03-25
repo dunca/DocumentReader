@@ -1,15 +1,15 @@
 package io.github.sidf;
 
-public class Bookmark {
-	private Page page;
+public class DocumentBookmark {
+	private DocumentPage page;
 	private int characterIndex;
 	
-	public Bookmark(Page page, int characterIndex) {
+	public DocumentBookmark(DocumentPage page, int characterIndex) {
 		this.page = page;
 		this.characterIndex = characterIndex;
 	}
 	
-	public Page getPage() {
+	public DocumentPage getPage() {
 		return page;
 	}
 	
@@ -17,7 +17,7 @@ public class Bookmark {
 		return characterIndex;
 	}
 
-	public void setPage(Page page) {
+	public void setPage(DocumentPage page) {
 		this.page = page;
 	}
 

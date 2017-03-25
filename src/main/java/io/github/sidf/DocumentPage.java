@@ -1,10 +1,10 @@
 package io.github.sidf;
 
-public class Page {
+public class DocumentPage {
 	private int index;
 	private String content;
 	
-	public Page(String content, int index) {
+	public DocumentPage(String content, int index) {
 		this.content = content;
 		this.index = index;
 	}

@@ -22,9 +22,9 @@ public class PdfDocument extends Document {
 	}
 
 	@Override
-	public Page getNextPage() throws IOException {
+	public DocumentPage getNextPage() throws IOException {
 		int currentIndex = -1;
-		Page currentPage = getBookmark().getPage();
+		DocumentPage currentPage = getBookmark().getPage();
 		
 		if (currentPage != null) {
 			currentIndex = currentPage.getIndex();
@@ -36,7 +36,7 @@ public class PdfDocument extends Document {
 		textStripper.setStartPage(newIndex + 1);
 		textStripper.setEndPage(newIndex + 1);
 		
-		Page page = new Page(textStripper.getText(pdfDocument), newIndex + 1);
+		DocumentPage page = new DocumentPage(textStripper.getText(pdfDocument), newIndex + 1);
 
 		currentIndex = newIndex;
 		return page;
