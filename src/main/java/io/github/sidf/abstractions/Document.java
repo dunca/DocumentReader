@@ -16,7 +16,6 @@ public abstract class Document implements AutoCloseable, Iterable<Page> {
 	private Bookmark bookmark;
 	private String documentPath;
 	private String documentName;
-	private Page currentPage;
 	
 	public Document(String filePath) throws Exception {
 		file = new File(filePath);
@@ -27,10 +26,9 @@ public abstract class Document implements AutoCloseable, Iterable<Page> {
 			throw new InvalidDocumentException(String.format("%s is not a file", filePath));
 		}
 		
-		bookmark = new Bookmark();
-		
 		documentPath = filePath;
 		documentName = file.getName();
+		bookmark = new Bookmark(getNextPage(), 0);
 	}
 	
 	public int getPageCount() {
@@ -55,14 +53,6 @@ public abstract class Document implements AutoCloseable, Iterable<Page> {
 	
 	public File getFile() {
 		return file;
-	}
-	
-	public Page getCurrentPage() {
-		return currentPage;
-	}
-	
-	public void setCurrentPage(Page page) {
-		this.currentPage = page;
 	}
 	
 	public void delete() {

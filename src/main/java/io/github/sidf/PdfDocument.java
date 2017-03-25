@@ -23,7 +23,13 @@ public class PdfDocument extends Document {
 
 	@Override
 	public Page getNextPage() throws IOException {
-		int currentIndex = getCurrentPage().getIndex();
+		int currentIndex = -1;
+		Page currentPage = getBookmark().getPage();
+		
+		if (currentPage != null) {
+			currentIndex = currentPage.getIndex();
+		}
+		
 		int newIndex = currentIndex + 1;
 		
 		PDFTextStripper textStripper = new PDFTextStripper();

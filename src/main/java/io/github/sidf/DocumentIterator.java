@@ -13,13 +13,13 @@ public class DocumentIterator implements Iterator<Page> {
 	}
 	
 	public boolean hasNext() {
-		return document.getCurrentPage().getIndex() <= document.getPageCount() - 1;
+		return document.getBookmark().getPage().getIndex() <= document.getPageCount() - 1;
 	}
 
 	public Page next() {
 		try {
 			Page page = document.getNextPage();
-			document.setCurrentPage(page);
+			document.getBookmark().setPage(page);
 			return page;
 		} catch (IOException e) {
 			// do something about it
