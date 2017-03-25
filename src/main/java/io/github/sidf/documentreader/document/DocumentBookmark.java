@@ -1,4 +1,4 @@
-package io.github.sidf;
+package io.github.sidf.documentreader.document;
 
 public class DocumentBookmark {
 	private int pageIndex;

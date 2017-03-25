@@ -1,9 +1,7 @@
-package io.github.sidf;
+package io.github.sidf.documentreader.document;
 
 import java.util.Iterator;
 import java.io.IOException;
-
-import io.github.sidf.abstractions.Document;
 
 public class DocumentIterator implements Iterator<DocumentPage> {
 	private Document document;

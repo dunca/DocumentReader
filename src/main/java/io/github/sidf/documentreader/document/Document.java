@@ -1,14 +1,12 @@
-package io.github.sidf.abstractions;
+package io.github.sidf.documentreader.document;
 
 import java.io.File;
 import java.util.Iterator;
+
+import io.github.sidf.documentreader.exceptions.InvalidDocumentException;
+
 import java.io.IOException;
 import java.io.FileNotFoundException;
-
-import io.github.sidf.DocumentPage;
-import io.github.sidf.DocumentBookmark;
-import io.github.sidf.DocumentIterator;
-import io.github.sidf.exceptions.InvalidDocumentException;
 
 public abstract class Document implements AutoCloseable, Iterable<DocumentPage> {
 	private File file;

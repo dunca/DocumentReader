@@ -1,4 +1,4 @@
-package io.github.sidf.exceptions;
+package io.github.sidf.documentreader.exceptions;
 
 public class InvalidDocumentException extends Exception {
 	public InvalidDocumentException() {
