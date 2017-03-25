@@ -13,7 +13,7 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 	}
 	
 	public boolean hasNext() {
-		return document.getBookmark().getPage().getIndex() <= document.getPageCount() - 1;
+		return document.getBookmark().getPageIndex() <= document.getPageCount() - 1;
 	}
 
 	public DocumentPage next() {

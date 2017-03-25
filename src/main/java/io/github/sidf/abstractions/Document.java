@@ -28,7 +28,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		
 		documentPath = filePath;
 		documentName = file.getName();
-		bookmark = new DocumentBookmark(getNextPage(), 0);
+		bookmark = new DocumentBookmark(getNextPage(), -1, 0);
 	}
 	
 	public int getPageCount() {

@@ -3,7 +3,6 @@ package io.github.sidf;
 import java.util.Iterator;
 
 public class DocumentPage implements Iterable<String> {
-	private int index;
 	private int length;
 	private String content;
 	private DocumentBookmark sourceDocumentBookmark;
@@ -12,15 +11,6 @@ public class DocumentPage implements Iterable<String> {
 		this.sourceDocumentBookmark = sourceDocumentBookmark;
 		this.length = content.length();
 		this.content = content;
-		this.index = index;
-	}
-	
-	public int getIndex() {
-		return index;
-	}
-	
-	public void setIndex(int index) {
-		this.index = index;
 	}
 	
 	public int getLength() {
