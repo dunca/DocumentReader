@@ -51,4 +51,8 @@ public abstract class Document {
 	public File getFile() {
 		return file;
 	}
+	
+	public void delete() {
+		file.delete();
+	}
 }
