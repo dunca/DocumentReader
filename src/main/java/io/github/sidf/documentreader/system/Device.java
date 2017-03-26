@@ -10,6 +10,11 @@ public class Device {
 		return OperatingSystem.LINUX;
 	}
 	
+	public static JvmArchitecture getJvmArchitecture() {
+		String arch = System.getProperty("sun.arch.data.model");
+		return arch == "64" ? JvmArchitecture.JVM64 : JvmArchitecture.JVM32;
+	}
+	
 	public static void shutDown() {
 		shutDown(3);
 	}
