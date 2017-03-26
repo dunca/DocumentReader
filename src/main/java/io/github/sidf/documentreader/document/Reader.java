@@ -17,10 +17,10 @@ public class Reader implements Runnable {
 	}
 
 	public void run() {
-		readingLoop();
+		readerLoop();
 	}
 	
-	private void readingLoop() {
+	private void readerLoop() {
 		// iterate over page and read
 	}
 	
