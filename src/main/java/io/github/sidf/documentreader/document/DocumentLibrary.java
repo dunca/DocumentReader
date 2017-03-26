@@ -16,6 +16,7 @@ public class DocumentLibrary implements AutoCloseable {
 		}
 		
 		this.libraryPath = libraryPath;
+		update();
 	}
 	
 	public void clear() {
