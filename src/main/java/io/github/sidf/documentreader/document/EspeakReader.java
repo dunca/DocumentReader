@@ -15,7 +15,9 @@ public class EspeakReader extends Reader {
 		if (Device.getOperatingSystem() == OperatingSystem.LINUX) {
 			espeakPath = "/usr/bin/espeak";
 		} else {
-			espeakPath = System.getenv("ProgramFiles") + " (x86)/eSpeak/command_line/espeak.exe";
+			String programFilesPath = System.getenv("ProgramFiles");
+			String programFiles86Path = programFilesPath += " (x86)";
+			espeakPath =  new File(programFiles86Path).exists() ? programFiles86Path : programFilesPath + "/eSpeak/command_line/espeak.exe";
 		}
 		
 		File espeakFile = new File(espeakPath);
