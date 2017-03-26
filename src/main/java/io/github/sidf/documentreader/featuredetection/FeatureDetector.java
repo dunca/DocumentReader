@@ -1,26 +1,25 @@
 package io.github.sidf.documentreader.featuredetection;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Core;
-import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.core.MatOfRect;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.videoio.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.system.PathHelper;
 
-public class FeatureDetector implements Runnable {
+public class FeatureDetector implements Runnable, AutoCloseable {
 	private boolean isStillRunning;
 	private VideoCapture captureDevice;
 	private ScheduledFuture scheduledFuture;
@@ -43,6 +42,9 @@ public class FeatureDetector implements Runnable {
 		if (!captureDevice.isOpened()) {
 			throw new IOException("Could not open video capture device");
 		}
+//		
+//		captureDevice.set(3, 1280);
+//		captureDevice.set(4, 800);
 	}
 	
 	public static void main(String[] array) throws IOException {
@@ -65,13 +67,18 @@ public class FeatureDetector implements Runnable {
 			image = new Mat();
 			grayImage = new Mat();
 			
-			captureDevice.retrieve(image);
+			captureDevice.read(image);
 			System.out.println("Image grabbed");
 			Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
 			
 			MatOfRect faceDetections = detectFaces(grayImage);
 			
+			if (faceDetections.elemSize() == 0) {
+				continue;
+			}
+			
 			Mat grayFaceImage = grayImage.submat(faceDetections.toArray()[0]);
+//			saveImageToDesktop(grayFaceImage, "face");
 			
 			int x = 0;
 			int y = (int)(grayFaceImage.size().height * 0.2);
@@ -81,33 +88,36 @@ public class FeatureDetector implements Runnable {
 			Rect eyeRegionRect = new Rect(x, y, width, height);
 			Mat eyeRegionImage = grayFaceImage.submat(eyeRegionRect);
 			
-			Imgcodecs.imwrite("C:\\face.jpg", eyeRegionImage);
-			
 			MatOfRect eyeDetections = detectClosedEyes(eyeRegionImage);
-			
-			if (eyeDetections.elemSize() == 0) {
-				if (scheduledFuture != null) {
-					scheduledFuture.cancel(false);
-					scheduledFuture = null;
-					System.out.print("no longer scheduled");
-				}
-			} else if (scheduledFuture == null) {
-				scheduledFuture = scheduledExecutorService.schedule(new Runnable() {
-					public void run() {
-						stop();
-//						Device.shutDown();
-						System.out.println("Scheduled thing executed");
-					}
-				}, 30, TimeUnit.SECONDS);
-			}
+			setShutdownTimerIfNecessary(eyeDetections);			
 			
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				stop();
 			}
+			
+			System.gc();
 		}
 
+	}
+	
+	private void setShutdownTimerIfNecessary(Mat eyeDetections) {
+		if (eyeDetections.elemSize() == 0) {
+			if (scheduledFuture != null) {
+				scheduledFuture.cancel(false);
+				scheduledFuture = null;
+				System.out.print("no longer scheduled");
+			}
+		} else if (scheduledFuture == null) {
+			scheduledFuture = scheduledExecutorService.schedule(new Runnable() {
+				public void run() {
+					stop();
+//					Device.shutDown();
+					System.out.println("Scheduled thing executed");
+				}
+			}, 30, TimeUnit.SECONDS);
+		}
 	}
 	
 	private MatOfRect detectFaces(Mat grayImage) {
@@ -120,15 +130,20 @@ public class FeatureDetector implements Runnable {
 		int width = (int)eyeRegionImage.size().width / 2;
 		int height = (int)eyeRegionImage.size().height;
 		
-		MatOfRect rightEyes = detectClosedEyes(rightEyeClassifier, eyeRegionImage.submat(0, height, 0, width));
+		Mat rightEyeRegion = eyeRegionImage.submat(0, height, 0, width);
+		MatOfRect rightEyes = detectClosedEyes(rightEyeClassifier, rightEyeRegion);
 		
-		if (rightEyes.elemSize() != 0) {
+		if (rightEyes.toArray().length != 0) {
 			System.out.println("right detected");
+//			saveImageToDesktop(rightEyeRegion, "right");
 			return rightEyes;
 		}
-		MatOfRect leftEyes = detectClosedEyes(leftEyeClassifier, eyeRegionImage.submat(0, height, width, (int)eyeRegionImage.size().width));
-		if (leftEyes.elemSize() != 0) {
+		
+		Mat leftEyeRegion = eyeRegionImage.submat(0, height, width, (int)eyeRegionImage.size().width);
+		MatOfRect leftEyes = detectClosedEyes(leftEyeClassifier, leftEyeRegion);
+		if (leftEyes.toArray().length != 0) {
 			System.out.println("left detected");
+//			saveImageToDesktop(leftEyeRegion, "left");
 		}
 		return leftEyes;
 	}
@@ -139,11 +154,25 @@ public class FeatureDetector implements Runnable {
 		return mat;
 	}
 	
+	private void saveImageToDesktop(Mat image, String name) {
+		String path = System.getProperty("user.home") + "/Desktop";;
+		
+		if (!new File(path).exists()) {
+			return;
+		}
+		
+		Imgcodecs.imwrite(String.format("%s/%s.jpg", path, name), image);
+	}
+	
 	public void stop() {
 		isStillRunning = false;
 		
 		if (scheduledExecutorService != null) {
 			scheduledExecutorService.shutdown();
 		}
+	}
+
+	public void close() throws Exception {
+		captureDevice.release();
 	}
 }
