@@ -1,5 +1,6 @@
 package io.github.sidf.documentreader.document;
 
+import java.io.File;
 import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -7,8 +8,8 @@ import org.apache.pdfbox.text.PDFTextStripper;
 public class PdfDocument extends Document {
 	private PDDocument pdfDocument;
 	
-	public PdfDocument(String path) throws Exception {
-		super(path);
+	public PdfDocument(File file) throws Exception {
+		super(file);
 		
 		pdfDocument = PDDocument.load(getFile());
 		setPageCount(pdfDocument.getNumberOfPages());

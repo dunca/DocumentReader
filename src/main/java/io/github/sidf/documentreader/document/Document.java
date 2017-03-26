@@ -15,8 +15,10 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 	private String documentPath;
 	private String documentName;
 	
-	public Document(String filePath) throws Exception {
-		file = new File(filePath);
+	public Document(File file) throws Exception {
+		this.file = file;
+		
+		String filePath = file.getPath();
 		
 		if (!file.exists()) {
 			throw new FileNotFoundException(String.format("%s does not exist", filePath));
@@ -24,7 +26,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 			throw new InvalidDocumentException(String.format("%s is not a file", filePath));
 		}
 		
-		documentPath = filePath;
+		documentPath = file.getPath();
 		documentName = file.getName();
 		bookmark = new DocumentBookmark(getNextPage(), -1, 0);
 	}
