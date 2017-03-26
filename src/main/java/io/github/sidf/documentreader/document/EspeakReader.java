@@ -3,13 +3,16 @@ package io.github.sidf.documentreader.document;
 import java.io.File;
 import java.io.IOException;
 
+import io.github.sidf.documentreader.system.Device;
+import io.github.sidf.documentreader.system.OperatingSystem;
+
 public class EspeakReader extends Reader {
 	private String espeakPath;
 	
 	public EspeakReader(DocumentPage page) throws Exception {
 		super(page);
 		
-		if (System.getProperty("os.name").contains("Linux")) {
+		if (Device.getOperatingSystem() == OperatingSystem.LINUX) {
 			espeakPath = "/usr/bin/espeak";
 		} else {
 			espeakPath = System.getenv("ProgramFiles") + " (x86)/eSpeak/command_line/espeak.exe";
