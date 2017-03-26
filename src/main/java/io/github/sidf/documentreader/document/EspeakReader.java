@@ -6,7 +6,7 @@ import java.io.IOException;
 public class EspeakReader extends Reader {
 	private String espeakPath;
 	
-	public EspeakReader(DocumentPage page) throws IOException {
+	public EspeakReader(DocumentPage page) throws Exception {
 		super(page);
 		
 		if (System.getProperty("os.name").contains("Linux")) {

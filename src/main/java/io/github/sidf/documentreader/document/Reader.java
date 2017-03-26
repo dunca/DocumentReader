@@ -1,11 +1,10 @@
 package io.github.sidf.documentreader.document;
 
-import java.io.IOException;
-
 public abstract class Reader implements Runnable {
-	public DocumentPage page;
+	private DocumentPage page;
+	private boolean isStillRunning;
 	
-	public Reader(DocumentPage page) throws IOException {
+	public Reader(DocumentPage page) throws Exception {
 		this.page = page;
 	}
 
@@ -22,11 +21,26 @@ public abstract class Reader implements Runnable {
 	}
 	
 	private void readerLoop() {
-		// iterate over page and read
+		isStillRunning = true;
+		
+		for (String sentence : page) {
+			try {
+				read(sentence);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if (isStillRunning) {
+				break;
+			}
+		}
+		
+		isStillRunning = false;
 	}
 	
 	public void stop() {
-		// stop reading
+		isStillRunning = false;
 	}
 	
 	public abstract void read(String text) throws Exception;
