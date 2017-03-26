@@ -1,10 +1,11 @@
 package io.github.sidf.documentreader.document;
 
+import java.io.IOException;
 
-public class Reader implements Runnable {
+public abstract class Reader implements Runnable {
 	public DocumentPage page;
 	
-	public Reader(DocumentPage page) {
+	public Reader(DocumentPage page) throws IOException {
 		this.page = page;
 	}
 
@@ -27,4 +28,6 @@ public class Reader implements Runnable {
 	public void stop() {
 		// stop reading
 	}
+	
+	public abstract void read(String text) throws Exception;
 }
