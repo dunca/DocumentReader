@@ -3,6 +3,7 @@ package io.github.sidf.documentreader.document;
 import java.io.File;
 import java.io.IOException;
 
+import io.github.sidf.documentreader.system.CommandHelper;
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.system.OperatingSystem;
 

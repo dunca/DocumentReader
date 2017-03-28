@@ -2,18 +2,16 @@ package io.github.sidf.documentreader.document;
 
 import java.io.File;
 import java.util.Iterator;
-
-import io.github.sidf.documentreader.exceptions.InvalidDocumentException;
-
 import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.io.FileNotFoundException;
 
 public abstract class Document implements AutoCloseable, Iterable<DocumentPage> {
 	private File file;
 	private int pageCount;
-	private DocumentBookmark bookmark;
 	private String documentPath;
 	private String documentName;
+	private DocumentBookmark bookmark;
 	
 	public Document(File file) throws Exception {
 		this.file = file;
@@ -23,7 +21,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		if (!file.exists()) {
 			throw new FileNotFoundException(String.format("%s does not exist", filePath));
 		} else if (file.isDirectory()) {
-			throw new InvalidDocumentException(String.format("%s is not a file", filePath));
+			throw new InvalidObjectException(String.format("%s is not a file", filePath));
 		}
 		
 		documentPath = file.getPath();

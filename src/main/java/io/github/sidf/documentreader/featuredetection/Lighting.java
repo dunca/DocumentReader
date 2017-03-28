@@ -3,6 +3,8 @@ package io.github.sidf.documentreader.featuredetection;
 import java.util.List;
 import java.util.ArrayList;
 import com.pi4j.io.gpio.Pin;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.GpioFactory;
@@ -12,6 +14,8 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.trigger.GpioSetStateTrigger;
 
 public class Lighting implements Runnable {
+	private static Logger logger = Logger.getLogger(Lighting.class.getName());
+	
 	private boolean isStillRunning;
 	private final GpioController gpioController =  GpioFactory.getInstance();
 	private final List<GpioSetStateTrigger> triggers = new ArrayList<GpioSetStateTrigger>();
@@ -66,7 +70,7 @@ public class Lighting implements Runnable {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				
+				logger.log(Level.WARNING, "Thread sleep interrupted", e);
 			}
 		}
 		

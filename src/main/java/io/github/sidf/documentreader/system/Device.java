@@ -1,8 +1,12 @@
 package io.github.sidf.documentreader.system;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Device {
+	private static Logger logger = Logger.getLogger(Device.class.getName());
+	
 	public static OperatingSystem getOperatingSystem() {
 		if (System.getProperty("os.name").contains("Windows")) {
 			return OperatingSystem.WINDOWS;
@@ -23,20 +27,20 @@ public class Device {
 		String command = null;
 		
 		switch (getOperatingSystem()) {
-		case WINDOWS:
-			command = "shutdown.exe -s -t ";
-			break;
-
-		case LINUX:
-			command = "shutdown -h ";
-			break;
+			case WINDOWS:
+				command = "shutdown.exe -s -t %d";
+				break;
+	
+			case LINUX:
+				command = "shutdown -h %d";
+				break;
 		}
 		
 		try {
-			Runtime.getRuntime().exec(command + countdown);
+			logger.info("Trying to shut down the system");
+			Runtime.getRuntime().exec(String.format(command, countdown));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.log(Level.SEVERE, "Could not shut down the system", e);
 		}
 	}
 }
