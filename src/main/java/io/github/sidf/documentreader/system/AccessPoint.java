@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.github.sidf.documentreader.util.CommandUtil;
+import io.github.sidf.documentreader.util.PathUtil;
+import io.github.sidf.documentreader.util.ValidatableCommand;
+
 public class AccessPoint implements AutoCloseable {
 	private static Logger logger = Logger.getLogger(AccessPoint.class.getName());
 

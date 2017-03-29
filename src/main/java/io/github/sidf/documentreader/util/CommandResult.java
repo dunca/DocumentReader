@@ -1,4 +1,4 @@
-package io.github.sidf.documentreader.system;
+package io.github.sidf.documentreader.util;
 
 public class CommandResult {
 	public String stdout;

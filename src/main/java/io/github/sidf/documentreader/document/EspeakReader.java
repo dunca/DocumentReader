@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import io.github.sidf.documentreader.system.Device;
-import io.github.sidf.documentreader.system.OperatingSystem;
+import io.github.sidf.documentreader.system.enums.OperatingSystem;
 
 public class EspeakReader extends Reader {
 	private String espeakPath;

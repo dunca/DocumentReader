@@ -17,7 +17,7 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
 import io.github.sidf.documentreader.system.Device;
-import io.github.sidf.documentreader.system.PathUtil;
+import io.github.sidf.documentreader.util.PathUtil;
 
 public class FeatureDetector implements Runnable, AutoCloseable {
 	private boolean isStillRunning;

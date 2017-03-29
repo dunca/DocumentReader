@@ -1,4 +1,7 @@
-package io.github.sidf.documentreader.system;
+package io.github.sidf.documentreader.util;
+
+import io.github.sidf.documentreader.system.Device;
+import io.github.sidf.documentreader.system.enums.OperatingSystem;
 
 public class PathUtil {
 	private static boolean runsLinux;

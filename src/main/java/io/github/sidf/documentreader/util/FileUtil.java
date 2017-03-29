@@ -1,4 +1,4 @@
-package io.github.sidf.documentreader.system;
+package io.github.sidf.documentreader.util;
 
 import java.util.Arrays;
 import java.io.IOException;

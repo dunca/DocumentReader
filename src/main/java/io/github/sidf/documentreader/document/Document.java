@@ -3,7 +3,7 @@ package io.github.sidf.documentreader.document;
 import java.io.File;
 import java.util.Iterator;
 
-import io.github.sidf.documentreader.system.FileUtil;
+import io.github.sidf.documentreader.util.FileUtil;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;

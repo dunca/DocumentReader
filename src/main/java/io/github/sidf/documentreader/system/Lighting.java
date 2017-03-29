@@ -1,4 +1,4 @@
-package io.github.sidf.documentreader.featuredetection;
+package io.github.sidf.documentreader.system;
 
 import java.util.List;
 import java.util.ArrayList;

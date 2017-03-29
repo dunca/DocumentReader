@@ -1,4 +1,4 @@
-package io.github.sidf.documentreader.system;
+package io.github.sidf.documentreader.system.enums;
 
 public enum OperatingSystem {
 	WINDOWS,
