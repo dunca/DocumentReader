@@ -5,9 +5,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.util.ArrayUtil;
-import io.github.sidf.documentreader.util.Language;
+import io.github.sidf.documentreader.util.enums.Language;
+import io.github.sidf.documentreader.util.enums.Speed;
 
 public abstract class Reader implements Runnable {
+	private Speed speed;
 	private Language language;
 	private DocumentPage page;
 	private boolean isStillRunning;
@@ -36,6 +38,19 @@ public abstract class Reader implements Runnable {
 		}
 		
 		this.language = language;
+	}
+	
+	public Speed getSpeed() {
+		return speed;
+	}
+	
+	public void setSpeed(Speed speed) throws IOException {
+		if (!ArrayUtil.arrayContains(getSupportedSpeed(), speed)) {
+			String message = String.format("The reader does not support %s speed", speed.getDisplayName());
+			throw new IOException(message);
+		}
+		
+		this.speed = speed;
 	}
 
 	@Override
@@ -66,6 +81,7 @@ public abstract class Reader implements Runnable {
 		isStillRunning = false;
 	}
 	
+	public abstract Speed[] getSupportedSpeed();
 	public abstract Language[] getSupportedLanguages();
 	public abstract void read(String text) throws Exception;
 }
