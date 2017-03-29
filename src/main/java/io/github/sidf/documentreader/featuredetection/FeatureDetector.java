@@ -2,9 +2,8 @@ package io.github.sidf.documentreader.featuredetection;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledExecutorService;
