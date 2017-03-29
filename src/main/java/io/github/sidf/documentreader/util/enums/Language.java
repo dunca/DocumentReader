@@ -1,4 +1,4 @@
-package io.github.sidf.documentreader.util;
+package io.github.sidf.documentreader.util.enums;
 
 public enum Language {
 	HUNGARIAN("Magyar"),
