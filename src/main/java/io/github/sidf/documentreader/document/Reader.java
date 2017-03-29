@@ -3,6 +3,8 @@ package io.github.sidf.documentreader.document;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.github.sidf.documentreader.util.Language;
+
 public abstract class Reader implements Runnable {
 	private DocumentPage page;
 	private boolean isStillRunning;
@@ -48,5 +50,6 @@ public abstract class Reader implements Runnable {
 		isStillRunning = false;
 	}
 	
+	public abstract Language[] getSupportedLanguages();
 	public abstract void read(String text) throws Exception;
 }
