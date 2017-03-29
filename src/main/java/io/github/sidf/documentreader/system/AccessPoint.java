@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.PathUtil;
+import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.ValidatableCommand;
 
 public class AccessPoint implements AutoCloseable {
@@ -21,7 +21,7 @@ public class AccessPoint implements AutoCloseable {
 	private static final String wlanSearchCommandTemplate = "ls /sys/class/net | grep %s";
 	private static final HashMap<String, ValidatableCommand> nonBlockingCommands = new HashMap<>();
 	
-	private AccessPoint(String ipAddr) throws IOException {
+	private AccessPoint(String ipAddr) throws Exception {
 		wlanInterface = getWlanInterfaceName();
 		
 		ipAddress = ipAddr;
@@ -40,11 +40,11 @@ public class AccessPoint implements AutoCloseable {
 		nonBlockingCommands.put("dnsmasq", dnsmasqCmd);
 	}
 	
-	private AccessPoint() throws IOException {
+	private AccessPoint() throws Exception {
 		this("192.168.13.37");
 	}
 	
-	public AccessPoint getInstance() throws IOException {
+	public AccessPoint getInstance() throws Exception {
 		if (instance == null) {
 			instance =  new AccessPoint();
 		}
@@ -52,7 +52,7 @@ public class AccessPoint implements AutoCloseable {
 		return instance;
 	}
 	
-	private String getWlanInterfaceName() throws IOException {
+	private String getWlanInterfaceName() throws Exception {
 		String iface = null;
 		
 		for (String pattern : wlanInterfacePatterns) {
@@ -70,7 +70,7 @@ public class AccessPoint implements AutoCloseable {
 		throw new IOException(message);
 	}
 
-	private void cleanup() throws IOException {
+	private void cleanup() throws Exception {
 		for (String command : nonBlockingCommands.keySet()) {
 			try {
 				CommandUtil.quitUnixProcess(command);
@@ -87,7 +87,7 @@ public class AccessPoint implements AutoCloseable {
 		
 	}
 
-	public void start() throws IOException {
+	public void start() throws Exception {
 		cleanup();
 		
 		for (ValidatableCommand command : nonBlockingCommands.values()) {

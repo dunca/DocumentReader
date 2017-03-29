@@ -4,11 +4,14 @@ import java.io.File;
 import java.util.List;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.io.IOException;
+import java.util.logging.Logger;
 import java.io.FileNotFoundException;
 
 public class DocumentLibrary implements AutoCloseable {
 	private File libraryPath;
-	private List<Document> documentStorage = new ArrayList<Document>();
+	private List<Document> documents = new ArrayList<Document>();
+	private static Logger logger = Logger.getLogger(DocumentLibrary.class.getName());
 	
 	public DocumentLibrary(File libraryPath) throws FileNotFoundException {
 		if (!libraryPath.exists() || !libraryPath.isDirectory()) {
@@ -20,9 +23,7 @@ public class DocumentLibrary implements AutoCloseable {
 	}
 	
 	public void clear() {
-		if (documentStorage != null) {
-			documentStorage.clear();
-		}
+		documents.clear();
 	}
 	
 	public void update() {
@@ -33,7 +34,7 @@ public class DocumentLibrary implements AutoCloseable {
 			}
 		})) { 
 			try {
-				documentStorage.add(new PdfDocument(file));
+				documents.add(new PdfDocument(file));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -43,13 +44,31 @@ public class DocumentLibrary implements AutoCloseable {
 	}
 	
 	public void delete() {
-		for (Document document : documentStorage) {
+		for (Document document : documents) {
 			document.delete();
 		}
 	}
 
+	public Document getDocumentById(String id) throws IOException {
+		for (Document document : documents) {
+			if (document.getDocumentId().equals(id)) {
+				return document;
+			}
+		}
+		
+		String message = String.format("No document with id %s found in the library", id);
+		logger.severe(message);
+		
+		throw new IOException(message);
+	}
+	
+	public File getLibraryPath() {
+		return libraryPath;
+	}
+	
+	@Override
 	public void close() throws Exception {
-		for (Document document : documentStorage) {
+		for (Document document : documents) {
 			document.close();
 		}
 	}

@@ -2,7 +2,9 @@ package io.github.sidf.documentreader.featuredetection;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ScheduledExecutorService;
@@ -28,6 +30,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	private static CascadeClassifier leftEyeClassifier;
 	private static CascadeClassifier rightEyeClassifier;
 	private ScheduledExecutorService scheduledExecutorService;
+	private static Logger logger = Logger.getLogger(FeatureDetector.class.getName());
 	
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -41,7 +44,9 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		captureDevice = new VideoCapture(0);
 		
 		if (!captureDevice.isOpened()) {
-			throw new IOException("Could not open video capture device");
+			String message = "Could not open video capture device";
+			logger.warning(message);
+			throw new IOException(message);
 		}
 //		
 //		captureDevice.set(3, 1280);
@@ -157,14 +162,14 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		return mat;
 	}
 	
-	private void saveImageToDesktop(Mat image, String name) {
+	private void saveImageToDesktop(Mat image, String imageName) {
 		String path = System.getProperty("user.home") + "/Desktop";;
 		
 		if (!new File(path).exists()) {
-			return;
+			logger.warning(String.format("Could not save image %s", imageName));
 		}
 		
-		Imgcodecs.imwrite(String.format("%s/%s.jpg", path, name), image);
+		Imgcodecs.imwrite(String.format("%s/%s.jpg", path, imageName), image);
 	}
 	
 	public void stop() {

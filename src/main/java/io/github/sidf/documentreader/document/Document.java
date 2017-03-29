@@ -31,7 +31,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		documentPath = file.getPath();
 		documentName = file.getName();
 		documentId = FileUtil.getMd5Hash(documentPath);
-		bookmark = new DocumentBookmark(getNextPage(), -1, 0);
+		bookmark = new DocumentBookmark(fetchNextPage(), -1, 0);
 	}
 	
 	public int getPageCount() {
@@ -40,6 +40,10 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 	
 	public void setPageCount(int pageCount) {
 		this.pageCount = pageCount;
+	}
+	
+	public String getDocumentId() {
+		return documentId;
 	}
 	
 	public String getDocumentPath() {
@@ -66,6 +70,16 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		return new DocumentIterator(this);
 	}
 	
-	public abstract DocumentPage getNextPage() throws IOException;
+	public DocumentPage nextPage() throws IOException {
+		DocumentPage page = fetchNextPage();
+		
+		getBookmark().setPage(page);
+		bookmark.setCharacterIndex(0);
+		bookmark.setPageIndex(bookmark.getPageIndex() + 1);
+		
+		return page;
+	}
+	
 	public abstract void close() throws Exception;
+	public abstract DocumentPage fetchNextPage() throws IOException;
 }

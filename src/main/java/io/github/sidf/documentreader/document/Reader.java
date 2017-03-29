@@ -1,8 +1,12 @@
 package io.github.sidf.documentreader.document;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public abstract class Reader implements Runnable {
 	private DocumentPage page;
 	private boolean isStillRunning;
+	private static Logger logger = Logger.getLogger(Reader.class.getName());
 	
 	public Reader(DocumentPage page) throws Exception {
 		this.page = page;
@@ -16,6 +20,7 @@ public abstract class Reader implements Runnable {
 		this.page = page;
 	}
 
+	@Override
 	public void run() {
 		readerLoop();
 	}
@@ -27,8 +32,8 @@ public abstract class Reader implements Runnable {
 			try {
 				read(sentence);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.log(Level.SEVERE, "Couldn't read sentence", e);
+				throw new RuntimeException(e.getMessage());
 			}
 			
 			if (isStillRunning) {

@@ -21,7 +21,7 @@ public class PdfDocument extends Document {
 	}
 
 	@Override
-	public DocumentPage getNextPage() throws IOException {
+	public DocumentPage fetchNextPage() throws IOException {
 		int currentIndex = getBookmark().getPageIndex();
 		int newIndex = currentIndex + 1;
 		
@@ -29,9 +29,7 @@ public class PdfDocument extends Document {
 		textStripper.setStartPage(newIndex + 1);
 		textStripper.setEndPage(newIndex + 1);
 		
-		DocumentPage page = new DocumentPage(getBookmark(), textStripper.getText(pdfDocument), newIndex + 1);
-
-		currentIndex = newIndex;
+		DocumentPage page = new DocumentPage(getBookmark(), textStripper.getText(pdfDocument), newIndex);
 		return page;
 	}
 }

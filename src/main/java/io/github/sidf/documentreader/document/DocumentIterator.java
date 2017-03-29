@@ -2,11 +2,8 @@ package io.github.sidf.documentreader.document;
 
 import java.util.Iterator;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class DocumentIterator implements Iterator<DocumentPage> {
-	private static Logger logger = Logger.getLogger(DocumentIterator.class.getName());
-	
 	private Document document;
 	
 	public DocumentIterator(Document document) {
@@ -18,14 +15,14 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 	}
 
 	public DocumentPage next() {
+		DocumentPage page = null;
+		
 		try {
-			DocumentPage page = document.getNextPage();
-			document.getBookmark().setPage(page);
-			return page;
+			page = document.nextPage();
 		} catch (IOException e) {
 			new RuntimeException(String.format("Could not fetch page from %s", document.getDocumentName()));
 		}
 		
-		return null;
+		return page;
 	}
 }

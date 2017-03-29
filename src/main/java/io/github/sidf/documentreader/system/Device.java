@@ -28,11 +28,11 @@ public class Device {
 		return arch == "64" ? JvmArchitecture.JVM64 : JvmArchitecture.JVM32;
 	}
 	
-	public static void shutDown() {
+	public static void shutDown() throws IOException {
 		shutDown(3);
 	}
 	
-	public static void shutDown(int countdown) {
+	public static void shutDown(int countdown) throws IOException {
 		String command = null;
 		
 		switch (getOperatingSystem()) {
@@ -45,38 +45,19 @@ public class Device {
 				break;
 		}
 		
-		try {
-			logger.info("Trying to shut down the system");
-			Runtime.getRuntime().exec(String.format(command, countdown));
-		} catch (IOException e) {
-			logger.log(Level.SEVERE, "Could not shut down the system", e);
-		}
+		Runtime.getRuntime().exec(String.format(command, countdown));
 	}
 	
-	public static void setVolume(int level) {
-		try {
-			CommandUtil.launchNonBlockingCommand(String.format("amixer sset PCM %d%%", level));
-		} catch (IOException e) {
-			logger.log(Level.WARNING, "Could not set the speaker's volume", e);
-		}
+	public static void setVolume(int level) throws Exception {
+		CommandUtil.launchNonBlockingCommand(String.format("amixer sset PCM %d%%", level));
 	}
 	
-	public static Integer getVolume() {
-		CommandResult commandResult = null;
-		
-		try {
-			commandResult = CommandUtil.launchNonBlockingCommand("amixer get PCM | tail -1");
-		} catch (IOException e) {
-			logger.log(Level.WARNING, "Could not get the speaker's volume", e);
-		}
-		
-		if (commandResult == null) {
-			return null;
-		}
+	public static Integer getVolume() throws Exception {
+		 CommandResult commandResult = CommandUtil.launchNonBlockingCommand("amixer get PCM | tail -1");
 		
 		Matcher matcher = volumePattern.matcher(commandResult.getStdout());
 		if (!matcher.find()) {
-			return null;
+			throw new IOException("Could not parse the speaker's volume");
 		}
 		
 		return Integer.valueOf(matcher.group());

@@ -24,7 +24,7 @@ public class ValidatableCommand {
 		
 		try {
 			commandResult = CommandUtil.launchNonBlockingCommand(command);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return false;
 		}
 		

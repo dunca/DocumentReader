@@ -19,12 +19,6 @@ public class EspeakReader extends Reader {
 			String programFiles86Path = programFilesPath += " (x86)";
 			espeakPath =  new File(programFiles86Path).exists() ? programFiles86Path : programFilesPath + "/eSpeak/command_line/espeak.exe";
 		}
-		
-		File espeakFile = new File(espeakPath);
-		
-		if (!espeakFile.exists()) {
-			throw new IOException(String.format("Path %s does not exist", espeakPath));
-		}
 	}
 
 	@Override

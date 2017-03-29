@@ -11,7 +11,7 @@ public class CommandUtil {
 		
 	}
 	
-	public static CommandResult launchNonBlockingCommand(String command) throws IOException {
+	public static CommandResult launchNonBlockingCommand(String command) throws IOException, InterruptedException {
 		String[] commandArray = null;
 		
 		if (command.contains("|")) {
@@ -26,21 +26,14 @@ public class CommandUtil {
 		logger.info(String.format("Trying to run command %s", command));
 		Process process = builder.start();
 		
-		int exitCode = -1;
-		
-		try {
-			exitCode = process.waitFor();
-		} catch (InterruptedException e) {
-			logger.log(Level.SEVERE, String.format("Command %s was interrupted", command), e);
-		}
-		
+		int exitCode = process.waitFor();
 		return new CommandResult(StreamUtil.inputStreamToString(process.getInputStream()), exitCode);
 	}
 	
-	public static void quitUnixProcess(String processName) throws IOException {
+	public static void quitUnixProcess(String processName) throws Exception {
 		try {
 			launchNonBlockingCommand(String.format("killall %s", processName));
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			logger.log(Level.SEVERE, String.format("Could not quit %s", processName), e);
 			if (isProcessRunning(processName)) {
 				throw e;
@@ -48,14 +41,8 @@ public class CommandUtil {
 		}
 	}
 	
-	public static boolean isProcessRunning(String processName) {
-		try {
-			launchNonBlockingCommand(String.format("ps aux | grep -v grep | grep %s", processName));
-		} catch (IOException e) {
-			logger.log(Level.SEVERE, String.format("Could check if %s is running", processName), e);
-			return false;
-		}
-		
-		return true;
+	public static boolean isProcessRunning(String processName) throws Exception {
+		CommandResult commandResult = launchNonBlockingCommand(String.format("ps aux | grep -v grep | grep %s", processName));
+		return commandResult.getStdout().trim().length() != 0;
 	}
 }
