@@ -1,11 +1,14 @@
 package io.github.sidf.documentreader.document;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.util.Language;
 
 public abstract class Reader implements Runnable {
+	private Language language;
 	private DocumentPage page;
 	private boolean isStillRunning;
 	private static Logger logger = Logger.getLogger(Reader.class.getName());
@@ -20,6 +23,19 @@ public abstract class Reader implements Runnable {
 
 	public void setPage(DocumentPage page) {
 		this.page = page;
+	}
+	
+	public Language getLanguage() {
+		return language;
+	}
+	
+	public void setLanguage(Language language) throws IOException {
+		if (!ArrayUtil.arrayContains(getSupportedLanguages(), language)) {
+			String message = String.format("The reader does not support %s", language.getDisplayName());
+			throw new IOException(message);
+		}
+		
+		this.language = language;
 	}
 
 	@Override

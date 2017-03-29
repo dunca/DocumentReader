@@ -33,7 +33,7 @@ public class EspeakReader extends Reader {
 
 	@Override
 	public void read(String text) throws IOException {
-		Runtime.getRuntime().exec(String.format("%s \"%s\"", espeakPath, text));
+		Runtime.getRuntime().exec(String.format("%s -v %s \"%s\"", espeakPath, languages.get(getLanguage()), text));
 	}
 
 	@Override
