@@ -4,8 +4,12 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class CommandHelper {
-	private static Logger logger = Logger.getLogger(StreamHelper.class.getName());
+public class CommandUtil {
+	private static Logger logger = Logger.getLogger(StreamUtil.class.getName());
+	
+	private CommandUtil() {
+		
+	}
 	
 	public static CommandResult launchNonBlockingCommand(String command) throws IOException {
 		String[] commandArray = null;
@@ -30,7 +34,7 @@ public class CommandHelper {
 			logger.log(Level.SEVERE, String.format("Command %s was interrupted", command), e);
 		}
 		
-		return new CommandResult(StreamHelper.inputStreamToString(process.getInputStream()), exitCode);
+		return new CommandResult(StreamUtil.inputStreamToString(process.getInputStream()), exitCode);
 	}
 	
 	public static void quitUnixProcess(String processName) throws IOException {

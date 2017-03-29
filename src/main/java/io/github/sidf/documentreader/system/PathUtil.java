@@ -1,11 +1,15 @@
 package io.github.sidf.documentreader.system;
 
-public class PathHelper {
+public class PathUtil {
 	private static boolean runsLinux;
 	private static ClassLoader classLoader;
 	
+	private PathUtil() {
+		
+	}
+	
 	static {
-		classLoader = PathHelper.class.getClassLoader();
+		classLoader = PathUtil.class.getClassLoader();
 		runsLinux = Device.getOperatingSystem() == OperatingSystem.LINUX;
 	}
 	

@@ -17,7 +17,7 @@ import org.opencv.videoio.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
 import io.github.sidf.documentreader.system.Device;
-import io.github.sidf.documentreader.system.PathHelper;
+import io.github.sidf.documentreader.system.PathUtil;
 
 public class FeatureDetector implements Runnable, AutoCloseable {
 	private boolean isStillRunning;
@@ -32,9 +32,9 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
-		leftEyeClassifier = new CascadeClassifier(PathHelper.getResourcePath("cascades/left_eye_lbp.xml"));
-		rightEyeClassifier = new CascadeClassifier(PathHelper.getResourcePath("cascades/right_eye_lbp.xml"));
-		faceClassifier = new CascadeClassifier(PathHelper.getResourcePath("cascades/lbpcascade_frontalface.xml"));
+		leftEyeClassifier = new CascadeClassifier(PathUtil.getResourcePath("cascades/left_eye_lbp.xml"));
+		rightEyeClassifier = new CascadeClassifier(PathUtil.getResourcePath("cascades/right_eye_lbp.xml"));
+		faceClassifier = new CascadeClassifier(PathUtil.getResourcePath("cascades/lbpcascade_frontalface.xml"));
 	}
 	
 	private FeatureDetector() throws IOException {

@@ -23,7 +23,7 @@ public class ValidatableCommand {
 		CommandResult commandResult = null;
 		
 		try {
-			commandResult = CommandHelper.launchNonBlockingCommand(command);
+			commandResult = CommandUtil.launchNonBlockingCommand(command);
 		} catch (IOException e) {
 			return false;
 		}

@@ -4,11 +4,16 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class StreamHelper {
-	private static Logger logger = Logger.getLogger(StreamHelper.class.getName());
+public class StreamUtil {
+	private StreamUtil() {
+		
+	}
+	
+	private static Logger logger = Logger.getLogger(StreamUtil.class.getName());
 	
 	public static String inputStreamToString(InputStream inputStream) {
 		StringBuilder stringBuilder = new StringBuilder();

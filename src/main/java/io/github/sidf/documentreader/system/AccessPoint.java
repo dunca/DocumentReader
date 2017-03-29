@@ -23,7 +23,7 @@ public class AccessPoint implements AutoCloseable {
 		ipAddress = ipAddr;
 		ipAddress24 = ipAddress.substring(0, ipAddress.lastIndexOf('.'));
 		flushCommand = String.format("ip addr flush dev %s", wlanInterface);
-		String hostapdConfigPath = PathHelper.getResourcePath("hostapd/hostapd.ini");
+		String hostapdConfigPath = PathUtil.getResourcePath("hostapd/hostapd.ini");
 		
 		ValidatableCommand staticIpCmd = new ValidatableCommand(String.format("ip addr add %s/24 broadcast %s.255 dev %s"
 																			  , ipAddress, ipAddress24, wlanInterface), 0);
@@ -52,7 +52,7 @@ public class AccessPoint implements AutoCloseable {
 		String iface = null;
 		
 		for (String pattern : wlanInterfacePatterns) {
-			String stdout = CommandHelper.launchNonBlockingCommand(String.format(wlanSearchCommandTemplate, pattern)).getStdout();
+			String stdout = CommandUtil.launchNonBlockingCommand(String.format(wlanSearchCommandTemplate, pattern)).getStdout();
 			
 			if (stdout != null && (stdout = stdout.trim()) != "") {
 				iface = stdout.split("\n")[0];
@@ -69,14 +69,14 @@ public class AccessPoint implements AutoCloseable {
 	private void cleanup() throws IOException {
 		for (String command : nonBlockingCommands.keySet()) {
 			try {
-				CommandHelper.quitUnixProcess(command);
+				CommandUtil.quitUnixProcess(command);
 			} catch (IOException e) {
 				throw e;
 			}
 		}
 		
 		try {
-			CommandHelper.launchNonBlockingCommand(flushCommand);
+			CommandUtil.launchNonBlockingCommand(flushCommand);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Could not flush the wireless lan interface", e);
 		}
