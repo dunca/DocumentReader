@@ -52,7 +52,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 //		captureDevice.set(4, 800);
 	}
 	
-	public FeatureDetector getInstance() throws IOException{
+	public static FeatureDetector getInstance() throws IOException{
 		if (instance == null) {
 			instance = new FeatureDetector();
 		}
