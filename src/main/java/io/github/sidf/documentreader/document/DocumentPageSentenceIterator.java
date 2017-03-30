@@ -17,8 +17,11 @@ public class DocumentPageSentenceIterator implements Iterator<String> {
 	public DocumentPageSentenceIterator(DocumentBookmark sourceDocumentBookmark, DocumentPage page) {
 		this.sourceDocumentBookmark = sourceDocumentBookmark;
 		breakIterator.setText(page.getContent());
-		// todo: always consider the sentence index inside the bookmark object
-		startBoundaryIndex = breakIterator.first();
+		
+		while ((startBoundaryIndex = breakIterator.first()) < sourceDocumentBookmark.getSentenceIndex()) {
+			startBoundaryIndex = breakIterator.next();
+		}
+		
 		this.page = page;
 	}
 	
