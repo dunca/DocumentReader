@@ -28,24 +28,28 @@ public class Device {
 		return arch == "64" ? JvmArchitecture.JVM64 : JvmArchitecture.JVM32;
 	}
 	
-	public static void shutDown() throws IOException {
-		shutDown(3);
-	}
-	
-	public static void shutDown(int countdown) throws IOException {
+	private static void togglePowerState(boolean reboot) throws IOException {
 		String command = null;
 		
 		switch (getOperatingSystem()) {
 			case WINDOWS:
-				command = "shutdown.exe -s -t %d";
+				command = "shutdown.exe " + (reboot ? "-r" : "-s");
 				break;
 	
 			case LINUX:
-				command = "shutdown -h %d";
+				command = "shutdown "  + (reboot ? "-r" : "-h");;
 				break;
 		}
 		
-		Runtime.getRuntime().exec(String.format(command, countdown));
+		Runtime.getRuntime().exec(command);
+	}
+	
+	public static void shutDown() throws IOException {
+		togglePowerState(false);
+	}
+	
+	public static void reboot() throws IOException {
+		togglePowerState(true);
 	}
 	
 	public static void setVolume(int level) throws Exception {
