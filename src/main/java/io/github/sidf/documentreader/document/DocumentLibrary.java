@@ -1,11 +1,14 @@
 package io.github.sidf.documentreader.document;
 
 import java.io.File;
+import java.util.Map;
 import java.util.List;
-import java.io.FileFilter;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.function.Consumer;
 import java.io.FileNotFoundException;
 
 public class DocumentLibrary implements AutoCloseable {
@@ -27,18 +30,16 @@ public class DocumentLibrary implements AutoCloseable {
 	}
 	
 	public void update() {
-		// TODO make the implementation a bit more dynamic
-		for (File file : libraryPath.listFiles(new FileFilter() {
-			public boolean accept(File pathname) {
-				return pathname.isFile() && pathname.getName().toLowerCase().endsWith(".pdf");
-			}
-		})) { 
-			try {
-				documents.add(new PdfDocument(file));
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				// ignore document for now
+		for (File file : libraryPath.listFiles()) {
+			for (String documentProvider : DocumentFactory.getDocumentProviders()) {
+				Document document = null;
+				try {
+					document = new DocumentFactory().getInstance(documentProvider, file);
+				} catch (Exception e) {
+					logger.log(Level.WARNING, "Could not initialize document", e);
+					continue;
+				}
+				documents.add(document);
 			}
 		}
 	}
@@ -64,6 +65,19 @@ public class DocumentLibrary implements AutoCloseable {
 	
 	public File getLibraryPath() {
 		return libraryPath;
+	}
+	
+	public Map<String, String> getDocumentNameMap() {
+		Map<String, String> map = new HashMap<>();
+		
+		documents.forEach(new Consumer<Document>() {
+			@Override
+			public void accept(Document document) {
+				map.put(document.getDocumentId(), document.getDocumentName());
+			}
+		});
+		
+		return map;
 	}
 	
 	@Override
