@@ -13,14 +13,18 @@ import java.io.FileNotFoundException;
 
 public class DocumentLibrary implements AutoCloseable {
 	private File libraryPath;
+	private File bookmarkIniFilePath;
 	private List<Document> documents = new ArrayList<Document>();
 	private static Logger logger = Logger.getLogger(DocumentLibrary.class.getName());
 	
-	public DocumentLibrary(File libraryPath) throws FileNotFoundException {
+	public DocumentLibrary(File libraryPath, File bookmarkFilePath) throws FileNotFoundException {
 		if (!libraryPath.exists() || !libraryPath.isDirectory()) {
-			throw new FileNotFoundException(String.format("%s is not a directory", libraryPath));
+			throw new FileNotFoundException(String.format("%s does not exist as a directory", libraryPath));
+		} else if (!bookmarkFilePath.exists()) {
+			throw new FileNotFoundException(String.format("%s does not exist as a file", bookmarkFilePath));
 		}
 		
+		this.bookmarkIniFilePath = bookmarkFilePath;
 		this.libraryPath = libraryPath;
 		update();
 	}
@@ -30,11 +34,13 @@ public class DocumentLibrary implements AutoCloseable {
 	}
 	
 	public void update() {
+		clear();
+		
 		for (File file : libraryPath.listFiles()) {
 			for (String documentProvider : DocumentFactory.getDocumentProviders()) {
 				Document document = null;
 				try {
-					document = new DocumentFactory().getInstance(documentProvider, file);
+					document = new DocumentFactory().getInstance(documentProvider, file, bookmarkIniFilePath);
 				} catch (Exception e) {
 					logger.log(Level.WARNING, "Could not initialize document", e);
 					continue;

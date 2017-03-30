@@ -7,7 +7,7 @@ public class DocumentPage implements Iterable<String> {
 	private String content;
 	private DocumentBookmark sourceDocumentBookmark;
 	
-	public DocumentPage(DocumentBookmark sourceDocumentBookmark, String content, int index) {
+	public DocumentPage(DocumentBookmark sourceDocumentBookmark, String content) {
 		this.sourceDocumentBookmark = sourceDocumentBookmark;
 		this.length = content.length();
 		this.content = content;

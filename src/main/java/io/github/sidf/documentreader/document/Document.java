@@ -1,13 +1,20 @@
 package io.github.sidf.documentreader.document;
 
 import java.io.File;
+import java.util.Map;
+
+import javax.naming.InitialContext;
+
+import org.ini4j.Ini;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.InvalidObjectException;
+import org.ini4j.InvalidFileFormatException;
 
 import io.github.sidf.documentreader.util.FileUtil;
-
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.FileNotFoundException;
 
 public abstract class Document implements AutoCloseable, Iterable<DocumentPage> {
 	private File file;
@@ -15,9 +22,11 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 	private String documentId;
 	private String documentPath;
 	private String documentName;
+	private static Ini bookmarkIni;
 	private DocumentBookmark bookmark;
+	private static Map<String, String[]> bookmarkIniMap;
 	
-	public Document(File file) throws Exception {
+	public Document(File file, File bookmarkIniFilePath) throws Exception {
 		this.file = file;
 		
 		String filePath = file.getPath();
@@ -26,12 +35,30 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 			throw new FileNotFoundException(String.format("%s does not exist", filePath));
 		} else if (file.isDirectory()) {
 			throw new InvalidObjectException(String.format("%s is not a file", filePath));
-		} 
+		}
+		
+		if (bookmarkIni == null) {
+			bookmarkIni = new Ini(new FileReader(bookmarkIniFilePath));
+		}
+		
+		if (bookmarkIniMap == null) {
+			bookmarkIniMap = parseBookmarkIniFile(bookmarkIniFilePath);
+		}
 		
 		documentPath = file.getPath();
 		documentName = file.getName();
 		documentId = FileUtil.getMd5Hash(documentPath);
-		bookmark = new DocumentBookmark(fetchNextPage(), -1, 0);
+		
+		int pageIndex = 0;
+		int sentenceIndex = 0;
+		if (bookmarkIniMap.containsKey(documentId)) {
+			String[] info = bookmarkIniMap.get(documentId);
+			pageIndex = Integer.valueOf(info[0]);
+			sentenceIndex = Integer.valueOf(info[1]);
+		}
+		
+		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIni, documentId);
+		fetchPage(pageIndex);
 	}
 	
 	public int getPageCount() {
@@ -58,6 +85,10 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		return bookmark;
 	}
 	
+	public void setBookmark(DocumentBookmark bookmark) {
+		this.bookmark = bookmark;
+	}
+	
 	public File getFile() {
 		return file;
 	}
@@ -70,16 +101,30 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		return new DocumentIterator(this);
 	}
 	
-	public DocumentPage nextPage() throws IOException {
-		DocumentPage page = fetchNextPage();
-		
-		getBookmark().setPage(page);
-		bookmark.setCharacterIndex(0);
-		bookmark.setPageIndex(bookmark.getPageIndex() + 1);
+	public DocumentPage setPage(int index, int sentenceIndex) throws IOException {
+		DocumentPage page = fetchPage(index);
+
+		bookmark.setPage(page);
+		bookmark.setPageIndex(index);
+		bookmark.setSentenceIndex(sentenceIndex);
 		
 		return page;
 	}
 	
+	private static Map<String, String[]> parseBookmarkIniFile(File bookmarkIniFile) {
+		Map<String, String[]> map = new HashMap<>();
+		
+		for (String hash : bookmarkIni.keySet()) {
+			map.put(hash, new String[] { bookmarkIni.get(hash, "pageIndex"), bookmarkIni.get(hash, "sentenceIndex") });
+		}
+		
+		return map;
+	}
+	
+	public void resetBookmark() throws IOException {
+		setPage(0, 0);
+	}
+	
 	public abstract void close() throws Exception;
-	public abstract DocumentPage fetchNextPage() throws IOException;
+	public abstract DocumentPage fetchPage(int index) throws IOException;
 }

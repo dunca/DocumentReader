@@ -1,37 +1,55 @@
 package io.github.sidf.documentreader.document;
 
+import java.io.IOException;
+
+import org.ini4j.Ini;
+
 public class DocumentBookmark {
 	private int pageIndex;
-	private DocumentPage page;
-	private int characterIndex;
+	private Ini bookmarkIni;
+	private int sentenceIndex;
+	private String documentId;
 	
-	public DocumentBookmark(DocumentPage page, int pageIndex, int characterIndex) {
+	private DocumentPage page;
+	
+	public DocumentBookmark(DocumentPage page, int pageIndex, int sentenceIndex, Ini bookmarkIni, String documentId) {
 		this.page = page;
 		this.pageIndex = pageIndex;
-		this.characterIndex = characterIndex;
+		this.documentId = documentId;
+		this.bookmarkIni = bookmarkIni;
+		this.sentenceIndex = sentenceIndex;
 	}
 	
 	public DocumentPage getPage() {
 		return page;
 	}
-	
-	public void setPage(DocumentPage page) {
+
+	public void setPage(DocumentPage page) throws IOException {
+		updateBookmarkIni();
 		this.page = page;
 	}
-	
+
 	public int getPageIndex() {
 		return pageIndex;
 	}
 	
-	public void setPageIndex(int pageIndex) {
+	public void setPageIndex(int pageIndex) throws IOException {
 		this.pageIndex = pageIndex;
+		setSentenceIndex(0);
 	}
 	
-	public int getCharacterIndex() {
-		return characterIndex;
+	public int getSentenceIndex() {
+		return sentenceIndex;
 	}
 	
-	public void setCharacterIndex(int characterIndex) {
-		this.characterIndex = characterIndex;
+	public void setSentenceIndex(int sentenceIndex) throws IOException {
+		updateBookmarkIni();
+		this.sentenceIndex = sentenceIndex;
+	}
+	
+	private void updateBookmarkIni() throws IOException {
+		bookmarkIni.put(documentId, "pageIndex", pageIndex);
+		bookmarkIni.put(documentId, "sentenceIndex", sentenceIndex);
+		bookmarkIni.store();
 	}
 }

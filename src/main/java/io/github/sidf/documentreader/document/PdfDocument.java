@@ -8,8 +8,8 @@ import org.apache.pdfbox.text.PDFTextStripper;
 public class PdfDocument extends Document {
 	private PDDocument pdfDocument;
 	
-	public PdfDocument(File file) throws Exception {
-		super(file);
+	public PdfDocument(File file, File bookmarkIniFilePath) throws Exception {
+		super(file, bookmarkIniFilePath);
 		
 		pdfDocument = PDDocument.load(getFile());
 		setPageCount(pdfDocument.getNumberOfPages());
@@ -21,15 +21,12 @@ public class PdfDocument extends Document {
 	}
 
 	@Override
-	public DocumentPage fetchNextPage() throws IOException {
-		int currentIndex = getBookmark().getPageIndex();
-		int newIndex = currentIndex + 1;
-		
+	public DocumentPage fetchPage(int index) throws IOException {
 		PDFTextStripper textStripper = new PDFTextStripper();
-		textStripper.setStartPage(newIndex + 1);
-		textStripper.setEndPage(newIndex + 1);
+		textStripper.setStartPage(index + 1);
+		textStripper.setEndPage(index + 1);
 		
-		DocumentPage page = new DocumentPage(getBookmark(), textStripper.getText(pdfDocument), newIndex);
+		DocumentPage page = new DocumentPage(getBookmark(), textStripper.getText(pdfDocument));
 		return page;
 	}
 }
