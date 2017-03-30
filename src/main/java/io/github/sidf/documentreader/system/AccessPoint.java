@@ -1,11 +1,11 @@
 package io.github.sidf.documentreader.system;
 
 import java.util.HashMap;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import io.github.sidf.documentreader.util.PathUtil;
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.ValidatableCommand;
 
@@ -21,13 +21,18 @@ public class AccessPoint implements AutoCloseable {
 	private static final String wlanSearchCommandTemplate = "ls /sys/class/net | grep %s";
 	private static final HashMap<String, ValidatableCommand> nonBlockingCommands = new HashMap<>();
 	
-	private AccessPoint(String ipAddr) throws Exception {
+	public AccessPoint(String ipAddress, String hostapdConfigPath) throws Exception {
+		if (!(new File(hostapdConfigPath).exists())) {
+			String message = String.format("File % does not exit", hostapdConfigPath);
+			logger.severe(message);
+			throw new IOException(message);
+		}
+		
 		wlanInterface = getWlanInterfaceName();
 		
-		ipAddress = ipAddr;
+		this.ipAddress = ipAddress;
 		ipAddress24 = ipAddress.substring(0, ipAddress.lastIndexOf('.'));
 		flushCommand = String.format("ip addr flush dev %s", wlanInterface);
-		String hostapdConfigPath = PathUtil.getResourcePath("hostapd/hostapd.ini");
 		
 		ValidatableCommand staticIpCmd = new ValidatableCommand(String.format("ip addr add %s/24 broadcast %s.255 dev %s"
 																			  , ipAddress, ipAddress24, wlanInterface), 0);
@@ -38,18 +43,6 @@ public class AccessPoint implements AutoCloseable {
 		nonBlockingCommands.put("ip", staticIpCmd);
 		nonBlockingCommands.put("hostapd", hostapdCmd);
 		nonBlockingCommands.put("dnsmasq", dnsmasqCmd);
-	}
-	
-	private AccessPoint() throws Exception {
-		this("192.168.13.37");
-	}
-	
-	public AccessPoint getInstance() throws Exception {
-		if (instance == null) {
-			instance =  new AccessPoint();
-		}
-		
-		return instance;
 	}
 	
 	private String getWlanInterfaceName() throws Exception {
