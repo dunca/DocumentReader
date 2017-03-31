@@ -162,8 +162,8 @@ public class DocumentReaderService {
 		
 		drService.startReading();
 		System.out.println("started reading");
-//		Thread.sleep(20000);
-//		drService.stopReading();
+		Thread.sleep(60000);
+		drService.stopReading();
 //		drService.startAccessPoint(ip, hostapdConfigPath);
 	}
 }

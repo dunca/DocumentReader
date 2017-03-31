@@ -64,6 +64,8 @@ public abstract class Reader implements Runnable {
 		logger.info("Entered reader loop");
 		
 		int pageIndex = 0;
+		
+		outerLoop:
 		for (DocumentPage page : document) {
 			logger.info(String.format("Reading page with index %d", pageIndex));
 			for (String sentence : page) {
@@ -75,7 +77,7 @@ public abstract class Reader implements Runnable {
 				}
 				
 				if (!isStillRunning) {
-					break;
+					break outerLoop;
 				}
 			}
 			pageIndex++;
