@@ -149,9 +149,7 @@ public class DocumentReaderService {
 		String hostapdConfigPath = array[2];
 		
 		DocumentReaderService drService = new DocumentReaderService(lib, bk);
-//		drService.setDocument("[79, 16, -62, 41, -72, 91, -17, -111, 2, 122, -18, -92, -75, 56, 106, -107]");
-//		drService.setDocument("[109, 89, -6, 13, -48, 29, -57, 125, -63, -72, 56, 28, -7, -18, 121, -117]");
-		drService.setDocument("[-77, 0, 49, -126, -28, 52, 66, 39, 85, -54, -93, -13, 81, 102, 27, 62]");
+		drService.setDocument("B3003182E434422755CAA3F351661B3E");
 		
 		drService.setReader("io.github.sidf.documentreader.document.EspeakReader");
 		System.out.println("done setting reader");

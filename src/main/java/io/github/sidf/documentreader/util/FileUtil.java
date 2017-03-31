@@ -1,14 +1,13 @@
 package io.github.sidf.documentreader.util;
 
-import java.util.Arrays;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
+import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;
 
 public class FileUtil {
-	// todo turn the hash into a character string
 	public static String getMd5Hash(String filePath) throws IOException {
 		byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
 		byte[] md5Hash = null;
@@ -19,6 +18,7 @@ public class FileUtil {
 			// it won't reach here since MD5 is valid
 		}
 		
-		return Arrays.toString(md5Hash);
+		// http://stackoverflow.com/questions/5470219/get-md5-string-from-message-digest
+		return DatatypeConverter.printHexBinary(md5Hash);
 	}
 }
