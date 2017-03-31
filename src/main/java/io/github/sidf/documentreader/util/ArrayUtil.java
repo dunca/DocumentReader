@@ -14,4 +14,22 @@ public class ArrayUtil {
 		
 		return false;
 	}
+	
+	public static String[] joinStringArrays(String[]... arrays) {
+		int totalSize = 0;
+		for (String[] array : arrays) {
+			totalSize += array.length;
+		}
+		
+		String[] resultArray = new String[totalSize];
+		
+		int index = 0;
+		for (String[] array : arrays) {
+			for (String item : array) {
+				resultArray[index++] = item;
+			}
+		}
+		
+		return resultArray;
+	}
 }
