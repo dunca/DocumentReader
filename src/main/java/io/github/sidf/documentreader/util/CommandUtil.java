@@ -14,7 +14,7 @@ public class CommandUtil {
 	public static CommandResult launchNonBlockingCommand(String command) throws IOException, InterruptedException {
 		String[] commandArray = null;
 		
-		if (command.contains("|")) {
+		if (command.contains("|") || command.contains("'") || command.contains("\"")) {
 			commandArray = new String[] {"/bin/sh", "-c", command};
 		} else {
 			commandArray = command.split(" ");

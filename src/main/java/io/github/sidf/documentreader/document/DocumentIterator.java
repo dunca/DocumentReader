@@ -26,7 +26,7 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 		
 		try {
 			page = document.setPage(pageIndex, sentenceIndex);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			new RuntimeException(String.format("Could not fetch page from %s", document.getDocumentName()));
 		}
