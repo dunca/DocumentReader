@@ -17,9 +17,17 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 	public DocumentPage next() {
 		DocumentPage page = null;
 		
+		int pageIndex = document.getBookmark().getPageIndex();
+		int sentenceIndex = document.getBookmark().getSentenceIndex();
+		if (document.getBookmark().getPage() != null) {
+			pageIndex++;
+			sentenceIndex = 0;
+		}
+		
 		try {
-			page = document.setPage(document.getBookmark().getPageIndex() + 1, 0);
+			page = document.setPage(pageIndex, sentenceIndex);
 		} catch (IOException e) {
+			e.printStackTrace();
 			new RuntimeException(String.format("Could not fetch page from %s", document.getDocumentName()));
 		}
 		

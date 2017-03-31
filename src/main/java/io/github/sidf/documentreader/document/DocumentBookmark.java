@@ -50,6 +50,7 @@ public class DocumentBookmark {
 	private void updateBookmarkIni() throws IOException {
 		bookmarkIni.put(documentId, "pageIndex", pageIndex);
 		bookmarkIni.put(documentId, "sentenceIndex", sentenceIndex);
-		bookmarkIni.store();
+		// todo fix storing
+//		bookmarkIni.store();
 	}
 }

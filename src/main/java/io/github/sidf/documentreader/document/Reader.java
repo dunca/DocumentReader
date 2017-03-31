@@ -11,20 +11,20 @@ import io.github.sidf.documentreader.util.enums.Speed;
 public abstract class Reader implements Runnable {
 	private Speed speed;
 	private Language language;
-	private DocumentPage page;
+	private Document document;
 	private boolean isStillRunning;
 	private static Logger logger = Logger.getLogger(Reader.class.getName());
 	
-	public Reader(DocumentPage page) throws Exception {
-		this.page = page;
+	public Reader(Document document) throws Exception {
+		this.document = document;
 	}
 
-	public DocumentPage getPage() {
-		return page;
+	public Document getDocument() {
+		return document;
 	}
 
-	public void setPage(DocumentPage page) {
-		this.page = page;
+	public void setDocument(Document document) {
+		this.document = document;
 	}
 	
 	public Language getLanguage() {
@@ -61,17 +61,24 @@ public abstract class Reader implements Runnable {
 	private void readerLoop() {
 		isStillRunning = true;
 		
-		for (String sentence : page) {
-			try {
-				read(sentence);
-			} catch (Exception e) {
-				logger.log(Level.SEVERE, "Couldn't read sentence", e);
-				throw new RuntimeException(e.getMessage());
+		logger.info("Entered reader loop");
+		
+		int pageIndex = 0;
+		for (DocumentPage page : document) {
+			logger.info(String.format("Reading page with index %d", pageIndex));
+			for (String sentence : page) {
+				try {
+					read(sentence);
+				} catch (Exception e) {
+					logger.log(Level.SEVERE, "Couldn't read sentence", e);
+					throw new RuntimeException(e.getMessage());
+				}
+				
+				if (!isStillRunning) {
+					break;
+				}
 			}
-			
-			if (isStillRunning) {
-				break;
-			}
+			pageIndex++;
 		}
 		
 		isStillRunning = false;

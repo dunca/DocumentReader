@@ -45,6 +45,8 @@ public class DocumentLibrary implements AutoCloseable {
 					logger.log(Level.WARNING, "Could not initialize document", e);
 					continue;
 				}
+				logger.info(String.format("Initialized document %s with id %s", document.getDocumentName(), 
+										  document.getDocumentId()));
 				documents.add(document);
 			}
 		}

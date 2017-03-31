@@ -8,6 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class FileUtil {
+	// todo turn the hash into a character string
 	public static String getMd5Hash(String filePath) throws IOException {
 		byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
 		byte[] md5Hash = null;

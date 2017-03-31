@@ -8,10 +8,10 @@ public class ReaderFactory {
 	private static List<String> readerProviders = ClassPathUtil.getSubclassNames(ReaderFactory.class.getPackage().getName(), 
 		   																	     Reader.class);
 
-	public static Reader getInstance(String className, DocumentPage page) throws Exception {
+	public static Reader getInstance(String className, Document document) throws Exception {
 		Class theClass = Class.forName(className); 
-		Constructor constructor = theClass.getConstructor(DocumentPage.class);
-		return (Reader) constructor.newInstance(page);
+		Constructor constructor = theClass.getConstructor(Document.class);
+		return (Reader) constructor.newInstance(document);
 	}
 		
 	public static List<String> getReaderProviders() {

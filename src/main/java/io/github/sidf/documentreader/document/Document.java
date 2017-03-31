@@ -58,7 +58,6 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		}
 		
 		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIni, documentId);
-		fetchPage(pageIndex);
 	}
 	
 	public int getPageCount() {

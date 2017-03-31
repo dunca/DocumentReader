@@ -1,5 +1,6 @@
 package io.github.sidf.documentreader.service;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.util.Map;
 import java.util.List;
@@ -39,7 +40,7 @@ public class DocumentReaderService {
 	
 	public void setDocument(String documentId) throws Exception {
 		document = documentLibrary.getDocumentById(documentId);
-		setReader(Reader.class.getName());
+//		setReader(Reader.class.getName());
 	}
 	
 	public Map<String, String> getDocumentNameMap() {
@@ -47,26 +48,26 @@ public class DocumentReaderService {
 	}
 	
 	public void setReader(String readerName) throws Exception {
-		readerInstance = ReaderFactory.getInstance(readerName, document.getBookmark().getPage());
+		readerInstance = ReaderFactory.getInstance(readerName, document);
 	}
 	
 	public void startReading() throws IOException {
 		readerThread = new Thread(readerInstance);
 		
-		lightingInstance = new Lighting();
-		lightingThread = new Thread(lightingInstance);
-		
-		featureDetectorInstance = FeatureDetector.getInstance();
-		featureDetectionThread = new Thread(featureDetectorInstance);
+//		lightingInstance = new Lighting();
+//		lightingThread = new Thread(lightingInstance);
+//		
+//		featureDetectorInstance = FeatureDetector.getInstance();
+//		featureDetectionThread = new Thread(featureDetectorInstance);
 		
 		readerThread.start();
-		lightingThread.start();
-		featureDetectionThread.start();
+//		lightingThread.start();
+//		featureDetectionThread.start();
 	}
 	
 	public void stopReading() {
-		featureDetectorInstance.stop();
-		lightingInstance.stop();
+//		featureDetectorInstance.stop();
+//		lightingInstance.stop();
 		readerInstance.stop();
 	}
 	
@@ -135,5 +136,36 @@ public class DocumentReaderService {
 	
 	public void stopAccessPoint() throws Exception {
 		accessPointInstance.close();
+	}
+	
+	public void getSupportedReaders() {
+		
+	}
+	
+	public static void main(String[] array) throws Exception {
+		File lib = new File(array[0]);
+		File bk = new File(array[1]);
+		String ip = "192.168.13.37";
+		String hostapdConfigPath = array[2];
+		
+		DocumentReaderService drService = new DocumentReaderService(lib, bk);
+//		drService.setDocument("[79, 16, -62, 41, -72, 91, -17, -111, 2, 122, -18, -92, -75, 56, 106, -107]");
+//		drService.setDocument("[109, 89, -6, 13, -48, 29, -57, 125, -63, -72, 56, 28, -7, -18, 121, -117]");
+		drService.setDocument("[-77, 0, 49, -126, -28, 52, 66, 39, 85, -54, -93, -13, 81, 102, 27, 62]");
+		
+		drService.setReader("io.github.sidf.documentreader.document.EspeakReader");
+		System.out.println("done setting reader");
+
+		drService.setReaderLanguage(Language.ROMANIAN);
+		System.out.println("done setting language");
+		
+		drService.setReaderSpeed(Speed.FAST);
+		System.out.println("done setting speed");
+		
+		drService.startReading();
+		System.out.println("started reading");
+//		Thread.sleep(20000);
+//		drService.stopReading();
+//		drService.startAccessPoint(ip, hostapdConfigPath);
 	}
 }
