@@ -1,6 +1,11 @@
 package io.github.sidf.documentreader.util;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
@@ -20,5 +25,19 @@ public class FileUtil {
 		
 		// http://stackoverflow.com/questions/5470219/get-md5-string-from-message-digest
 		return DatatypeConverter.printHexBinary(md5Hash);
+	}
+	
+	public static String fileToString(File file) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+				sb.append("\n");
+			}
+		}
+		
+		return sb.toString();
 	}
 }

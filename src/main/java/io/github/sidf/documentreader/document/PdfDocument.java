@@ -2,31 +2,37 @@ package io.github.sidf.documentreader.document;
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
+
+import io.github.sidf.documentreader.util.FileUtil;
+import io.github.sidf.documentreader.util.CommandUtil;
+import io.github.sidf.documentreader.util.CommandResult;
 
 public class PdfDocument extends Document {
-	private PDDocument pdfDocument;
-	
 	public PdfDocument(File file, File bookmarkIniFilePath) throws Exception {
 		super(file, bookmarkIniFilePath);
 		
-		pdfDocument = PDDocument.load(getFile());
-		setPageCount(pdfDocument.getNumberOfPages());
+		setPageCount(fetchPageCount());
 	}
 	
 	@Override
 	public void close() throws IOException {
-		pdfDocument.close();
+		
 	}
 
 	@Override
-	public DocumentPage fetchPage(int index) throws IOException {
-		PDFTextStripper textStripper = new PDFTextStripper();
-		textStripper.setStartPage(index + 1);
-		textStripper.setEndPage(index + 1);
+	public DocumentPage fetchPage(int index) throws Exception {
+		File tempFile = File.createTempFile("tempContent", null);
+		CommandUtil.launchNonBlockingCommand(String.format("pdftotext -layout -nopgbrk -f %d -l %d \"%s\" %s", index + 1, index + 1,
+														   getDocumentPath(), tempFile.getPath()));
 		
-		DocumentPage page = new DocumentPage(getBookmark(), textStripper.getText(pdfDocument));
+		DocumentPage page = new DocumentPage(getBookmark(), FileUtil.fileToString(tempFile));
+		tempFile.delete();
 		return page;
+	}
+	
+	private int fetchPageCount() throws IOException, InterruptedException {
+		CommandResult commandResult = CommandUtil.launchNonBlockingCommand(String.format("pdfinfo \"%s\" | grep Pages", getDocumentPath()));
+		int pageCount = Integer.valueOf(commandResult.getStdout().split("\\s+")[1]);
+		return pageCount;
 	}
 }
