@@ -1,7 +1,5 @@
 package io.github.sidf.documentreader.util;
 
-import java.io.IOException;
-
 public class ValidatableCommand {
 	private final String command;
 	private final int successExitValue;

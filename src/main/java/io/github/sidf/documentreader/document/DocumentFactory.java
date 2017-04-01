@@ -11,8 +11,8 @@ public class DocumentFactory {
 																				   Document.class);
 	
 	public static Document getInstance(String className, File file, File bookmarkIniFilePath) throws Exception {
-		Class theClass = Class.forName(className); 
-		Constructor constructor = theClass.getConstructor(File.class, File.class);
+		Class<?> theClass = Class.forName(className); 
+		Constructor<?> constructor = theClass.getConstructor(File.class, File.class);
 		return (Document) constructor.newInstance(file, bookmarkIniFilePath);
 	}
 	 

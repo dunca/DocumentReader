@@ -5,8 +5,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.util.ArrayUtil;
-import io.github.sidf.documentreader.util.enums.Language;
 import io.github.sidf.documentreader.util.enums.Speed;
+import io.github.sidf.documentreader.util.enums.Language;
 
 public abstract class Reader implements Runnable {
 	private Speed speed;

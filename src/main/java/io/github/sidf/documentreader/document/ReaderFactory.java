@@ -9,8 +9,8 @@ public class ReaderFactory {
 		   																	     Reader.class);
 
 	public static Reader getInstance(String className, Document document) throws Exception {
-		Class theClass = Class.forName(className); 
-		Constructor constructor = theClass.getConstructor(Document.class);
+		Class<?> theClass = Class.forName(className); 
+		Constructor<?> constructor = theClass.getConstructor(Document.class);
 		return (Reader) constructor.newInstance(document);
 	}
 		

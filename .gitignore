@@ -1,2 +1,3 @@
 /target/
 /.apt_generated/
+/dependency-reduced-pom.xml

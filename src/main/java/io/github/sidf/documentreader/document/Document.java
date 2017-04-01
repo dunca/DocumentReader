@@ -2,17 +2,12 @@ package io.github.sidf.documentreader.document;
 
 import java.io.File;
 import java.util.Map;
-
-import javax.naming.InitialContext;
-
 import org.ini4j.Ini;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.InvalidObjectException;
-import org.ini4j.InvalidFileFormatException;
 
 import io.github.sidf.documentreader.util.FileUtil;
 

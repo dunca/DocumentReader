@@ -40,7 +40,7 @@ public class DocumentLibrary implements AutoCloseable {
 			for (String documentProvider : DocumentFactory.getDocumentProviders()) {
 				Document document = null;
 				try {
-					document = new DocumentFactory().getInstance(documentProvider, file, bookmarkIniFilePath);
+					document = DocumentFactory.getInstance(documentProvider, file, bookmarkIniFilePath);
 				} catch (Exception e) {
 					logger.log(Level.WARNING, "Could not initialize document", e);
 					continue;

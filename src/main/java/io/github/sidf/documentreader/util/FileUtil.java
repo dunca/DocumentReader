@@ -1,13 +1,12 @@
 package io.github.sidf.documentreader.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import javax.xml.bind.DatatypeConverter;
 import java.security.NoSuchAlgorithmException;

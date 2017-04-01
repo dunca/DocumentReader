@@ -3,14 +3,12 @@ package io.github.sidf.documentreader.system;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.logging.Logger;
 
+import io.github.sidf.documentreader.util.CommandUtil;
+import io.github.sidf.documentreader.util.CommandResult;
 import io.github.sidf.documentreader.system.enums.JvmArchitecture;
 import io.github.sidf.documentreader.system.enums.OperatingSystem;
-import io.github.sidf.documentreader.util.CommandResult;
-import io.github.sidf.documentreader.util.CommandUtil;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Device {
 	private static Logger logger = Logger.getLogger(Device.class.getName());
