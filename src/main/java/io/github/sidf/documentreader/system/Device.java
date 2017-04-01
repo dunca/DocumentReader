@@ -91,6 +91,6 @@ public class Device {
 	
 	public static boolean isRoot() throws Exception {
 		CommandResult commandResult = CommandUtil.launchNonBlockingCommand("whoami");
-		return commandResult.getStdout().trim().equals("root");
+		return commandResult.getStdout().equals("root");
 	}
 }
