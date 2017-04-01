@@ -2,6 +2,7 @@ package io.github.sidf.documentreader.featuredetection;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executors;
@@ -17,7 +18,7 @@ import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
-import io.github.sidf.documentreader.system.Device;
+import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.PathUtil;
 
 public class FeatureDetector implements Runnable, AutoCloseable {
@@ -30,6 +31,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	private static CascadeClassifier rightEyeClassifier;
 	private ScheduledExecutorService scheduledExecutorService;
 	private static Logger logger = Logger.getLogger(FeatureDetector.class.getName());
+	private static final String[] autofocusTweakCommands = { "uvcdynctrl --set='Focus, Auto' 0", "uvcdynctrl --set='Focus (absolute)' 5" };
 	
 	static {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -41,13 +43,15 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	
 	private FeatureDetector() throws IOException {
 		captureDevice = new VideoCapture(0);
-		
+
 		if (!captureDevice.isOpened()) {
 			String message = "Could not open video capture device";
 			logger.warning(message);
 			throw new IOException(message);
 		}
-//		
+		
+		disableAutofocus();
+		
 //		captureDevice.set(3, 1280);
 //		captureDevice.set(4, 800);
 	}
@@ -65,7 +69,16 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	
 	private void featureDetectorLoop() {
 		isStillRunning = true;
-		scheduledExecutorService = Executors.newScheduledThreadPool(1);
+		scheduledExecutorService = Executors.newScheduledThreadPool(2);
+		
+		scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+			@Override
+			public void run() {
+				System.runFinalization();
+				System.gc();
+			}
+			
+		}, 20, 20, TimeUnit.SECONDS);
 		
 		Mat image;
 		Mat grayImage;
@@ -75,7 +88,6 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 			grayImage = new Mat();
 			
 			captureDevice.read(image);
-//			System.out.println("Image grabbed");
 			Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
 			
 			MatOfRect faceDetections = detectFaces(grayImage);
@@ -96,32 +108,29 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 			Mat eyeRegionImage = grayFaceImage.submat(eyeRegionRect);
 			
 			MatOfRect eyeDetections = detectClosedEyes(eyeRegionImage);
-			setShutdownTimerIfNecessary(eyeDetections);			
+			managerSchedule(eyeDetections);			
 			
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				stop();
 			}
-			
-			System.gc();
 		}
 
 	}
 	
-	private void setShutdownTimerIfNecessary(Mat eyeDetections) {
+	private void managerSchedule(Mat eyeDetections) {
 		if (eyeDetections.elemSize() == 0) {
 			if (scheduledFuture != null) {
 				scheduledFuture.cancel(false);
 				scheduledFuture = null;
-				System.out.print("no longer scheduled");
+				logger.info("Disabled schedule");
 			}
 		} else if (scheduledFuture == null) {
 			scheduledFuture = scheduledExecutorService.schedule(new Runnable() {
 				public void run() {
 					stop();
-//					Device.shutDown();
-					System.out.println("Scheduled thing executed");
+					logger.info("Enabled schedule");
 				}
 			}, 30, TimeUnit.SECONDS);
 		}
@@ -142,7 +151,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		
 		if (rightEyes.toArray().length != 0) {
 			System.out.println("right detected");
-//			saveImageToDesktop(rightEyeRegion, "right");
+			saveImageToDesktop(rightEyeRegion, "right");
 			return rightEyes;
 		}
 		
@@ -181,5 +190,16 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 
 	public void close() throws Exception {
 		captureDevice.release();
+	}
+	
+	private void disableAutofocus() {
+		logger.info("Trying to disable autofocus");
+		for (String command : autofocusTweakCommands) {
+			try {
+				CommandUtil.launchNonBlockingCommand(command);
+			} catch (Exception e) {
+				logger.log(Level.WARNING, "Something went wrong while trying to disable autofocus", e);
+			}
+		}
 	}
 }
