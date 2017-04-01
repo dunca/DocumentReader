@@ -13,8 +13,8 @@ import org.opencv.core.Core;
 import org.opencv.core.Rect;
 import org.opencv.core.MatOfRect;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.videoio.VideoCapture;
+import org.opencv.highgui.Highgui;
+import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
 import io.github.sidf.documentreader.system.Device;
@@ -75,7 +75,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 			grayImage = new Mat();
 			
 			captureDevice.read(image);
-			System.out.println("Image grabbed");
+//			System.out.println("Image grabbed");
 			Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
 			
 			MatOfRect faceDetections = detectFaces(grayImage);
@@ -168,7 +168,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 			logger.warning(String.format("Could not save image %s", imageName));
 		}
 		
-		Imgcodecs.imwrite(String.format("%s/%s.jpg", path, imageName), image);
+		Highgui.imwrite(String.format("%s/%s.jpg", path, imageName), image);
 	}
 	
 	public void stop() {
