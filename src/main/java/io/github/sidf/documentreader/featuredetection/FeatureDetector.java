@@ -1,6 +1,5 @@
 package io.github.sidf.documentreader.featuredetection;
 
-import java.awt.font.GraphicAttribute;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -20,11 +19,8 @@ import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
-import io.github.sidf.documentreader.system.Device;
-import io.github.sidf.documentreader.system.enums.OperatingSystem;
-import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.PathUtil;
-import nu.pattern.OpenCV;
+import io.github.sidf.documentreader.util.CommandUtil;
 
 public class FeatureDetector implements Runnable, AutoCloseable {
 	private boolean isStillRunning;
@@ -39,15 +35,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	private static final String[] autofocusTweakCommands = { "uvcdynctrl --set='Focus, Auto' 0", "uvcdynctrl --set='Focus (absolute)' 5" };
 	
 	static {
-		if (Device.getOperatingSystem() == OperatingSystem.WINDOWS) {
-			OpenCV.loadShared();
-		}
-		
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		
-		leftEyeClassifier = new CascadeClassifier(PathUtil.getResourcePath("cascades/left_eye_lbp.xml"));
-		rightEyeClassifier = new CascadeClassifier(PathUtil.getResourcePath("cascades/right_eye_lbp.xml"));
-		faceClassifier = new CascadeClassifier(PathUtil.getResourcePath("cascades/lbpcascade_frontalface.xml"));
 	}
 	
 	private FeatureDetector() throws IOException {
@@ -60,6 +48,12 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		}
 		
 		disableAutofocus();
+		
+		if (faceClassifier == null) {
+			leftEyeClassifier = new CascadeClassifier(PathUtil.resourcePathToFilePath("cascades/left_eye_lbp.xml"));
+			rightEyeClassifier = new CascadeClassifier(PathUtil.resourcePathToFilePath("cascades/right_eye_lbp.xml"));
+			faceClassifier = new CascadeClassifier(PathUtil.resourcePathToFilePath("cascades/lbpcascade_frontalface.xml"));
+		}
 	}
 	
 	public static FeatureDetector getInstance() throws IOException{
@@ -151,7 +145,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	private MatOfRect detectFaces(Mat grayImage) {
 		MatOfRect faces = new MatOfRect();
 		faceClassifier.detectMultiScale(grayImage, faces);
-		System.out.println("trying faceszzzz");
+
 		if (!faces.empty()) {
 			logger.info("Face detected");
 		}
