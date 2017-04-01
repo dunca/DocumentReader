@@ -3,6 +3,8 @@ package io.github.sidf.documentreader.system;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.util.CommandUtil;
@@ -11,8 +13,11 @@ import io.github.sidf.documentreader.system.enums.JvmArchitecture;
 import io.github.sidf.documentreader.system.enums.OperatingSystem;
 
 public class Device {
+	private static final String debianPackageCheckTemplate = "dpkg -s %s";
 	private static Logger logger = Logger.getLogger(Device.class.getName());
 	private static final Pattern volumePattern = Pattern.compile("(?<=\\[)\\d+(?=%\\])");
+	private static String[] dependecies = { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", "poppler-utils",
+											"psmisc", "grep", "iproute2"};
 	
 	public static OperatingSystem getOperatingSystem() {
 		if (System.getProperty("os.name").contains("Windows")) {
@@ -63,5 +68,24 @@ public class Device {
 		}
 		
 		return Integer.valueOf(matcher.group());
+	}
+	
+	public static boolean dependenciesAreSatisfied() throws Exception {
+		List<String> unsatisfiedDependencies = new ArrayList<>();
+		
+		for (String dependency : dependecies) {
+			CommandResult commandResult = CommandUtil.launchNonBlockingCommand(String.format(debianPackageCheckTemplate, dependency));
+			if (commandResult.exitValue != 0) {
+				unsatisfiedDependencies.add(dependency);
+			}
+		}
+		
+		if (unsatisfiedDependencies.size() != 0) {
+			String joinedUnsatisfied = String.join("\n", unsatisfiedDependencies);
+			logger.severe(String.format("The following dependencies are missing:\n%s", joinedUnsatisfied));
+			return false;
+		}
+		
+		return true;
 	}
 }
