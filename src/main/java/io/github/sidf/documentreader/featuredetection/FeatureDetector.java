@@ -1,5 +1,6 @@
 package io.github.sidf.documentreader.featuredetection;
 
+import java.awt.font.GraphicAttribute;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -12,14 +13,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.opencv.core.Mat;
 import org.opencv.core.Core;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.core.MatOfRect;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
+import io.github.sidf.documentreader.system.Device;
+import io.github.sidf.documentreader.system.enums.OperatingSystem;
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.PathUtil;
+import nu.pattern.OpenCV;
 
 public class FeatureDetector implements Runnable, AutoCloseable {
 	private boolean isStillRunning;
@@ -34,6 +39,10 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	private static final String[] autofocusTweakCommands = { "uvcdynctrl --set='Focus, Auto' 0", "uvcdynctrl --set='Focus (absolute)' 5" };
 	
 	static {
+		if (Device.getOperatingSystem() == OperatingSystem.WINDOWS) {
+			OpenCV.loadShared();
+		}
+		
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
 		leftEyeClassifier = new CascadeClassifier(PathUtil.getResourcePath("cascades/left_eye_lbp.xml"));
@@ -51,9 +60,6 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		}
 		
 		disableAutofocus();
-		
-//		captureDevice.set(3, 1280);
-//		captureDevice.set(4, 800);
 	}
 	
 	public static FeatureDetector getInstance() throws IOException{
@@ -85,29 +91,35 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		
 		while (isStillRunning) {
 			image = new Mat();
+
+			// top quality hack to used clear the buffer
+			for (int i = 0; i < 6; i++) {
+				captureDevice.read(image);
+			}
 			grayImage = new Mat();
 			
-			captureDevice.read(image);
 			Imgproc.cvtColor(image, grayImage, Imgproc.COLOR_BGR2GRAY);
-			
 			MatOfRect faceDetections = detectFaces(grayImage);
 			
-			if (faceDetections.elemSize() == 0) {
+			if (faceDetections.empty()) {
 				continue;
 			}
 			
 			Mat grayFaceImage = grayImage.submat(faceDetections.toArray()[0]);
 //			saveImageToDesktop(grayFaceImage, "face");
 			
-			int x = 0;
-			int y = (int)(grayFaceImage.size().height * 0.2);
-			int width = (int)grayFaceImage.size().width;
-			int height = (int)(y * 1.7);
-
-			Rect eyeRegionRect = new Rect(x, y, width, height);
-			Mat eyeRegionImage = grayFaceImage.submat(eyeRegionRect);
+			Size grayFaceImageSize = grayFaceImage.size();
 			
-			MatOfRect eyeDetections = detectClosedEyes(eyeRegionImage);
+			int x = 0;
+			int y = (int)(grayFaceImageSize.height * 0.2);
+			int width = (int)(grayFaceImageSize.width);
+			int height = (int)(y * 1.7);
+			
+			int halfWidth = width / 2;
+			Rect rightEyeRegion = new Rect(x, y, halfWidth, height);
+			Rect leftEyeRegion = new Rect(halfWidth, y, (int)(grayFaceImageSize.width - halfWidth), height);
+
+			MatOfRect eyeDetections = detectClosedEyes(grayFaceImage, rightEyeRegion, leftEyeRegion);
 			managerSchedule(eyeDetections);			
 			
 			try {
@@ -132,46 +144,47 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 					stop();
 					logger.info("Enabled schedule");
 				}
-			}, 30, TimeUnit.SECONDS);
+			}, 15, TimeUnit.SECONDS);
 		}
 	}
 	
 	private MatOfRect detectFaces(Mat grayImage) {
 		MatOfRect faces = new MatOfRect();
 		faceClassifier.detectMultiScale(grayImage, faces);
+		System.out.println("trying faceszzzz");
+		if (!faces.empty()) {
+			logger.info("Face detected");
+		}
 		return faces;
 	}
 	
-	private MatOfRect detectClosedEyes(Mat eyeRegionImage) {
-		int width = (int)eyeRegionImage.size().width / 2;
-		int height = (int)eyeRegionImage.size().height;
+	private MatOfRect detectClosedEyes(Mat grayFaceImage, Rect... rects) {
+		Mat rightEyeImage = grayFaceImage.submat(rects[0]);
+		MatOfRect rightEyes = detectClosedEyes(rightEyeClassifier, rightEyeImage);
 		
-		Mat rightEyeRegion = eyeRegionImage.submat(0, height, 0, width);
-		MatOfRect rightEyes = detectClosedEyes(rightEyeClassifier, rightEyeRegion);
-		
-		if (rightEyes.toArray().length != 0) {
-			System.out.println("right detected");
-			saveImageToDesktop(rightEyeRegion, "right");
+		if (!rightEyes.empty()) {
+			logger.info("The right eye seems to be closed");
+//			saveImageToDesktop(rightEyeImage, "right");
 			return rightEyes;
 		}
 		
-		Mat leftEyeRegion = eyeRegionImage.submat(0, height, width, (int)eyeRegionImage.size().width);
-		MatOfRect leftEyes = detectClosedEyes(leftEyeClassifier, leftEyeRegion);
-		if (leftEyes.toArray().length != 0) {
-			System.out.println("left detected");
-//			saveImageToDesktop(leftEyeRegion, "left");
+		Mat leftEyeImage = grayFaceImage.submat(rects[1]);
+		MatOfRect leftEyes = detectClosedEyes(leftEyeClassifier, leftEyeImage);
+		if (!leftEyes.empty()) {
+			logger.info("The left eye seems to be closed");
+//			saveImageToDesktop(leftEyeImage, "left");
 		}
 		return leftEyes;
 	}
 	
 	private MatOfRect detectClosedEyes(CascadeClassifier classifier, Mat grayFaceImage) {
-		MatOfRect mat = new MatOfRect();
-		classifier.detectMultiScale(grayFaceImage, mat);
-		return mat;
+		MatOfRect eyes = new MatOfRect();
+		classifier.detectMultiScale(grayFaceImage, eyes);
+		return eyes;
 	}
 	
-	private void saveImageToDesktop(Mat image, String imageName) {
-		String path = System.getProperty("user.home") + "/Desktop";;
+	private void saveImage(Mat image, String imageName) {
+		String path = System.getProperty("user.home");
 		
 		if (!new File(path).exists()) {
 			logger.warning(String.format("Could not save image %s", imageName));
@@ -201,5 +214,10 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 				logger.log(Level.WARNING, "Something went wrong while trying to disable autofocus", e);
 			}
 		}
+	}
+	
+	public static void main(String[] arr) throws IOException {
+		FeatureDetector fDetector = new FeatureDetector();
+		fDetector.run();
 	}
 }
