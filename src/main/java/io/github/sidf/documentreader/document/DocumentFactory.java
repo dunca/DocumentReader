@@ -7,6 +7,10 @@ import java.lang.reflect.Constructor;
 import io.github.sidf.documentreader.util.ClassPathUtil;
 
 public class DocumentFactory {
+	private DocumentFactory() {
+		
+	}
+	
 	private static List<String> documentProviders = ClassPathUtil.getSubclassNames(DocumentFactory.class.getPackage().getName(), 
 																				   Document.class);
 	

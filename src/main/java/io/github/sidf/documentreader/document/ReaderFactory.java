@@ -5,6 +5,10 @@ import java.lang.reflect.Constructor;
 import io.github.sidf.documentreader.util.ClassPathUtil;
 
 public class ReaderFactory {
+	private ReaderFactory() {
+		
+	}
+	
 	private static List<String> readerProviders = ClassPathUtil.getSubclassNames(ReaderFactory.class.getPackage().getName(), 
 		   																	     Reader.class);
 
