@@ -56,7 +56,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		}
 	}
 	
-	public static FeatureDetector getInstance() throws IOException{
+	public static FeatureDetector getInstance() throws IOException {
 		if (instance == null) {
 			instance = new FeatureDetector();
 		}
@@ -86,7 +86,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		while (isStillRunning) {
 			image = new Mat();
 
-			// top quality hack to used clear the buffer
+			// top quality hack used to clear the buffer
 			for (int i = 0; i < 6; i++) {
 				captureDevice.read(image);
 			}

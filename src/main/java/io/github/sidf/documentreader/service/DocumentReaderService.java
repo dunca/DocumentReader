@@ -1,6 +1,5 @@
 package io.github.sidf.documentreader.service;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.util.Map;
 import java.util.List;
@@ -54,21 +53,21 @@ public class DocumentReaderService {
 	public void startReading() throws IOException {
 		readerThread = new Thread(readerInstance);
 		
-//		lightingInstance = new Lighting();
-//		lightingThread = new Thread(lightingInstance);
+		lightingInstance = new Lighting();
+		lightingThread = new Thread(lightingInstance);
 //		
-//		featureDetectorInstance = FeatureDetector.getInstance();
-//		featureDetectionThread = new Thread(featureDetectorInstance);
+		featureDetectorInstance = FeatureDetector.getInstance();
+		featureDetectionThread = new Thread(featureDetectorInstance);
 		
-		readerThread.start();
+//		readerThread.start();
 //		lightingThread.start();
-//		featureDetectionThread.start();
+		featureDetectionThread.start();
 	}
 	
 	public void stopReading() {
-//		featureDetectorInstance.stop();
+		featureDetectorInstance.stop();
 //		lightingInstance.stop();
-		readerInstance.stop();
+//		readerInstance.stop();
 	}
 	
 	public void setAudioVolume(int level) throws Exception {
@@ -143,13 +142,17 @@ public class DocumentReaderService {
 	}
 	
 	public static void main(String[] array) throws Exception {
+//		if (!Device.dependenciesAreSatisfied()) {
+//			return;
+//		}
+		
 		File lib = new File(array[0]);
 		File bk = new File(array[1]);
 		String ip = "192.168.13.37";
 		String hostapdConfigPath = array[2];
 		
 		DocumentReaderService drService = new DocumentReaderService(lib, bk);
-		drService.setDocument("B3003182E434422755CAA3F351661B3E");
+		drService.setDocument("b3003182e434422755caa3f351661b3e".toUpperCase());
 		
 		drService.setReader("io.github.sidf.documentreader.document.EspeakReader");
 		System.out.println("done setting reader");
@@ -162,7 +165,7 @@ public class DocumentReaderService {
 		
 		drService.startReading();
 		System.out.println("started reading");
-//		Thread.sleep(60000);
+//		Thread.sleep(40000);
 //		drService.stopReading();
 //		drService.startAccessPoint(ip, hostapdConfigPath);
 	}

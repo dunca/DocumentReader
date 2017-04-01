@@ -1,10 +1,10 @@
 package io.github.sidf.documentreader.system;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.util.CommandUtil;
