@@ -2,7 +2,6 @@ package io.github.sidf.documentreader.service;
 
 import java.io.File;
 import java.util.Map;
-import java.util.List;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
@@ -11,7 +10,6 @@ import io.github.sidf.documentreader.system.Lighting;
 import io.github.sidf.documentreader.document.Reader;
 import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.document.Document;
-import io.github.sidf.documentreader.system.AccessPoint;
 import io.github.sidf.documentreader.util.enums.Language;
 import io.github.sidf.documentreader.document.ReaderFactory;
 import io.github.sidf.documentreader.document.DocumentLibrary;
@@ -80,31 +78,23 @@ public class DocumentReaderService {
 		return Device.getVolume();
 	}
 	
-	public void setReaderSpeed(Speed speed) throws IOException {
-		readerInstance.setSpeed(speed);
+	public void setCurrentReaderSpeed(String speed) throws IOException {
+		readerInstance.setSpeed(Speed.fromString(speed));
 	}
 	
-	public Speed getCurrentReaderSpeed() {
-		return readerInstance.getSpeed();
-	}
-	
-	public void setCurrentReaderLanguage(Language language) throws IOException {
-		readerInstance.setLanguage(language);
-	}
-	
-	public Language getCurrentReaderLanguage() {
-		return readerInstance.getLanguage();
+	public void setCurrentReaderLanguage(String language) throws IOException {
+		readerInstance.setLanguage(Language.fromString(language));
 	}
 	
 	public String[] getReaderProviders() {
 		return ReaderFactory.getReaderProviders();
 	}
 
-	public Language[] getCurrentSupportedLanguages() {
+	public String[] getCurrentSupportedLanguages() {
 		return readerInstance.getSupportedLanguages();
 	}
 	
-	public Speed[] getCurrentSupportedSpeed() {
+	public String[] getCurrentSupportedSpeed() {
 		return readerInstance.getSupportedSpeed();
 	}
 

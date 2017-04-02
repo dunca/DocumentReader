@@ -17,7 +17,7 @@ public enum Language {
 		return displayName;
 	}
 	
-	public Language fromString(String displayName) {
+	public static Language fromString(String displayName) {
 		for (Language language : Language.values()) {
 			if (language.displayName.equals(displayName)) {
 				return language;

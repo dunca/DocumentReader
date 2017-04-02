@@ -90,7 +90,7 @@ public abstract class Reader implements Runnable {
 		isStillRunning = false;
 	}
 	
-	public abstract Speed[] getSupportedSpeed();
-	public abstract Language[] getSupportedLanguages();
+	public abstract String[] getSupportedSpeed();
+	public abstract String[] getSupportedLanguages();
 	public abstract void read(String text) throws Exception;
 }

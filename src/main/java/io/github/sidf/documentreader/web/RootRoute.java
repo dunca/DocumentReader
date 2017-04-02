@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
 import javax.servlet.ServletException;
+import javax.imageio.spi.ServiceRegistry;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
 import io.github.sidf.documentreader.util.ArrayUtil;
@@ -39,9 +40,9 @@ class RootRoute implements Route {
 	private String selectedReaderSpeed;
 	private String selectedDocumentHash;
 	private String selectedReaderProvider;
-	private Speed[] supportedReaderSpeed;
+	private String[] supportedReaderSpeed;
 	private String[] availableReaderProviders;
-	private Language[] supportedReaderLanguages;
+	private String[] supportedReaderLanguages;
 	
 	private String selectedVolumeLevel;
 	private static final Map<String, String> supportedVolumeLevels = new LinkedHashMap<>();
@@ -212,8 +213,8 @@ class RootRoute implements Route {
 			supportedReaderSpeed = service.getCurrentSupportedSpeed();
 			supportedReaderLanguages = service.getCurrentSupportedLanguages();
 			
-			selectedReaderLang = supportedReaderLanguages[0].getDisplayName();
-			selectedReaderSpeed = supportedReaderSpeed[0].getDisplayName();
+			selectedReaderLang = supportedReaderLanguages[0];
+			selectedReaderSpeed = supportedReaderSpeed[0];
 		}
 	}
 	
@@ -229,10 +230,20 @@ class RootRoute implements Route {
 			break;
 		case "btn_set_lang":
 			selectedReaderLang = RequestUtil.parseBodyString(request.body(), "set_lang");
+			try {
+				service.setCurrentReaderLanguage(selectedReaderLang);
+			} catch (IOException e) {
+				errorMessage = "Could not set the reader's language";
+			}
 			ini.put("Reader", "language", selectedReaderLang);
 			break;
 		case "btn_set_reading_speed":
 			selectedReaderSpeed = RequestUtil.parseBodyString(request.body(), "set_reading_speed");
+			try {
+				service.setCurrentReaderSpeed(selectedReaderSpeed);
+			} catch (IOException e) {
+				errorMessage = "Could not set the reader's speed";
+			}
 			ini.put("Reader", "speed", selectedReaderSpeed);
 			break;
 		case "btn_set_volume":

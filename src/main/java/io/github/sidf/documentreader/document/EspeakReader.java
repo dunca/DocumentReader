@@ -1,6 +1,7 @@
 package io.github.sidf.documentreader.document;
 
 import java.util.Map;
+import java.awt.event.ItemEvent;
 import java.util.HashMap;
 
 import io.github.sidf.documentreader.util.enums.Speed;
@@ -34,12 +35,12 @@ public class EspeakReader extends Reader {
 	}
 
 	@Override
-	public Language[] getSupportedLanguages() {
-		return languageMap.keySet().toArray(new Language[0]);
+	public String[] getSupportedLanguages() {
+		return languageMap.keySet().stream().map(item -> item.getDisplayName()).toArray(String[]::new);
 	}
 	
 	@Override
-	public Speed[] getSupportedSpeed() {
-		return speedMap.keySet().toArray(new Speed[0]);
+	public String[] getSupportedSpeed() {
+		return speedMap.keySet().stream().map(item -> item.getDisplayName()).toArray(String[]::new);
 	}
 }

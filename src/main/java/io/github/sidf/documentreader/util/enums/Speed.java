@@ -15,7 +15,7 @@ public enum Speed {
 		return displayName;
 	}
 	
-	public Speed fromString(String displayName) {
+	public static Speed fromString(String displayName) {
 		for (Speed speed : Speed.values()) {
 			if (speed.displayName.equals(displayName)) {
 				return speed;
