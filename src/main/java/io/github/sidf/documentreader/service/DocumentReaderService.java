@@ -40,7 +40,7 @@ public class DocumentReaderService {
 		return documentLibrary.getDocumentMap();
 	}
 	
-	public void setReader(String readerName) throws Exception {
+	public void setCurrentReader(String readerName) throws Exception {
 		readerInstance = ReaderFactory.getInstance(readerName, document);
 	}
 	

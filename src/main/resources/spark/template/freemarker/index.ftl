@@ -64,10 +64,10 @@
 			<label for="set_lang">Language</label>
 		    <select id="set_lang" name="set_lang">
 	    		<#list supportedReaderLanguages as language>
-	    			<#if selectedReaderLang?? && selectedReaderLang == language.getDisplayName()>
-	    				<option selected value="${language}">${language.getDisplayName()}</option>
+	    			<#if selectedReaderLang?? && selectedReaderLang == language>
+	    				<option selected value="${language}">${language}</option>
 	    			<#else>
-						<option value="${language}">${language.getDisplayName()}</option>
+						<option value="${language}">${language}</option>
 					</#if>
 				</#list>
 			</select>
@@ -78,10 +78,10 @@
 			<label for="set_reading_speed">Reading speed</label>
 		    <select id="set_reading_speed" name="set_reading_speed">
 	    		<#list supportedReaderSpeed as speed>
-	    			<#if selectedReaderSpeed?? && selectedReaderSpeed == speed.getDisplayName()>
-	    				<option selected value="${speed}">${speed.getDisplayName()}</option>
+	    			<#if selectedReaderSpeed?? && selectedReaderSpeed == speed>
+	    				<option selected value="${speed}">${speed}</option>
 	    			<#else>
-						<option value="${speed}">${speed.getDisplayName()}</option>
+						<option value="${speed}">${speed}</option>
 					</#if>
 				</#list>
 			</select>

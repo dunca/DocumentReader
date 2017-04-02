@@ -9,7 +9,7 @@ public class RequestUtil {
 	}
 	
 	public static String parseBodyString(String body, String elementName) {
-		Pattern pattern = Pattern.compile(String.format("(?<=%s\\=)\\w+(?=(&|$))", elementName));
+		Pattern pattern = Pattern.compile(String.format("(?<=%s\\=)[\\w\\.]+(?=(&|$))", elementName));
 		Matcher matcher = pattern.matcher(body);
 		if (matcher.find()) {
 			return matcher.group();

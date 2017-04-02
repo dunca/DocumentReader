@@ -199,7 +199,7 @@ class RootRoute implements Route {
 			
 			if (ArrayUtil.arrayContains(availableReaderProviders, provider)) {
 				selectedReaderProvider = provider;
-				service.setReader(provider);
+				service.setCurrentReader(provider);
 			}
 			
 			selectedReaderLang = lang;
@@ -208,7 +208,7 @@ class RootRoute implements Route {
 		
 		if (selectedReaderProvider == null) {
 			selectedReaderProvider = availableReaderProviders[0];
-			service.setReader(selectedReaderProvider);
+			service.setCurrentReader(selectedReaderProvider);
 			
 			supportedReaderSpeed = service.getCurrentSupportedSpeed();
 			supportedReaderLanguages = service.getCurrentSupportedLanguages();
@@ -226,6 +226,11 @@ class RootRoute implements Route {
 			break;
 		case "btn_set_reader":
 			selectedReaderProvider = RequestUtil.parseBodyString(request.body(), "set_reader");
+			try {
+				service.setCurrentReader(selectedReaderProvider);
+			} catch (Exception e1) {
+				errorMessage = "Could not set the reader provider";
+			}
 			ini.put("Reader", "provider", selectedReaderProvider);
 			break;
 		case "btn_set_lang":
