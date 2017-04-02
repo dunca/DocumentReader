@@ -1,12 +1,15 @@
 package io.github.sidf.documentreader.system;
 
-import java.util.HashMap;
 import java.io.File;
+import java.util.HashMap;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.ini4j.InvalidFileFormatException;
 
 import io.github.sidf.documentreader.util.CommandUtil;
+import io.github.sidf.documentreader.util.FileUtil;
 import io.github.sidf.documentreader.util.ValidatableCommand;
 
 public class AccessPoint implements AutoCloseable {
@@ -14,6 +17,7 @@ public class AccessPoint implements AutoCloseable {
 
 	private final String ipAddress;
 	private final String ipAddress24;
+	private String hostapdConfigPath;
 	private static String flushCommand;
 	private static AccessPoint instance;
 	private static String wlanInterface;
@@ -28,7 +32,9 @@ public class AccessPoint implements AutoCloseable {
 			throw new IOException(message);
 		}
 		
+		this.hostapdConfigPath = hostapdConfigPath;
 		wlanInterface = getWlanInterfaceName();
+		updateConfigFile();
 		
 		this.ipAddress = ipAddress;
 		ipAddress24 = ipAddress.substring(0, ipAddress.lastIndexOf('.'));
@@ -91,6 +97,14 @@ public class AccessPoint implements AutoCloseable {
 				
 				throw new IOException(message);
 			}
+		}
+	}
+	
+	public void updateConfigFile() throws InvalidFileFormatException, IOException {
+		String content = FileUtil.fileToString(new File(hostapdConfigPath));
+		content = content.replaceFirst("interface=.*", "interface=" + wlanInterface);
+		try (PrintWriter writer = new PrintWriter(hostapdConfigPath, "UTF-8")) {
+			writer.print(content);
 		}
 	}
 	
