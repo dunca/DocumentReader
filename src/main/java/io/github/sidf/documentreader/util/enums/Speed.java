@@ -14,4 +14,13 @@ public enum Speed {
 	public String getDisplayName() {
 		return displayName;
 	}
+	
+	public Speed fromString(String displayName) {
+		for (Speed speed : Speed.values()) {
+			if (speed.displayName.equals(displayName)) {
+				return speed;
+			}
+		}
+		return null;
+	}
 }

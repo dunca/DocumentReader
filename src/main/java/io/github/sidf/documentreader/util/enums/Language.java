@@ -16,4 +16,13 @@ public enum Language {
 	public String getDisplayName() {
 		return displayName;
 	}
+	
+	public Language fromString(String displayName) {
+		for (Language language : Language.values()) {
+			if (language.displayName.equals(displayName)) {
+				return language;
+			}
+		}
+		return null;
+	}
 }
