@@ -20,12 +20,9 @@ import io.github.sidf.documentreader.featuredetection.FeatureDetector;
 public class DocumentReaderService {
 	private static Reader readerInstance;
 	private static Lighting lightingInstance;
-	private static AccessPoint accessPointInstance;
 	private static FeatureDetector featureDetectorInstance;
 	
 	private static Document document;
-	private static DocumentReaderService instance;
-	private static boolean featureDetectionEnabled;
 	private static DocumentLibrary documentLibrary;
 	
 	private static Thread readerThread;
@@ -39,35 +36,40 @@ public class DocumentReaderService {
 	
 	public void setDocument(String documentId) throws Exception {
 		document = documentLibrary.getDocumentById(documentId);
-//		setReader(Reader.class.getName());
 	}
 	
-	public Map<String, String> getDocumentNameMap() {
-		return documentLibrary.getDocumentNameMap();
+	public Map<String, String> getDocumentMap() {
+		return documentLibrary.getDocumentMap();
 	}
 	
 	public void setReader(String readerName) throws Exception {
 		readerInstance = ReaderFactory.getInstance(readerName, document);
 	}
 	
-	public void startReading() throws IOException {
+	public void startReading(boolean featureDetectionEnabled) throws IOException {
 		readerThread = new Thread(readerInstance);
+		readerThread.start();
 		
-		lightingInstance = new Lighting();
-		lightingThread = new Thread(lightingInstance);
-//		
-		featureDetectorInstance = FeatureDetector.getInstance();
-		featureDetectionThread = new Thread(featureDetectorInstance);
-		
-//		readerThread.start();
-//		lightingThread.start();
-		featureDetectionThread.start();
+		if (featureDetectionEnabled) {
+			featureDetectorInstance = FeatureDetector.getInstance();
+			featureDetectionThread = new Thread(featureDetectorInstance);
+			featureDetectionThread.start();
+			
+			lightingInstance = new Lighting();
+			lightingThread = new Thread(lightingInstance);
+			lightingThread.start();
+		}
 	}
 	
 	public void stopReading() {
-		featureDetectorInstance.stop();
-//		lightingInstance.stop();
-//		readerInstance.stop();
+		if (readerInstance != null) {
+			readerInstance.stop();
+		}
+		
+		if (featureDetectorInstance != null) {
+			featureDetectorInstance.stop();
+			lightingInstance.stop();
+		}
 	}
 	
 	public void setAudioVolume(int level) throws Exception {
@@ -82,91 +84,39 @@ public class DocumentReaderService {
 		readerInstance.setSpeed(speed);
 	}
 	
-	public Speed getReaderSpeed() {
+	public Speed getCurrentReaderSpeed() {
 		return readerInstance.getSpeed();
 	}
 	
-	public void setReaderLanguage(Language language) throws IOException {
+	public void setCurrentReaderLanguage(Language language) throws IOException {
 		readerInstance.setLanguage(language);
 	}
 	
-	public Language getReaderLanguage() {
+	public Language getCurrentReaderLanguage() {
 		return readerInstance.getLanguage();
 	}
 	
-	public void setFeatureDetection(boolean enabled) {
-		featureDetectionEnabled = enabled;
-	}
-	
-	public boolean getFeatureDetection() {
-		return featureDetectionEnabled;
-	}
-	
-	public List<String> getReaderProviders() {
+	public String[] getReaderProviders() {
 		return ReaderFactory.getReaderProviders();
 	}
 
-	public Language[] getSupportedLanguages() {
+	public Language[] getCurrentSupportedLanguages() {
 		return readerInstance.getSupportedLanguages();
 	}
 	
-	public Speed[] getSupportedSpeed() {
+	public Speed[] getCurrentSupportedSpeed() {
 		return readerInstance.getSupportedSpeed();
 	}
 
-	public void updateLibrary() {
+	public void updateDocumentLibrary() {
 		documentLibrary.update();
 	}
 	
-	public void shutDown() throws IOException {
+	public void shutDownDevice() throws IOException {
 		Device.shutDown();
 	}
 	
-	public void reboot() throws IOException {
+	public void rebootDevice() throws IOException {
 		Device.reboot();
-	}
-	
-	public void startAccessPoint(String ipAddress, String hostapdConfigPath) throws Exception {
-		if (accessPointInstance == null) {
-			accessPointInstance = new AccessPoint(ipAddress, hostapdConfigPath);
-		}
-		accessPointInstance.start();
-	}
-	
-	public void stopAccessPoint() throws Exception {
-		accessPointInstance.close();
-	}
-	
-	public void getSupportedReaders() {
-		
-	}
-	
-	public static void main(String[] array) throws Exception {
-//		if (!Device.dependenciesAreSatisfied()) {
-//			return;
-//		}
-		
-		File lib = new File(array[0]);
-		File bk = new File(array[1]);
-		String ip = "192.168.13.37";
-		String hostapdConfigPath = array[2];
-		
-		DocumentReaderService drService = new DocumentReaderService(lib, bk);
-		drService.setDocument("b3003182e434422755caa3f351661b3e".toUpperCase());
-		
-		drService.setReader("io.github.sidf.documentreader.document.EspeakReader");
-		System.out.println("done setting reader");
-
-		drService.setReaderLanguage(Language.ROMANIAN);
-		System.out.println("done setting language");
-		
-		drService.setReaderSpeed(Speed.FAST);
-		System.out.println("done setting speed");
-		
-		drService.startReading();
-		System.out.println("started reading");
-//		Thread.sleep(40000);
-//		drService.stopReading();
-//		drService.startAccessPoint(ip, hostapdConfigPath);
 	}
 }

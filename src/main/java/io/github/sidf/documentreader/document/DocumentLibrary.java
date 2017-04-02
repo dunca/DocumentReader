@@ -76,7 +76,7 @@ public class DocumentLibrary implements AutoCloseable {
 		return libraryPath;
 	}
 	
-	public Map<String, String> getDocumentNameMap() {
+	public Map<String, String> getDocumentMap() {
 		Map<String, String> map = new HashMap<>();
 		
 		documents.forEach(new Consumer<Document>() {

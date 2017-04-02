@@ -7,7 +7,6 @@ import java.util.Map;
 import org.ini4j.Ini;
 import spark.Request;
 import spark.Response;
-import java.util.List;
 import java.util.HashMap;
 import spark.ModelAndView;
 import java.io.IOException;
@@ -50,6 +49,7 @@ class RootRoute implements Route {
 	private String selectedLog;
 	private String selectedPageContent;
 	private String selectedFeatureDetection;
+	private Map<String, String> availableDocuments;
 	private static final String[] standardSwitchOptions = new String[] { "on", "off" };
 	
 	private static Ini ini;
@@ -67,6 +67,7 @@ class RootRoute implements Route {
 		supportedVolumeLevels.put("50 %", "50");
 		supportedVolumeLevels.put("100 %", "100");
 		
+		availableDocuments = service.getDocumentMap();
 		availableReaderProviders = service.getReaderProviders();
 		updateVariables(true);
 	}
@@ -91,8 +92,6 @@ class RootRoute implements Route {
 	}
 	
 	private Object handleGet() {
-		Map<String, String> availableDocuments = service.getDocumentNameMap();
-		
 		if (selectedDocumentHash == null && availableDocuments.size() != 0) {
 			selectedDocumentHash = availableDocuments.entrySet().iterator().next().getKey();
 		}
@@ -117,7 +116,7 @@ class RootRoute implements Route {
 		map.put("supportedReaderLanguages", supportedReaderLanguages);
 		
 		map.put("selectedDocumentHash", selectedDocumentHash);
-		map.put("availableDocuments", service.getDocumentNameMap());
+		map.put("availableDocuments", service.getDocumentMap());
 		
 		message = errorMessage = null;
 		return new FreeMarkerEngine().render(new ModelAndView(map, "index.ftl"));
@@ -125,7 +124,7 @@ class RootRoute implements Route {
 	
 	private Object handlePost() {
 	    if (request.contentType().startsWith("multipart/form-data")) {
-	    	request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("C:\\Users\\Esc\\Desktop\\crap"));
+	    	request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/tmp"));
 		    Part uploadedFile = null;
 			try {
 				uploadedFile = request.raw().getPart("uploaded_file");
@@ -140,8 +139,7 @@ class RootRoute implements Route {
 			    try (InputStream inputStream = uploadedFile.getInputStream()) {
 			    	FileUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
 			    	service.updateDocumentLibrary();
-			    	// TODO make sure it's accepted by one of the reader providers
-			    	
+			    	availableDocuments = service.getDocumentMap();
 			    	message = "Successful upload";
 			    } catch (IOException e) {
 					errorMessage = "Could not save the file";
@@ -187,6 +185,11 @@ class RootRoute implements Route {
 			selectedPageContent = ini.get("Web UI", "content");
 			if (selectedPageContent == null) {
 				selectedPageContent = "on";
+			}
+			
+			selectedDocumentHash = ini.get("Document", "selectedDocumentHash");
+			if (!availableDocuments.containsKey(selectedDocumentHash)) {
+				selectedDocumentHash = availableDocuments.keySet().iterator().next();
 			}
 			
 			String provider = ini.get("Reader", "provider");
