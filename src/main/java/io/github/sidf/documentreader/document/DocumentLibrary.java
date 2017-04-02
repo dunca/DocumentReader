@@ -42,7 +42,8 @@ public class DocumentLibrary implements AutoCloseable {
 				try {
 					document = DocumentFactory.getInstance(documentProvider, file, bookmarkIniFilePath);
 				} catch (Exception e) {
-					logger.log(Level.WARNING, "Could not initialize document", e);
+					file.delete();
+					logger.log(Level.WARNING, "Could not initialize document, deleted", e);
 					continue;
 				}
 				documents.add(document);
