@@ -1,16 +1,18 @@
 package io.github.sidf.documentreader.web;
 
+import io.github.sidf.documentreader.service.DocumentReaderService;
+import spark.Route;
 import spark.Spark;
 
 public class WebInterface {
 	private String configPath;
 	private String libraryPath;
-	private String hostapdConfigPath;
+	private static DocumentReaderService service;
 	
-	public WebInterface(String libraryPath, String configPath, String hostapdConfigPath) {
+	public WebInterface(String libraryPath, String configPath, DocumentReaderService documentReaderService) {
 		this.configPath = configPath;
 		this.libraryPath = libraryPath;
-		this.hostapdConfigPath = hostapdConfigPath;
+		documentReaderService = service;
 	}
 	
 	public void start() {
@@ -18,17 +20,13 @@ public class WebInterface {
 		Spark.ipAddress("0.0.0.0");
 		Spark.staticFileLocation("/spark/public");
 		
-		Spark.get("/", new RootRoute(libraryPath, configPath, hostapdConfigPath));
-		Spark.post("/", new RootRoute(libraryPath, configPath, hostapdConfigPath));
+		Route route = new RootRoute(libraryPath, configPath, service);
+		
+		Spark.get("/", route);
+		Spark.post("/", route);
 	}
 	
 	public void stop() {
 		Spark.stop();
-	}
-	
-	
-	public static void main(String[] args) throws InterruptedException {
-		WebInterface webInterface = new WebInterface("","", "");
-		webInterface.start();
 	}
 }

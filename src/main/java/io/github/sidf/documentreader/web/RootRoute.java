@@ -14,7 +14,7 @@ import javax.servlet.http.Part;
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
-
+import io.github.sidf.documentreader.service.DocumentReaderService;
 import io.github.sidf.documentreader.util.FileUtil;
 
 
@@ -25,14 +25,14 @@ class RootRoute implements Route {
 	
 	private String configPath;
 	private String libraryPath;
-	private String hostapdConfigPath;
 	
+	private static DocumentReaderService service;
 	private static final Pattern btnPattern = Pattern.compile("btn_set\\w+(?=\\=)");
 	
-	public RootRoute(String libraryPath, String configPath, String hostapdConfigPath) {
+	public RootRoute(String libraryPath, String configPath, DocumentReaderService documentReaderService) {
 		this.configPath = configPath;
 		this.libraryPath = libraryPath;
-		this.hostapdConfigPath = hostapdConfigPath;
+		service = documentReaderService;
 	}
 	
 	@Override
