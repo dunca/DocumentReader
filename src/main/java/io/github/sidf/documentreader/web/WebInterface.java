@@ -12,10 +12,10 @@ public class WebInterface {
 	public WebInterface(String libraryPath, String configPath, DocumentReaderService documentReaderService) {
 		this.configPath = configPath;
 		this.libraryPath = libraryPath;
-		documentReaderService = service;
+		service = documentReaderService;
 	}
 	
-	public void start() {
+	public void start() throws Exception {
 		Spark.port(80);
 		Spark.ipAddress("0.0.0.0");
 		Spark.staticFileLocation("/spark/public");

@@ -5,9 +5,14 @@
 	</head>
 
 	<body>
-		<#if documentCount??>
-			Library size: ${documentCount}
+		<#if message??>
+			Info: ${message}
 		</#if>
+		<#if errorMessage??>
+			Altert: ${errorMessage}
+		</#if>	
+		
+		Library size: ${availableDocuments?size}
 		
 		<#if selectedDocumentName??>
 			Selected document: ${selectedDocumentName}
@@ -16,13 +21,6 @@
 			<button name="continueButton">Continue</button>
 			<button name="stopButton">Stop</button>
 			
-		</#if>
-	
-		<#if message??>
-			Info: ${message}
-		</#if>
-		<#if errorMessage??>
-			Altert: ${errorMessage}
 		</#if>
 	
 		<form method='post' enctype='multipart/form-data' action="/">
@@ -36,23 +34,70 @@
 		<form method='post' action="/">
 			<label for="set_book">Document</label>
 		    <select id="set_book" name="set_book">
-			  <option value="volvo">Volvo</option>
+	    		<#list availableDocuments?keys as key>
+	    			<#if selectedDocumentHash?? && selectedDocumentHash == key>
+	    				<option selected value="${key}">${availableDocuments[key]}</option>
+	    			<#else>
+						<option value="${key}">${availableDocuments[key]}</option>
+					</#if>
+				</#list>
 			</select>
 		    <button name="btn_set_book">Apply</button>
 		    
 		    <br />
 			
+			<label for="set_reader">Reader</label>
+		    <select id="set_reader" name="set_reader">
+	    		<#list availableReaders as reader>
+	    			<#if selectedReaderProvider?? && selectedReaderProvider == reader>
+	    				<option selected value="${reader}">${reader}</option>
+	    			<#else>
+						<option value="${reader}">${reader}</option>
+					</#if>
+				</#list>
+			</select>
+		    <button name="btn_set_reader">Apply</button>
+		    
+		    <br />
+			
 			<label for="set_lang">Language</label>
 		    <select id="set_lang" name="set_lang">
-			  <option value="volvo">Volvo</option>
+	    		<#list supportedReaderLanguages as language>
+	    			<#if selectedReaderLang?? && selectedReaderLang == language.getDisplayName()>
+	    				<option selected value="${language}">${language.getDisplayName()}</option>
+	    			<#else>
+						<option value="${language}">${language.getDisplayName()}</option>
+					</#if>
+				</#list>
 			</select>
 		    <button name="btn_set_lang">Apply</button>
+		    
+		    <br />
+		    
+			<label for="set_reading_speed">Reading speed</label>
+		    <select id="set_reading_speed" name="set_reading_speed">
+	    		<#list supportedReaderSpeed as speed>
+	    			<#if selectedReaderSpeed?? && selectedReaderSpeed == speed.getDisplayName()>
+	    				<option selected value="${speed}">${speed.getDisplayName()}</option>
+	    			<#else>
+						<option value="${speed}">${speed.getDisplayName()}</option>
+					</#if>
+				</#list>
+			</select>
+		    <button name="btn_set_reading_speed">Apply</button>
 		    
 		    <br />
 			
 			<label for="set_volume">Volume</label>
 		    <select id="set_volume" name="set_volume">
-			  <option value="volvo">Volvo</option>
+  	    		<#list supportedVolumeLevels?keys as key>
+  	    			<#assign value = supportedVolumeLevels[key]>
+	    			<#if selectedVolumeLevel?? && selectedVolumeLevel == value>
+	    				<option selected value="${value}">${key}</option>
+	    			<#else>
+						<option value="${value}">${key}</option>
+					</#if>
+				</#list>
 			</select>
 		    <button name="btn_set_volume">Apply</button>
 		    
@@ -60,8 +105,13 @@
 			
 			<label for="set_feature_detection">Feature detection</label>
 		    <select id="set_feature_detection" name="set_feature_detection">
-			  <option value="on">on</option>
-			  <option value="off">off</option>
+  	    		<#list standardSwitchOptions as option>
+	    			<#if selectedFeatureDetection?? && selectedFeatureDetection == option>
+	    				<option selected value="${option}">${option}</option>
+	    			<#else>
+						<option value="${option}">${option}</option>
+					</#if>
+				</#list>
 			</select>
 		    <button name="btn_set_feature_detection">Apply</button>
 		    
@@ -69,8 +119,13 @@
 			
 			<label for="set_logs">Logs</label>
 		    <select id="set_logs" name="set_logs">
-			  <option value="on">on</option>
-			  <option value="off">off</option>
+  	    		<#list standardSwitchOptions as option>
+	    			<#if selectedLog?? && selectedLog == option>
+	    				<option selected value="${option}">${option}</option>
+	    			<#else>
+						<option value="${option}">${option}</option>
+					</#if>
+				</#list>
 			</select>
 		    <button name="btn_set_logs">Apply</button>
 		    
@@ -78,8 +133,13 @@
 		    
 			<label for="set_page_content">Page content</label>
 		    <select id="set_page_content" name="set_page_content">
-			  <option value="on">on</option>
-			  <option value="off">off</option>
+  	    		<#list standardSwitchOptions as option>
+	    			<#if selectedPageContent?? && selectedPageContent == option>
+	    				<option selected value="${option}">${option}</option>
+	    			<#else>
+						<option value="${option}">${option}</option>
+					</#if>
+				</#list>
 			</select>
 		    <button name="btn_set_page_content">Apply</button>
 		    
