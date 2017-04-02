@@ -32,7 +32,7 @@ public abstract class Reader implements Runnable {
 	}
 	
 	public void setLanguage(Language language) throws IOException {
-		if (!ArrayUtil.arrayContains(getSupportedLanguages(), language)) {
+		if (!ArrayUtil.arrayContains(getSupportedLanguages(), language.getDisplayName())) {
 			String message = String.format("The reader does not support %s", language.getDisplayName());
 			throw new IOException(message);
 		}
@@ -45,7 +45,7 @@ public abstract class Reader implements Runnable {
 	}
 	
 	public void setSpeed(Speed speed) throws IOException {
-		if (!ArrayUtil.arrayContains(getSupportedSpeed(), speed)) {
+		if (!ArrayUtil.arrayContains(getSupportedSpeed(), speed.getDisplayName())) {
 			String message = String.format("The reader does not support %s speed", speed.getDisplayName());
 			throw new IOException(message);
 		}
