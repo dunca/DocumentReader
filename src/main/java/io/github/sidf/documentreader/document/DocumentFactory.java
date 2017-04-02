@@ -11,8 +11,8 @@ public class DocumentFactory {
 		
 	}
 	
-	private static List<String> documentProviders = ClassPathUtil.getSubclassNames(DocumentFactory.class.getPackage().getName(), 
-																				   Document.class);
+	private static String[] documentProviders = ClassPathUtil.getSubclassNames(DocumentFactory.class.getPackage().getName(), 
+																			   Document.class).toArray(new String[0]);
 	
 	public static Document getInstance(String className, File file, File bookmarkIniFilePath) throws Exception {
 		Class<?> theClass = Class.forName(className); 
@@ -20,7 +20,7 @@ public class DocumentFactory {
 		return (Document) constructor.newInstance(file, bookmarkIniFilePath);
 	}
 	 
-	public static List<String> getDocumentProviders() {
+	public static String[] getDocumentProviders() {
 		return documentProviders;
 	}
 }

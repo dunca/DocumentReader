@@ -9,8 +9,8 @@ public class ReaderFactory {
 		
 	}
 	
-	private static List<String> readerProviders = ClassPathUtil.getSubclassNames(ReaderFactory.class.getPackage().getName(), 
-		   																	     Reader.class);
+	private static String[] readerProviders = ClassPathUtil.getSubclassNames(ReaderFactory.class.getPackage().getName(), 
+	   																	     Reader.class).toArray(new String[0]);
 
 	public static Reader getInstance(String className, Document document) throws Exception {
 		Class<?> theClass = Class.forName(className); 
@@ -18,7 +18,7 @@ public class ReaderFactory {
 		return (Reader) constructor.newInstance(document);
 	}
 		
-	public static List<String> getReaderProviders() {
+	public static String[] getReaderProviders() {
 		return readerProviders;
 	}
 }
