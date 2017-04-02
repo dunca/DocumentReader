@@ -14,12 +14,13 @@
 		
 		Library size: ${availableDocuments?size}
 		
-		<#if selectedDocumentName??>
-			Selected document: ${selectedDocumentName}
+		<#if selectedDocument??>
+			Selected document: ${selectedDocument}
 			
-			<button name="readButton">Read</button>
-			<button name="continueButton">Continue</button>
-			<button name="stopButton">Stop</button>
+			<button name="btn_read">Read</button>
+			<button name="btn_continue">Continue</button>
+			<button name="btn_stop">Stop</button>
+			<button name="btn_delete">Delete document</button>
 			
 		</#if>
 	
@@ -48,7 +49,7 @@
 			
 			<label for="set_reader">Reader</label>
 		    <select id="set_reader" name="set_reader">
-	    		<#list availableReaders as reader>
+	    		<#list availableReaderProviders as reader>
 	    			<#if selectedReaderProvider?? && selectedReaderProvider == reader>
 	    				<option selected value="${reader}">${reader}</option>
 	    			<#else>

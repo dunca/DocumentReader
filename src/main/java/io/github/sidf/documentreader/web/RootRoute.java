@@ -19,6 +19,7 @@ import javax.servlet.http.Part;
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
+import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.util.FileUtil;
 import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.util.enums.Language;
@@ -40,7 +41,7 @@ class RootRoute implements Route {
 	private String selectedDocumentHash;
 	private String selectedReaderProvider;
 	private Speed[] supportedReaderSpeed;
-	private List<String> availableReaders;
+	private String[] availableReaderProviders;
 	private Language[] supportedReaderLanguages;
 	
 	private String selectedVolumeLevel;
@@ -66,7 +67,7 @@ class RootRoute implements Route {
 		supportedVolumeLevels.put("50 %", "50");
 		supportedVolumeLevels.put("100 %", "100");
 		
-		availableReaders = service.getReaderProviders();
+		availableReaderProviders = service.getReaderProviders();
 		updateVariables(true);
 	}
 	
@@ -107,7 +108,8 @@ class RootRoute implements Route {
 		map.put("selectedVolumeLevel", selectedVolumeLevel);
 		map.put("supportedVolumeLevels", supportedVolumeLevels);
 		
-		map.put("availableReaders", availableReaders);
+		map.put("selectedDocument", availableDocuments.get(selectedDocumentHash));
+		map.put("availableReaderProviders", availableReaderProviders);
 		map.put("selectedReaderLang", selectedReaderLang);
 		map.put("selectedReaderSpeed", selectedReaderSpeed);
 		map.put("selectedReaderProvider", selectedReaderProvider);
@@ -137,7 +139,7 @@ class RootRoute implements Route {
 			    String fileName = uploadedFile.getSubmittedFileName();
 			    try (InputStream inputStream = uploadedFile.getInputStream()) {
 			    	FileUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
-			    	service.updateLibrary();
+			    	service.updateDocumentLibrary();
 			    	// TODO make sure it's accepted by one of the reader providers
 			    	
 			    	message = "Successful upload";
@@ -191,7 +193,7 @@ class RootRoute implements Route {
 			String speed = ini.get("Reader", "speed");
 			String lang = ini.get("Reader", "language");
 			
-			if (availableReaders.contains(provider)) {
+			if (ArrayUtil.arrayContains(availableReaderProviders, provider)) {
 				selectedReaderProvider = provider;
 				service.setReader(provider);
 			}
@@ -201,11 +203,11 @@ class RootRoute implements Route {
 		}
 		
 		if (selectedReaderProvider == null) {
-			selectedReaderProvider = availableReaders.get(0);
+			selectedReaderProvider = availableReaderProviders[0];
 			service.setReader(selectedReaderProvider);
 			
-			supportedReaderSpeed = service.getSupportedSpeed();
-			supportedReaderLanguages = service.getSupportedLanguages();
+			supportedReaderSpeed = service.getCurrentSupportedSpeed();
+			supportedReaderLanguages = service.getCurrentSupportedLanguages();
 			
 			selectedReaderLang = supportedReaderLanguages[0].getDisplayName();
 			selectedReaderSpeed = supportedReaderSpeed[0].getDisplayName();
@@ -255,13 +257,13 @@ class RootRoute implements Route {
 			String action = RequestUtil.parseBodyString(request.body(), "set_manage_device");
 			if (action.equals("reboot")) {
 				try {
-					service.reboot();
+					service.rebootDevice();
 				} catch (IOException e) {
 					errorMessage = "Could not reboot the system";
 				}
 			} else {
 				try {
-					service.shutDown();
+					service.shutDownDevice();
 				} catch (IOException e) {
 					errorMessage = "Could not power off the system";
 				}
