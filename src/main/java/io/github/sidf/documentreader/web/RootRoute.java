@@ -5,8 +5,6 @@ import spark.Spark;
 import java.io.File;
 import java.util.Map;
 import org.ini4j.Ini;
-import org.w3c.dom.css.ElementCSSInlineStyle;
-
 import spark.Request;
 import spark.Response;
 import java.util.HashMap;
@@ -222,6 +220,8 @@ class RootRoute implements Route {
 	
 	private void handleButtonPress(String buttonName, Request request) {
 		switch (buttonName) {
+		case "btn_delete":
+			service.deleteDocument(selectedDocumentHash);
 		case "btn_set_book":
 			selectedDocumentHash = RequestUtil.parseBodyString(request.body(), "set_book");
 			ini.put("Document", "selectedDocumentHash", selectedDocumentHash);

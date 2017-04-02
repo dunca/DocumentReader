@@ -109,4 +109,12 @@ public class DocumentReaderService {
 	public void rebootDevice() throws IOException {
 		Device.reboot();
 	}
+	
+	public void deleteDocument(String documentId) {
+		boolean changed = documentLibrary.deleteDocument(documentId);
+		
+		if (changed) {
+			documentLibrary.update();
+		}
+	}
 }

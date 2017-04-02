@@ -1,5 +1,6 @@
 package io.github.sidf.documentreader.document;
 
+import java.awt.event.ItemEvent;
 import java.io.File;
 import java.util.Map;
 import java.util.List;
@@ -94,5 +95,16 @@ public class DocumentLibrary implements AutoCloseable {
 		for (Document document : documents) {
 			document.close();
 		}
+	}
+
+	public boolean deleteDocument(String documentId) {
+		for (Document document : documents) {
+			if (document.getDocumentId().equals(documentId)) {
+				document.delete();
+				return true;
+			}
+		}
+		
+		return false;
 	}
 }
