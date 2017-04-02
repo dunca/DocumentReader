@@ -5,6 +5,8 @@ import spark.Spark;
 import java.io.File;
 import java.util.Map;
 import org.ini4j.Ini;
+import org.w3c.dom.css.ElementCSSInlineStyle;
+
 import spark.Request;
 import spark.Response;
 import java.util.HashMap;
@@ -16,13 +18,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
 import javax.servlet.ServletException;
-import javax.imageio.spi.ServiceRegistry;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
-import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.util.FileUtil;
-import io.github.sidf.documentreader.util.enums.Speed;
-import io.github.sidf.documentreader.util.enums.Language;
+import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.web.util.RequestUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
@@ -215,6 +214,9 @@ class RootRoute implements Route {
 			
 			selectedReaderLang = supportedReaderLanguages[0];
 			selectedReaderSpeed = supportedReaderSpeed[0];
+		} else {
+			supportedReaderSpeed = service.getCurrentSupportedSpeed();
+			supportedReaderLanguages = service.getCurrentSupportedLanguages();
 		}
 	}
 	
