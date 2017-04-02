@@ -90,7 +90,6 @@ class RootRoute implements Route {
 	}
 	
 	private Object handleGet() {
-		System.out.println(selectedFeatureDetection + "---------------------------------!!_!!_!_!_!_!_!__!_!_");
 		Map<String, String> availableDocuments = service.getDocumentNameMap();
 		
 		if (selectedDocumentHash == null && availableDocuments.size() != 0) {
@@ -138,7 +137,7 @@ class RootRoute implements Route {
 			    String fileName = uploadedFile.getSubmittedFileName();
 			    try (InputStream inputStream = uploadedFile.getInputStream()) {
 			    	FileUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
-			    	
+			    	service.updateLibrary();
 			    	// TODO make sure it's accepted by one of the reader providers
 			    	
 			    	message = "Successful upload";
