@@ -1,14 +1,13 @@
 package io.github.sidf.documentreader;
 
 import java.io.File;
-import java.util.logging.Logger;
-
 import org.ini4j.Ini;
-
-import io.github.sidf.documentreader.service.DocumentReaderService;
-import io.github.sidf.documentreader.system.AccessPoint;
+import java.util.logging.Logger;
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.web.WebInterface;
+import io.github.sidf.documentreader.system.AccessPoint;
+import io.github.sidf.documentreader.service.DocumentReaderService;
+
 
 public class Application {
 	private static final int requiredFileCount = 4;
@@ -43,10 +42,7 @@ public class Application {
 		
 		WebInterface webInterface = new WebInterface(args[0], args[1],
 													 new DocumentReaderService(new File(args[0]), new File(args[3])));
-		// will block
 		webInterface.start();
-		
-		accessPoint.close();
 	}
 	
 	private static boolean argsArValid(String[] args) {
