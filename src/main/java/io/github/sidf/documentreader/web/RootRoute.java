@@ -151,10 +151,7 @@ class RootRoute implements Route {
 	    	
 			if (matcher.find()) {
 				pressedButton = matcher.group();
-				message = "button pressed " + pressedButton;
 				handleButtonPress(pressedButton, request);
-			} else {
-				errorMessage = "no button pressed";
 			}
 	    }
 	    
