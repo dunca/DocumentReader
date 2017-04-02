@@ -4,11 +4,13 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import javax.xml.bind.DatatypeConverter;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 
 public class FileUtil {
@@ -38,5 +40,9 @@ public class FileUtil {
 		}
 		
 		return sb.toString();
+	}
+	
+	public static void inputStreamToFile(InputStream is, String locationPath) throws IOException {
+		Files.copy(is, Paths.get(locationPath), StandardCopyOption.REPLACE_EXISTING);
 	}
 }

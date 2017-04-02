@@ -31,7 +31,7 @@ public class PathUtil {
 	public static String resourcePathToFilePath(String relativeResourcePath) throws IOException {
 		InputStream inputStream = classLoader.getResourceAsStream(relativeResourcePath);
 		String filePath = getRandomFileName(null);
-		Files.copy(inputStream, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+		FileUtil.inputStreamToFile(inputStream, filePath);
 		return filePath;
 	}
 	
