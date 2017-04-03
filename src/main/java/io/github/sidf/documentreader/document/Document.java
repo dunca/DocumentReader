@@ -6,6 +6,8 @@ import org.ini4j.Ini;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.io.FileReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.io.FileNotFoundException;
 import java.io.InvalidObjectException;
 
@@ -20,6 +22,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 	private static Ini bookmarkIni;
 	private DocumentBookmark bookmark;
 	private static Map<String, String[]> bookmarkIniMap;
+	private static Logger logger = Logger.getLogger(Document.class.getName());
 	
 	public Document(File file, File bookmarkIniFilePath) throws Exception {
 		this.file = file;
@@ -52,7 +55,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 			sentenceIndex = Integer.valueOf(info[1]);
 		}
 		
-		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIniFilePath, documentId);
+		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIniFilePath, this);
 	}
 	
 	public int getPageCount() {
@@ -115,8 +118,18 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		return map;
 	}
 	
-	public void resetBookmark() throws Exception {
-		setPage(0, 0);
+	private void wrapBookmark() throws Exception {
+		if (bookmark.endReached()) {
+			setPage(0, 0);
+		}
+	}
+	
+	public void postReadingOperations() {
+		try {
+			wrapBookmark();
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Could not perform post reading operations" , e);
+		}
 	}
 	
 	public abstract void close() throws Exception;

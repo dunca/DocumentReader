@@ -83,6 +83,7 @@ public abstract class Reader implements Runnable {
 			pageIndex++;
 		}
 		
+		document.postReadingOperations();
 		isStillRunning = false;
 	}
 	

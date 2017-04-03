@@ -30,7 +30,7 @@ public class DocumentPageSentenceIterator implements Iterator<String> {
 		endBoundaryIndex = breakIterator.next();
 		boolean hasNext = endBoundaryIndex != BreakIterator.DONE;
 		
-		if (!hasNext) {
+		if (!hasNext && !sourceDocumentBookmark.onLastPage()) {
 			setSentenceIndex(0);
 		}
 		
