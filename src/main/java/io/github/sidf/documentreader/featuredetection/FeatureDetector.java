@@ -38,7 +38,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 	}
 	
-	private FeatureDetector() throws IOException {
+	public FeatureDetector() throws IOException {
 		captureDevice = new VideoCapture(0);
 
 		if (!captureDevice.isOpened()) {
@@ -56,12 +56,12 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 		}
 	}
 	
-	public static FeatureDetector getInstance() throws IOException {
-		if (instance == null) {
-			instance = new FeatureDetector();
-		}
-		return instance;
-	}
+//	public static FeatureDetector getInstance() throws IOException {
+//		if (instance == null) {
+//			instance = new FeatureDetector();
+//		}
+//		return instance;
+//	}
 	
 	public void run() {
 		featureDetectorLoop();

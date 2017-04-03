@@ -49,7 +49,7 @@ public class DocumentReaderService {
 		readerThread.start();
 		
 		if (featureDetectionEnabled) {
-			featureDetectorInstance = FeatureDetector.getInstance();
+			featureDetectorInstance = new FeatureDetector();
 			featureDetectionThread = new Thread(featureDetectorInstance);
 			featureDetectionThread.start();
 			
