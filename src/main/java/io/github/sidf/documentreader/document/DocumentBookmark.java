@@ -46,6 +46,11 @@ public class DocumentBookmark {
 	}
 	
 	public void setSentenceIndex(int sentenceIndex) throws IOException {
+		if (this.sentenceIndex == sentenceIndex && 
+			(bookmarkIni.get(document.getDocumentId(), "pageIndex") == String.valueOf(pageIndex))) {
+			return;
+		}
+		
 		this.sentenceIndex = sentenceIndex;
 		updateBookmarkIni();
 	}
