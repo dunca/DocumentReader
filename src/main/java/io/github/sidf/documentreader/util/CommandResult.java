@@ -1,8 +1,8 @@
 package io.github.sidf.documentreader.util;
 
 public class CommandResult {
-	public String stdout;
-	public int exitValue;
+	private String stdout;
+	private int exitValue;
 	
 	public CommandResult(String stdout, int exitValue) {
 		this.stdout = stdout;

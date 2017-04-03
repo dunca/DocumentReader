@@ -75,7 +75,7 @@ public class Device {
 		
 		for (String dependency : dependecies) {
 			CommandResult commandResult = CommandUtil.launchNonBlockingCommand(String.format(debianPackageCheckTemplate, dependency));
-			if (commandResult.exitValue != 0) {
+			if (commandResult.getExitValue() != 0) {
 				unsatisfiedDependencies.add(dependency);
 			}
 		}
