@@ -77,6 +77,7 @@ class RootRoute implements Route {
 		this.map = new HashMap<>();
 
 		String requestMethod = request.requestMethod();
+		response.header("Accept-Charset", "utf-8");
 		
 		switch (requestMethod) {
 		case "GET":
@@ -189,6 +190,7 @@ class RootRoute implements Route {
 			if (!availableDocuments.containsKey(selectedDocumentHash)) {
 				selectedDocumentHash = availableDocuments.keySet().iterator().next();
 			}
+			updateDocumentInfo(selectedDocumentHash);
 			
 			String provider = ini.get("Reader", "provider");
 			String speed = ini.get("Reader", "speed");
@@ -220,11 +222,25 @@ class RootRoute implements Route {
 	
 	private void handleButtonPress(String buttonName, Request request) {
 		switch (buttonName) {
-		case "btn_delete":
+		case "btn_set_delete":
 			service.deleteDocument(selectedDocumentHash);
+			updateDocumentInfo(availableDocuments.keySet().iterator().next());
+			break;
+		case "btn_set_read":
+			try {
+				service.startReading(selectedFeatureDetection.equals("on"));
+			} catch (IOException e) {
+				errorMessage = "Coult not start the reader";
+			}
+			break;
+		case "btn_set_stop":
+			service.stopReading();
+			break;
+		case "btn_set_continue":
+			// TODO
+			break;
 		case "btn_set_book":
-			selectedDocumentHash = RequestUtil.parseBodyString(request.body(), "set_book");
-			ini.put("Document", "selectedDocumentHash", selectedDocumentHash);
+			updateDocumentInfo(RequestUtil.parseBodyString(request.body(), "set_book"));
 			break;
 		case "btn_set_reader":
 			selectedReaderProvider = RequestUtil.parseBodyString(request.body(), "set_reader");
@@ -240,7 +256,7 @@ class RootRoute implements Route {
 			try {
 				service.setCurrentReaderLanguage(selectedReaderLang);
 			} catch (IOException e) {
-				errorMessage = "Could not set the reader's language";
+				errorMessage = "Could not set the reader's language" + e.getMessage();
 			}
 			ini.put("Reader", "language", selectedReaderLang);
 			break;
@@ -298,6 +314,16 @@ class RootRoute implements Route {
 			ini.store();
 		} catch (IOException e) {
 			errorMessage = "Could not store settings";
+		}
+	}
+	
+	private void updateDocumentInfo(String documentHash) {
+		selectedDocumentHash = documentHash;
+		ini.put("Document", "selectedDocumentHash", selectedDocumentHash);
+		try {
+			service.setDocument(selectedDocumentHash);
+		} catch (Exception e) {
+			errorMessage = "Could not set the document";
 		}
 	}
 }

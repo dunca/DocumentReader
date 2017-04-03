@@ -190,13 +190,14 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	public void stop() {
 		isStillRunning = false;
 		
+		captureDevice.release();
 		if (scheduledExecutorService != null) {
 			scheduledExecutorService.shutdown();
 		}
 	}
 
 	public void close() throws Exception {
-		captureDevice.release();
+		
 	}
 	
 	private void disableAutofocus() {

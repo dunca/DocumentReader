@@ -88,9 +88,17 @@ public abstract class Reader implements Runnable {
 	
 	public void stop() {
 		isStillRunning = false;
+		
+		try {
+			stopInternal();
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Could not stop fully stop the reader", e);
+		}
 	}
+	
 	
 	public abstract String[] getSupportedSpeed();
 	public abstract String[] getSupportedLanguages();
+	public abstract void stopInternal() throws Exception;
 	public abstract void read(String text) throws Exception;
 }
