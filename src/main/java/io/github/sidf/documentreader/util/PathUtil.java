@@ -30,7 +30,7 @@ public class PathUtil {
 	
 	public static String resourcePathToFilePath(String relativeResourcePath) throws IOException {
 		InputStream inputStream = classLoader.getResourceAsStream(relativeResourcePath);
-		String filePath = getRandomFileName(null);
+		String filePath = "/tmp/" + getRandomFileName(null);
 		FileUtil.inputStreamToFile(inputStream, filePath);
 		return filePath;
 	}
