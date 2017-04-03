@@ -31,7 +31,7 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 		}
 		
 		try {
-			page = document.setPage(pageIndex, sentenceIndex);
+			page = document.updateBookmarkPage(pageIndex, sentenceIndex);
 		} catch (Exception e) {
 			e.printStackTrace();
 			new RuntimeException(String.format("Could not fetch page from %s", document.getDocumentName()));

@@ -98,7 +98,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		return new DocumentIterator(this);
 	}
 	
-	public DocumentPage setPage(int index, int sentenceIndex) throws Exception {
+	public DocumentPage updateBookmarkPage(int index, int sentenceIndex) throws Exception {
 		DocumentPage page = fetchPage(index);
 
 		bookmark.setPage(page);
@@ -120,7 +120,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 	
 	private void wrapBookmark() throws Exception {
 		if (bookmark.endReached()) {
-			setPage(0, 0);
+			updateBookmarkPage(0, 0);
 		}
 	}
 	
