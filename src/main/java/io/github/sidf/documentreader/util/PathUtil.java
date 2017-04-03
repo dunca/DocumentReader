@@ -3,9 +3,6 @@ package io.github.sidf.documentreader.util;
 import java.util.UUID;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.system.enums.OperatingSystem;
@@ -28,7 +25,7 @@ public class PathUtil {
 		return runsLinux ? path : path.substring(1);
 	}
 	
-	public static String resourcePathToFilePath(String relativeResourcePath) throws IOException {
+	public static String resourcePathToFile(String relativeResourcePath) throws IOException {
 		InputStream inputStream = classLoader.getResourceAsStream(relativeResourcePath);
 		String filePath = "/tmp/" + getRandomFileName(null);
 		FileUtil.inputStreamToFile(inputStream, filePath);
