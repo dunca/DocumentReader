@@ -28,17 +28,27 @@ public class DocumentPageSentenceIterator implements Iterator<String> {
 	
 	public boolean hasNext() {
 		endBoundaryIndex = breakIterator.next();
-		return endBoundaryIndex != BreakIterator.DONE;
+		boolean hasNext = endBoundaryIndex != BreakIterator.DONE;
+		
+		if (!hasNext) {
+			setSentenceIndex(0);
+		}
+		
+		return hasNext;
 	}
 
 	public String next() {
 		String sentence = page.getContent().substring(startBoundaryIndex, endBoundaryIndex);
+		setSentenceIndex(startBoundaryIndex);
+		startBoundaryIndex = endBoundaryIndex;
+		return sentence;
+	}
+	
+	private void setSentenceIndex(int index) {
 		try {
-			sourceDocumentBookmark.setSentenceIndex(startBoundaryIndex);
+			sourceDocumentBookmark.setSentenceIndex(index);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Something went wrong when setting the sentence index", e);
 		}
-		startBoundaryIndex = endBoundaryIndex;
-		return sentence;
 	}
 }

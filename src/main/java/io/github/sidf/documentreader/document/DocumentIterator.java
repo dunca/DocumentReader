@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 public class DocumentIterator implements Iterator<DocumentPage> {
 	private Document document;
+	private boolean firstIteration = true;
 	
 	public DocumentIterator(Document document) {
 		this.document = document;
@@ -18,9 +19,9 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 		
 		int pageIndex = document.getBookmark().getPageIndex();
 		int sentenceIndex = document.getBookmark().getSentenceIndex();
-		if (document.getBookmark().getPage() != null) {
+		
+		if (!firstIteration && sentenceIndex == 0) {
 			pageIndex++;
-			sentenceIndex = 0;
 		}
 		
 		try {
@@ -29,6 +30,8 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 			e.printStackTrace();
 			new RuntimeException(String.format("Could not fetch page from %s", document.getDocumentName()));
 		}
+		
+		firstIteration = false;
 		
 		return page;
 	}
