@@ -67,7 +67,7 @@ public abstract class Reader implements Runnable {
 		
 		outerLoop:
 		for (DocumentPage page : document) {
-			logger.info(String.format("Reading page with index %d", pageIndex));
+			logger.info(String.format("Reading page with the session index of %d", pageIndex));
 			for (String sentence : page) {
 				try {
 					read(sentence);
@@ -84,7 +84,7 @@ public abstract class Reader implements Runnable {
 		}
 		
 		document.postReadingOperations();
-		isStillRunning = false;
+		stop();
 	}
 	
 	public void stop() {
@@ -96,7 +96,6 @@ public abstract class Reader implements Runnable {
 			logger.log(Level.SEVERE, "Could not stop fully stop the reader", e);
 		}
 	}
-	
 	
 	public abstract String[] getSupportedSpeed();
 	public abstract String[] getSupportedLanguages();
