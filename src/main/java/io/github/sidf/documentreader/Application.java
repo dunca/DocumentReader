@@ -3,19 +3,30 @@ package io.github.sidf.documentreader;
 import java.io.File;
 import org.ini4j.Ini;
 import java.util.logging.Logger;
+import java.util.logging.FileHandler;
+
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.web.WebInterface;
 import io.github.sidf.documentreader.system.AccessPoint;
+import io.github.sidf.documentreader.util.HtmlLogFormatter;
 import io.github.sidf.documentreader.service.DocumentReaderService;
-
 
 public class Application {
 	private static final int requiredFileCount = 4;
+	private static String projectName;
+	private static Logger logger;
 	
-	// the root logger
-	private static Logger logger = Logger.getLogger("");
+	static {
+		String packageName = Application.class.getPackage().getName();
+		logger = Logger.getLogger(packageName);
+		projectName = packageName.substring(packageName.lastIndexOf('.') + 1);
+	}
 	
 	public static void main(String[] args) throws Exception {
+		FileHandler htmlHandler = new FileHandler(String.format("%s-log.html", projectName), 10240, 1, true);
+		htmlHandler.setFormatter(new HtmlLogFormatter());
+		logger.addHandler(htmlHandler);
+		
 		if (!argsArValid(args)) {
 			logger.severe("This app requires some arguments in this exact order:\n"
 					+ "a path to the document library directory\n"
