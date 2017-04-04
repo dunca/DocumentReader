@@ -4,7 +4,26 @@
 		<meta charset="UTF-8">
 		<title>DocumentReader</title>
 	</head>
-
+	
+	<#if selectedLog == "on">
+		<script>
+	        function loadLog() {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+			    if (this.readyState == 4 && this.status == 200) {
+			     document.getElementById("logDiv").innerHTML = this.responseText;
+			    }
+			  };
+			  xhttp.open("GET", "log", true);
+			  xhttp.send();
+			  
+			   setTimeout(loadLog, 1500);
+			}
+			
+			loadLog();
+		</script>
+	</#if>
+	
 	<body>
 		<#assign disabled = isReading?then('disabled', '')>
 	
@@ -161,5 +180,8 @@
 			</select>
 		    <button name="btn_set_manage_device" ${disabled}>Apply</button>
 	    </form>
+	    
+	    <div id="logDiv">
+    	</dir>
 	</body>
 </html>

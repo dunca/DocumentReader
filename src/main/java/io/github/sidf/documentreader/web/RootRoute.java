@@ -91,10 +91,10 @@ class RootRoute implements Route {
 	private Object handleGet() {
 		updateDocumentInfo(config.getDocumentHash());
 
-		map.put("isReading", isReading);
 		map.put("message", message);
 		map.put("errorMessage", errorMessage);
 		
+		map.put("isReading", isReading);
 		map.put("selectedLog", config.getLog());
 		map.put("selectedPageContent", config.getContent());
 		map.put("selectedFeatureDetection", config.getFeatureDetection());
