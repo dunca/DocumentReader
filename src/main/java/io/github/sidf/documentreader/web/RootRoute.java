@@ -183,6 +183,8 @@ class RootRoute implements Route {
 			provider = availableReaderProviders[0];
 		} 
 		updateReaderInfo(provider);
+		
+		ini.store();
 	}
 	
 	private void updateReaderInfo(String provider) {
