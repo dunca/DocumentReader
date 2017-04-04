@@ -34,6 +34,10 @@ public class DocumentReaderService {
 	
 	public void setDocument(String documentId) throws Exception {
 		document = documentLibrary.getDocumentById(documentId);
+		
+		if (readerInstance != null) {
+			readerInstance.setDocument(document);
+		}
 	}
 	
 	public Map<String, String> getDocumentMap() {
