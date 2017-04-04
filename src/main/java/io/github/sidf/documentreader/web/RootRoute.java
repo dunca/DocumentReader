@@ -15,42 +15,37 @@ import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
+import javax.xml.validation.SchemaFactoryConfigurationError;
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
 import io.github.sidf.documentreader.util.FileUtil;
 import io.github.sidf.documentreader.util.ArrayUtil;
+import io.github.sidf.documentreader.web.util.ConfigUtil;
 import io.github.sidf.documentreader.web.util.RequestUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
 class RootRoute implements Route {
-	private Map<String, Object> map;
 	private Request request;
 	private Response response;
 	private String configPath;
 	private String libraryPath;
+	private Map<String, Object> map;
 	
 	private String message;
 	private String errorMessage;
 	
-	private String selectedReaderLang;
-	private String selectedReaderSpeed;
-	private String selectedDocumentHash;
-	private String selectedReaderProvider;
 	private String[] supportedReaderSpeed;
 	private String[] availableReaderProviders;
 	private String[] supportedReaderLanguages;
 	
-	private String selectedVolumeLevel;
 	private static final Map<String, String> supportedVolumeLevels = new LinkedHashMap<>();
 	
-	private String selectedLog;
-	private String selectedPageContent;
-	private String selectedFeatureDetection;
 	private Map<String, String> availableDocuments;
 	private static final String[] standardSwitchOptions = new String[] { "on", "off" };
 	
 	private static Ini ini;
+	private static ConfigUtil config;
 	private static DocumentReaderService service;
 	private static final Pattern buttonPattern = Pattern.compile("btn_set\\w+(?=\\=)");
 	
@@ -60,14 +55,16 @@ class RootRoute implements Route {
 		service = documentReaderService;
 		ini = new Ini(new File(configPath));
 		
-		supportedVolumeLevels.put("0 %", "0");
-		supportedVolumeLevels.put("25 %", "25");
-		supportedVolumeLevels.put("50 %", "50");
+		config = new ConfigUtil(ini);
+		
 		supportedVolumeLevels.put("100 %", "100");
+		supportedVolumeLevels.put("50 %", "50");
+		supportedVolumeLevels.put("25 %", "25");
+		supportedVolumeLevels.put("0 %", "0");
 		
 		availableDocuments = service.getDocumentMap();
 		availableReaderProviders = service.getReaderProviders();
-		updateVariables(true);
+		preconfiguration();
 	}
 	
 	@Override
@@ -91,30 +88,30 @@ class RootRoute implements Route {
 	}
 	
 	private Object handleGet() {
-		if (selectedDocumentHash == null && availableDocuments.size() != 0) {
-			selectedDocumentHash = availableDocuments.entrySet().iterator().next().getKey();
+		if (config.getDocumentHash() == null && availableDocuments.size() != 0) {
+			config.setDocumentHash(availableDocuments.entrySet().iterator().next().getKey());
 		}
 		
 		map.put("message", message);
 		map.put("errorMessage", errorMessage);
 		
-		map.put("selectedLog", selectedLog);
-		map.put("selectedPageContent", selectedPageContent);
-		map.put("selectedFeatureDetection", selectedFeatureDetection);
+		map.put("selectedLog", config.getLog());
+		map.put("selectedPageContent", config.getContent());
+		map.put("selectedFeatureDetection", config.getFeatureDetection());
 		map.put("standardSwitchOptions", standardSwitchOptions);
 		
-		map.put("selectedVolumeLevel", selectedVolumeLevel);
+		map.put("selectedVolumeLevel", config.getVolume());
 		map.put("supportedVolumeLevels", supportedVolumeLevels);
 		
-		map.put("selectedDocument", availableDocuments.get(selectedDocumentHash));
+		map.put("selectedDocument", availableDocuments.get(config.getDocumentHash()));
 		map.put("availableReaderProviders", availableReaderProviders);
-		map.put("selectedReaderLang", selectedReaderLang);
-		map.put("selectedReaderSpeed", selectedReaderSpeed);
-		map.put("selectedReaderProvider", selectedReaderProvider);
+		map.put("selectedReaderLang", config.getReaderLanguage());
+		map.put("selectedReaderSpeed", config.getReaderSpeed());
+		map.put("selectedReaderProvider", config.getReaderProvider());
 		map.put("supportedReaderSpeed", supportedReaderSpeed);
 		map.put("supportedReaderLanguages", supportedReaderLanguages);
 		
-		map.put("selectedDocumentHash", selectedDocumentHash);
+		map.put("selectedDocumentHash", config.getDocumentHash());
 		map.put("availableDocuments", service.getDocumentMap());
 		
 		message = errorMessage = null;
@@ -146,10 +143,9 @@ class RootRoute implements Route {
 			}
 	    } else {
 	    	Matcher matcher = buttonPattern.matcher(request.body());
-	    	String pressedButton = null;
 	    	
 			if (matcher.find()) {
-				pressedButton = matcher.group();
+				String pressedButton = matcher.group();
 				handleButtonPress(pressedButton, request);
 			}
 	    }
@@ -160,75 +156,97 @@ class RootRoute implements Route {
 		return null;
 	}
 	
-	private void updateVariables(boolean readFromConfig) throws Exception {
-		if (readFromConfig) {
-			selectedVolumeLevel = ini.get("Device", "volume");
-			if (!supportedVolumeLevels.containsValue(selectedVolumeLevel)) {
-				selectedVolumeLevel = supportedVolumeLevels.values().iterator().next();
-				int volume = Integer.valueOf(selectedVolumeLevel);
-				if (service.getAudioVolume() != volume) {
-					service.setAudioVolume(volume);
-				}
+	private void preconfiguration() throws Exception {
+		if (!supportedVolumeLevels.containsValue(config.getVolume())) {
+			String firstVolume = supportedVolumeLevels.values().iterator().next();
+			config.setVolume(firstVolume);
+			int volume = Integer.valueOf(firstVolume);
+			if (service.getAudioVolume() != volume) {
+				service.setAudioVolume(volume);
 			}
-			
-			selectedFeatureDetection = ini.get("Feature detection", "featureDetection");
-			if (selectedFeatureDetection == null) {
-				selectedFeatureDetection = "off";
-			}
-			
-			selectedLog = ini.get("Web UI", "log");
-			if (selectedLog == null) {
-				selectedLog = "on";
-			}
-			
-			selectedPageContent = ini.get("Web UI", "content");
-			if (selectedPageContent == null) {
-				selectedPageContent = "on";
-			}
-			
-			selectedDocumentHash = ini.get("Document", "selectedDocumentHash");
-			if (!availableDocuments.containsKey(selectedDocumentHash)) {
-				selectedDocumentHash = availableDocuments.keySet().iterator().next();
-			}
-			updateDocumentInfo(selectedDocumentHash);
-			
-			String provider = ini.get("Reader", "provider");
-			String speed = ini.get("Reader", "speed");
-			String lang = ini.get("Reader", "language");
-			
-			if (ArrayUtil.arrayContains(availableReaderProviders, provider)) {
-				selectedReaderProvider = provider;
-				service.setCurrentReader(provider);
-			}
-			
-			selectedReaderLang = lang;
-			selectedReaderSpeed = speed;
 		}
 		
-		if (selectedReaderProvider == null) {
-			selectedReaderProvider = availableReaderProviders[0];
-			service.setCurrentReader(selectedReaderProvider);
+		if (config.getFeatureDetection() == null) {
+			config.setFeatureDetection("off");
+		}
+		
+		if (config.getLog() == null) {
+			config.setLog("on");
+		}
+		
+		if (config.getContent() == null) {
+			config.setContent("on");
+		}
+		
+		String documentHash = config.getDocumentHash();
+		if (!availableDocuments.containsKey(documentHash)) {
+			// TODO handle runtime exception
+			documentHash = availableDocuments.keySet().iterator().next();
+		}
+		updateDocumentInfo(documentHash);
+		
+		String provider = config.getReaderProvider();
+		if (!ArrayUtil.arrayContains(availableReaderProviders, provider)) {
+			provider = availableReaderProviders[0];
+		} 
+		updateReaderInfo(provider);
+	}
+	
+	private void updateReaderInfo(String provider) {
+		String currentProvider = config.getReaderProvider();
+		
+		if (!provider.equals(currentProvider)) {
+			config.setReaderProvider(provider);
+		}
+		
+		try {
+			service.setCurrentReader(provider);
+		} catch (Exception e) {
+			errorMessage = "Could not update reader settings";
+			// TODO do something about it, otherwise the next 2 lines will probably fail too
+		}
+		
+		supportedReaderSpeed = service.getCurrentSupportedSpeed();
+		supportedReaderLanguages = service.getCurrentSupportedLanguages();
+		
+		try {
+			updateReaderSettings();
+		} catch (Exception e) {
+			config.setReaderSpeed(supportedReaderSpeed[0]);
+			config.setReaderLanguage(supportedReaderLanguages[0]);
 			
-			supportedReaderSpeed = service.getCurrentSupportedSpeed();
-			supportedReaderLanguages = service.getCurrentSupportedLanguages();
-			
-			selectedReaderLang = supportedReaderLanguages[0];
-			selectedReaderSpeed = supportedReaderSpeed[0];
-		} else {
-			supportedReaderSpeed = service.getCurrentSupportedSpeed();
-			supportedReaderLanguages = service.getCurrentSupportedLanguages();
+			try {
+				updateReaderSettings();
+			} catch (IOException e1) {
+				errorMessage = "Could not update speed and / or language settings";
+			}
+		}
+	}
+	
+	private void updateReaderSettings() throws IOException {
+		service.setCurrentReaderSpeed(config.getReaderSpeed());
+		service.setCurrentReaderLanguage(config.getReaderLanguage());
+	}
+	private void updateDocumentInfo(String documentHash) {
+		config.setDocumentHash(documentHash);
+		
+		try {
+			service.setDocument(documentHash);
+		} catch (Exception e) {
+			errorMessage = "Could not set the document";
 		}
 	}
 	
 	private void handleButtonPress(String buttonName, Request request) {
 		switch (buttonName) {
 		case "btn_set_delete":
-			service.deleteDocument(selectedDocumentHash);
+			service.deleteDocument(config.getDocumentHash());
+			// TODO handle exception in case no other docs exist
 			updateDocumentInfo(availableDocuments.keySet().iterator().next());
 			break;
 		case "btn_set_read":
 			try {
-				service.startReading(selectedFeatureDetection.equals("on"));
+				service.startReading(config.getFeatureDetection().equals("on"));
 			} catch (IOException e) {
 				errorMessage = "Coult not start the reader";
 			}
@@ -243,52 +261,43 @@ class RootRoute implements Route {
 			updateDocumentInfo(RequestUtil.parseBodyString(request.body(), "set_book"));
 			break;
 		case "btn_set_reader":
-			selectedReaderProvider = RequestUtil.parseBodyString(request.body(), "set_reader");
-			try {
-				service.setCurrentReader(selectedReaderProvider);
-			} catch (Exception e1) {
-				errorMessage = "Could not set the reader provider";
-			}
-			ini.put("Reader", "provider", selectedReaderProvider);
+			updateReaderInfo(RequestUtil.parseBodyString(request.body(), "set_reader"));
 			break;
 		case "btn_set_lang":
-			selectedReaderLang = RequestUtil.parseBodyString(request.body(), "set_lang");
+			String selectedReaderLang = RequestUtil.parseBodyString(request.body(), "set_lang");
 			try {
 				service.setCurrentReaderLanguage(selectedReaderLang);
+				config.setReaderLanguage(selectedReaderLang);
 			} catch (IOException e) {
 				errorMessage = "Could not set the reader's language" + e.getMessage();
 			}
-			ini.put("Reader", "language", selectedReaderLang);
 			break;
 		case "btn_set_reading_speed":
-			selectedReaderSpeed = RequestUtil.parseBodyString(request.body(), "set_reading_speed");
+			String selectedReaderSpeed = RequestUtil.parseBodyString(request.body(), "set_reading_speed");
 			try {
 				service.setCurrentReaderSpeed(selectedReaderSpeed);
+				config.setReaderSpeed(selectedReaderSpeed);
 			} catch (IOException e) {
 				errorMessage = "Could not set the reader's speed";
 			}
-			ini.put("Reader", "speed", selectedReaderSpeed);
 			break;
 		case "btn_set_volume":
-			selectedVolumeLevel = RequestUtil.parseBodyString(request.body(), "set_volume");
+			String selectedVolumeLevel = RequestUtil.parseBodyString(request.body(), "set_volume");
 			try {
 				service.setAudioVolume(Integer.parseInt(selectedVolumeLevel));
-				ini.put("Device", "volume", selectedVolumeLevel);
+				config.setVolume(selectedVolumeLevel);
 			} catch (Exception e) {
 				errorMessage = "Could not change the volume";
 			}
 			break;
 		case "btn_set_feature_detection":
-			selectedFeatureDetection = RequestUtil.parseBodyString(request.body(), "set_feature_detection");
-			ini.put("Feature detection", "featureDetection", selectedFeatureDetection);
+			config.setFeatureDetection(RequestUtil.parseBodyString(request.body(), "set_feature_detection"));
 			break;
 		case "btn_set_logs":
-			selectedLog = RequestUtil.parseBodyString(request.body(), "set_logs");
-			ini.put("Web UI", "log", selectedLog);
+			config.setLog(RequestUtil.parseBodyString(request.body(), "set_logs"));
 			break;
 		case "btn_set_page_content":
-			selectedPageContent = RequestUtil.parseBodyString(request.body(), "set_page_content");
-			ini.put("Web UI", "content", selectedPageContent);
+			config.setContent(RequestUtil.parseBodyString(request.body(), "set_page_content"));
 			break;
 		case "btn_set_manage_device":
 			String action = RequestUtil.parseBodyString(request.body(), "set_manage_device");
@@ -314,16 +323,6 @@ class RootRoute implements Route {
 			ini.store();
 		} catch (IOException e) {
 			errorMessage = "Could not store settings";
-		}
-	}
-	
-	private void updateDocumentInfo(String documentHash) {
-		selectedDocumentHash = documentHash;
-		ini.put("Document", "selectedDocumentHash", selectedDocumentHash);
-		try {
-			service.setDocument(selectedDocumentHash);
-		} catch (Exception e) {
-			errorMessage = "Could not set the document";
 		}
 	}
 }
