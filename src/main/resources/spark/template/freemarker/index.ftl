@@ -36,8 +36,8 @@
 		<br />
 		
 		<form method='post' action="/">
-			<label for="set_book">Document</label>
-		    <select id="set_book" name="set_book">
+			<label for="set_document">Document</label>
+		    <select id="set_document" name="set_document">
 	    		<#list availableDocuments?keys as key>
 	    			<#if selectedDocumentHash?? && selectedDocumentHash == key>
 	    				<option selected value="${key}">${availableDocuments[key]}</option>
@@ -46,7 +46,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_book">Apply</button>
+		    <button name="btn_set_document">Apply</button>
 		    
 		    <br />
 			

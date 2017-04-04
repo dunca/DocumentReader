@@ -260,8 +260,8 @@ class RootRoute implements Route {
 		case "btn_set_continue":
 			// TODO
 			break;
-		case "btn_set_book":
-			updateDocumentInfo(RequestUtil.parseBodyString(request.body(), "set_book"));
+		case "btn_set_document":
+			updateDocumentInfo(RequestUtil.parseBodyString(request.body(), "set_document"));
 			break;
 		case "btn_set_reader":
 			updateReaderInfo(RequestUtil.parseBodyString(request.body(), "set_reader"));
