@@ -121,4 +121,8 @@ public class DocumentReaderService {
 			documentLibrary.update();
 		}
 	}
+	
+	public void resetCurrentDocumentBookmark() {
+		document.resetBookmark();
+	}
 }

@@ -124,6 +124,14 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		}
 	}
 	
+	public void resetBookmark() {
+		try {
+			updateBookmarkPage(0, 0);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Could not reset bookmark", e);
+		}
+	}
+	
 	public void postReadingOperations() {
 		try {
 			wrapBookmark();

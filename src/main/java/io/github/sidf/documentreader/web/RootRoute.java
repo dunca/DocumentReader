@@ -259,8 +259,8 @@ class RootRoute implements Route {
 		case "btn_set_stop":
 			service.stopReading();
 			break;
-		case "btn_set_continue":
-			// TODO
+		case "btn_set_clear_bookmark":
+			service.resetCurrentDocumentBookmark();
 			break;
 		case "btn_set_document":
 			updateDocumentInfo(RequestUtil.parseBodyString(request.body(), "set_document"));

@@ -20,7 +20,7 @@
 			
 			<form method='post' action="/">
 				<button name="btn_set_read">Read</button>
-				<button name="btn_set_continue">Continue</button>
+				<button name="btn_set_reset_bookmark">Remove bookmark</button>
 				<button name="btn_set_stop">Stop</button>
 				<button name="btn_set_delete">Delete document</button>
 			</form>
