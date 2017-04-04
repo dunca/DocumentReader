@@ -13,17 +13,17 @@ import io.github.sidf.documentreader.service.DocumentReaderService;
 
 public class Application {
 	private static final int requiredFileCount = 4;
-	private static String projectName;
+	private static String logPath;
 	private static Logger logger;
 	
 	static {
 		String packageName = Application.class.getPackage().getName();
 		logger = Logger.getLogger(packageName);
-		projectName = packageName.substring(packageName.lastIndexOf('.') + 1);
+		logPath = String.format("%s-log.html", packageName.substring(packageName.lastIndexOf('.') + 1));
 	}
 	
 	public static void main(String[] args) throws Exception {
-		FileHandler htmlHandler = new FileHandler(String.format("%s-log.html", projectName), 10240, 1, true);
+		FileHandler htmlHandler = new FileHandler(logPath, 1024 * 100, 1, false);
 		htmlHandler.setFormatter(new HtmlLogFormatter());
 		logger.addHandler(htmlHandler);
 		
@@ -51,7 +51,7 @@ public class Application {
 		AccessPoint accessPoint = new AccessPoint(ipAddress, args[2]);
 		accessPoint.start();
 		
-		WebInterface webInterface = new WebInterface(args[0], args[1],
+		WebInterface webInterface = new WebInterface(args[0], args[1], logPath,
 													 new DocumentReaderService(new File(args[0]), new File(args[3])));
 		webInterface.start();
 	}
