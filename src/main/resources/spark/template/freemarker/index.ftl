@@ -6,6 +6,8 @@
 	</head>
 
 	<body>
+		<#assign disabled = isReading?then('disabled', '')>
+	
 		<#if message??>
 			Info: ${message}
 		</#if>
@@ -19,10 +21,13 @@
 			Selected document: ${selectedDocument}
 			
 			<form method='post' action="/">
-				<button name="btn_set_read">Read</button>
-				<button name="btn_set_reset_bookmark">Remove bookmark</button>
-				<button name="btn_set_stop">Stop</button>
-				<button name="btn_set_delete">Delete document</button>
+				<#if isReading == true>
+					<button name="btn_set_stop">Stop</button>
+				<#else>
+					<button name="btn_set_read">Read</button>
+				</#if>
+				<button name="btn_set_reset_bookmark" ${disabled}>Remove bookmark</button>
+				<button name="btn_set_delete" ${disabled}>Delete document</button>
 			</form>
 			
 		</#if>
@@ -46,7 +51,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_document">Apply</button>
+		    <button name="btn_set_document" ${disabled}>Apply</button>
 		    
 		    <br />
 			
@@ -60,7 +65,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_reader">Apply</button>
+		    <button name="btn_set_reader" ${disabled}>Apply</button>
 		    
 		    <br />
 			
@@ -117,7 +122,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_feature_detection">Apply</button>
+		    <button name="btn_set_feature_detection" ${disabled}>Apply</button>
 		    
 		    <br /><br />
 			
@@ -154,7 +159,7 @@
 			  <option value="reboot">reboot</option>
 			  <option value="shutdown">shut down</option>
 			</select>
-		    <button name="btn_set_manage_device">Apply</button>
+		    <button name="btn_set_manage_device" ${disabled}>Apply</button>
 	    </form>
 	</body>
 </html>

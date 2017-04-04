@@ -32,6 +32,7 @@ class RootRoute implements Route {
 	private String libraryPath;
 	private Map<String, Object> map;
 	
+	private boolean isReading;
 	private String message;
 	private String errorMessage;
 	
@@ -89,7 +90,8 @@ class RootRoute implements Route {
 	
 	private Object handleGet() {
 		updateDocumentInfo(config.getDocumentHash());
-		
+
+		map.put("isReading", isReading);
 		map.put("message", message);
 		map.put("errorMessage", errorMessage);
 		
@@ -252,12 +254,14 @@ class RootRoute implements Route {
 		case "btn_set_read":
 			try {
 				service.startReading(config.getFeatureDetection().equals("on"));
+				isReading = true;
 			} catch (IOException e) {
 				errorMessage = "Coult not start the reader";
 			}
 			break;
 		case "btn_set_stop":
 			service.stopReading();
+			isReading = false;
 			break;
 		case "btn_set_clear_bookmark":
 			service.resetCurrentDocumentBookmark();
