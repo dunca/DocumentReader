@@ -88,9 +88,7 @@ class RootRoute implements Route {
 	}
 	
 	private Object handleGet() {
-		if (config.getDocumentHash() == null && availableDocuments.size() != 0) {
-			config.setDocumentHash(availableDocuments.entrySet().iterator().next().getKey());
-		}
+		updateDocumentInfo(config.getDocumentHash());
 		
 		map.put("message", message);
 		map.put("errorMessage", errorMessage);
@@ -178,12 +176,7 @@ class RootRoute implements Route {
 			config.setContent("on");
 		}
 		
-		String documentHash = config.getDocumentHash();
-		if (!availableDocuments.containsKey(documentHash)) {
-			// TODO handle runtime exception
-			documentHash = availableDocuments.keySet().iterator().next();
-		}
-		updateDocumentInfo(documentHash);
+		updateDocumentInfo(config.getDocumentHash());
 		
 		String provider = config.getReaderProvider();
 		if (!ArrayUtil.arrayContains(availableReaderProviders, provider)) {
@@ -227,7 +220,16 @@ class RootRoute implements Route {
 		service.setCurrentReaderSpeed(config.getReaderSpeed());
 		service.setCurrentReaderLanguage(config.getReaderLanguage());
 	}
+	
 	private void updateDocumentInfo(String documentHash) {
+		if (!availableDocuments.containsKey(documentHash)) {
+			if (availableDocuments.size() != 0) {
+				documentHash = availableDocuments.keySet().iterator().next();
+			} else {
+				documentHash = null;
+			}
+		}
+		
 		config.setDocumentHash(documentHash);
 		
 		try {
@@ -240,9 +242,10 @@ class RootRoute implements Route {
 	private void handleButtonPress(String buttonName, Request request) {
 		switch (buttonName) {
 		case "btn_set_delete":
-			service.deleteDocument(config.getDocumentHash());
-			// TODO handle exception in case no other docs exist
-			updateDocumentInfo(availableDocuments.keySet().iterator().next());
+			String documentHash = config.getDocumentHash();
+			service.deleteDocument(documentHash);
+			availableDocuments.remove(documentHash);
+			updateDocumentInfo(null);
 			break;
 		case "btn_set_read":
 			try {
