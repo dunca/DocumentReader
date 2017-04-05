@@ -41,7 +41,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		}
 		
 		if (bookmarkIniMap == null) {
-			bookmarkIniMap = parseBookmarkIniFile(bookmarkIniFilePath);
+			bookmarkIniMap = parseBookmarkIniFile();
 		}
 		
 		documentPath = file.getPath();
@@ -114,7 +114,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		return page;
 	}
 	
-	private static Map<String, String[]> parseBookmarkIniFile(File bookmarkIniFile) {
+	private static Map<String, String[]> parseBookmarkIniFile() {
 		Map<String, String[]> map = new HashMap<>();
 		
 		for (String hash : bookmarkIni.keySet()) {
