@@ -19,12 +19,13 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 	private String documentId;
 	private String documentPath;
 	private String documentName;
+	private File currentPagePath;
 	private static Ini bookmarkIni;
 	private DocumentBookmark bookmark;
 	private static Map<String, String[]> bookmarkIniMap;
 	private static Logger logger = Logger.getLogger(Document.class.getName());
 	
-	public Document(File file, File bookmarkIniFilePath) throws Exception {
+	public Document(File file, File bookmarkIniFilePath, File currentPagePath) throws Exception {
 		this.file = file;
 		
 		String filePath = file.getPath();
@@ -45,6 +46,7 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		
 		documentPath = file.getPath();
 		documentName = file.getName();
+		this.currentPagePath = currentPagePath;
 		documentId = FileUtil.getMd5Hash(documentPath);
 		
 		int pageIndex = 0;
@@ -88,6 +90,10 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 	
 	public File getFile() {
 		return file;
+	}
+	
+	public File getCurrentPagePath() {
+		return currentPagePath;
 	}
 	
 	public void delete() {

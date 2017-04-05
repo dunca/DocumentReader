@@ -47,12 +47,19 @@ public class Application {
 		}
 		
 		Ini ini = new Ini(new File(args[1]));
+		
+		String currentPagePath = ini.get("Document", "currentPagePath");
+		if (currentPagePath == null) {
+			logger.severe("The currentPagePath is invalid");
+			return;
+		}
+		
 		String ipAddress = ini.get("Access point", "ipAddress");
 		AccessPoint accessPoint = new AccessPoint(ipAddress, args[2]);
 		accessPoint.start();
 		
 		WebInterface webInterface = new WebInterface(args[0], args[1], logPath,
-													 new DocumentReaderService(new File(args[0]), new File(args[3])));
+													 new DocumentReaderService(new File(args[0]), new File(args[3]), new File(currentPagePath)));
 		webInterface.start();
 	}
 	

@@ -1,12 +1,15 @@
 package io.github.sidf.documentreader.web.util;
 
+import java.io.File;
 import org.ini4j.Ini;
+import java.io.IOException;
+import org.ini4j.InvalidFileFormatException;
 
 public class ConfigUtil {
 	private Ini ini;
 	
-	public ConfigUtil(Ini ini) {
-		this.ini = ini;
+	public ConfigUtil(String configPath) throws InvalidFileFormatException, IOException {
+		this.ini = new Ini(new File(configPath));
 	}
 	
 	public String getDocumentHash() {
@@ -41,6 +44,14 @@ public class ConfigUtil {
 		return ini.get("Web UI", "content");
 	}
 	
+	public String getCurrentPagePath() {
+		return ini.get("Document", "currentPagePath");
+	}
+	
+	public String getPort() {
+		return ini.get("Web UI", "port");
+	}
+	
 	public void setDocumentHash(String hash) {
 		ini.put("Document", "selectedDocumentHash", hash);
 	}
@@ -71,5 +82,9 @@ public class ConfigUtil {
 	
 	public void setContent(String mode) {
 		ini.put("Web UI", "content", mode);
+	}
+	
+	public void store() throws IOException {
+		ini.store();
 	}
 }

@@ -1,6 +1,5 @@
 package io.github.sidf.documentreader.document;
 
-import java.awt.event.ItemEvent;
 import java.io.File;
 import java.util.Map;
 import java.util.List;
@@ -14,11 +13,12 @@ import java.io.FileNotFoundException;
 
 public class DocumentLibrary implements AutoCloseable {
 	private File libraryPath;
+	private File currentPagePath;
 	private File bookmarkIniFilePath;
 	private List<Document> documents = new ArrayList<Document>();
 	private static Logger logger = Logger.getLogger(DocumentLibrary.class.getName());
 	
-	public DocumentLibrary(File libraryPath, File bookmarkFilePath) throws FileNotFoundException {
+	public DocumentLibrary(File libraryPath, File bookmarkFilePath, File currentPagePath) throws FileNotFoundException {
 		if (!libraryPath.exists() || !libraryPath.isDirectory()) {
 			throw new FileNotFoundException(String.format("%s does not exist as a directory", libraryPath));
 		} else if (!bookmarkFilePath.exists()) {
@@ -26,6 +26,7 @@ public class DocumentLibrary implements AutoCloseable {
 		}
 		
 		this.bookmarkIniFilePath = bookmarkFilePath;
+		this.currentPagePath = currentPagePath;
 		this.libraryPath = libraryPath;
 		update();
 	}
@@ -41,7 +42,7 @@ public class DocumentLibrary implements AutoCloseable {
 			for (String documentProvider : DocumentFactory.getDocumentProviders()) {
 				Document document = null;
 				try {
-					document = DocumentFactory.getInstance(documentProvider, file, bookmarkIniFilePath);
+					document = DocumentFactory.getInstance(documentProvider, file, bookmarkIniFilePath, currentPagePath);
 				} catch (Exception e) {
 					file.delete();
 					logger.log(Level.WARNING, "Could not initialize document, deleted", e);

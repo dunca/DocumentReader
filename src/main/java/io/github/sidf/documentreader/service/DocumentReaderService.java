@@ -28,8 +28,8 @@ public class DocumentReaderService {
 	private static Thread featureDetectionThread;
 	
 	
-	public DocumentReaderService(File libraryPath, File bookmarkFilePath) throws FileNotFoundException {
-		documentLibrary = new DocumentLibrary(libraryPath, bookmarkFilePath);
+	public DocumentReaderService(File libraryPath, File bookmarkFilePath, File currentPagePath) throws FileNotFoundException {
+		documentLibrary = new DocumentLibrary(libraryPath, bookmarkFilePath, currentPagePath);
 	}
 	
 	public void setDocument(String documentId) throws Exception {

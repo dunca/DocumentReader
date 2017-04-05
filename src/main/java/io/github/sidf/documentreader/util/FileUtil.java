@@ -7,7 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import javax.xml.bind.DatatypeConverter;
 import java.nio.file.StandardCopyOption;
@@ -44,5 +47,13 @@ public class FileUtil {
 	
 	public static void inputStreamToFile(InputStream is, String locationPath) throws IOException {
 		Files.copy(is, Paths.get(locationPath), StandardCopyOption.REPLACE_EXISTING);
+	}
+	
+	public static void stringToFile(String source, String locationPath) throws FileNotFoundException {
+		try(PrintWriter writer = new PrintWriter(locationPath, "UTF-8")) {
+			writer.print(source);
+		} catch (UnsupportedEncodingException e) {
+			// ignore
+		}
 	}
 }

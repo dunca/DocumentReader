@@ -2,20 +2,20 @@ package io.github.sidf.documentreader.web;
 
 import spark.Route;
 import spark.Spark;
-import java.io.File;
 import java.util.Map;
 import org.ini4j.Ini;
 import spark.Request;
 import spark.Response;
 import java.util.HashMap;
 import spark.ModelAndView;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
-import javax.xml.validation.SchemaFactoryConfigurationError;
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -28,14 +28,13 @@ import io.github.sidf.documentreader.service.DocumentReaderService;
 class RootRoute implements Route {
 	private Request request;
 	private Response response;
-	private String configPath;
 	private String libraryPath;
 	private Map<String, Object> map;
 	
-	private boolean isReading;
 	private String message;
 	private String errorMessage;
 	
+	private boolean isReading;
 	private String[] supportedReaderSpeed;
 	private String[] availableReaderProviders;
 	private String[] supportedReaderLanguages;
@@ -45,26 +44,22 @@ class RootRoute implements Route {
 	private Map<String, String> availableDocuments;
 	private static final String[] standardSwitchOptions = new String[] { "on", "off" };
 	
-	private static Ini ini;
 	private static ConfigUtil config;
 	private static DocumentReaderService service;
 	private static final Pattern buttonPattern = Pattern.compile("btn_set\\w+(?=\\=)");
 	
 	public RootRoute(String libraryPath, String configPath, DocumentReaderService documentReaderService) throws Exception {
-		this.configPath = configPath;
 		this.libraryPath = libraryPath;
 		service = documentReaderService;
-		ini = new Ini(new File(configPath));
-		
-		config = new ConfigUtil(ini);
+		config = new ConfigUtil(configPath);
 		
 		supportedVolumeLevels.put("100 %", "100");
 		supportedVolumeLevels.put("50 %", "50");
 		supportedVolumeLevels.put("25 %", "25");
 		supportedVolumeLevels.put("0 %", "0");
 		
-		availableDocuments = service.getDocumentMap();
 		availableReaderProviders = service.getReaderProviders();
+		availableDocuments = service.getDocumentMap();
 		preconfiguration();
 	}
 	
@@ -186,7 +181,7 @@ class RootRoute implements Route {
 		} 
 		updateReaderInfo(provider);
 		
-		ini.store();
+		config.store();
 	}
 	
 	private void updateReaderInfo(String provider) {
@@ -329,7 +324,7 @@ class RootRoute implements Route {
 		}
 		
 		try {
-			ini.store();
+			config.store();
 		} catch (IOException e) {
 			errorMessage = "Could not store settings";
 		}
