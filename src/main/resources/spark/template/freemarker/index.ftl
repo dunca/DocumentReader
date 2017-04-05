@@ -4,27 +4,48 @@
 		<meta charset="UTF-8">
 		<title>DocumentReader</title>
 	</head>
-	
-	<#if selectedLog == "on">
+		<#assign logUrl = "log">
+		<#assign logDiv = "logDiv">
+		<#assign isReadingUrl = "isReading">
+		
 		<script>
-	        function loadLog() {
+	        function asyncRequest(url) {
 			  var xhttp = new XMLHttpRequest();
 			  xhttp.onreadystatechange = function() {
 			    if (this.readyState == 4 && this.status == 200) {
-			     document.getElementById("logDiv").innerHTML = this.responseText;
+			    	if (url === "${logUrl}") {
+			    		document.getElementById("${logDiv}").innerHTML = this.responseText;
+			    	} else if (url === "${isReadingUrl}" && this.responseText === "false") {
+			    		location.reload();
+			    	}
 			    }
 			  };
-			  xhttp.open("GET", "log", true);
+			  xhttp.open("GET", url, true);
 			  xhttp.send();
-			  
-			   setTimeout(loadLog, 1500);
+			   
+				<#if selectedLog == "on">
+				setTimeout(function() {
+					asyncRequest("${logUrl}");
+				}, 2000);
+				</#if>
+				
+				<#if isReading == true>
+				setTimeout(function() {
+					asyncRequest("${isReadingUrl}");
+				}, 4000);
+				</#if>
 			}
+			<#if selectedLog == "on">
+			asyncRequest("${logUrl}");
+			</#if>
 			
-			loadLog();
+			<#if isReading == true>
+			asyncRequest("${isReadingUrl}");
+			</#if>
 		</script>
-	</#if>
 	
 	<body>
+	<div id="abcdef123"></div>
 		<#assign disabled = isReading?then('disabled', '')>
 	
 		<#if message??>
@@ -181,7 +202,7 @@
 		    <button name="btn_set_manage_device" ${disabled}>Apply</button>
 	    </form>
 	    
-	    <div id="logDiv">
+	    <div id="${logDiv}">
     	</dir>
 	</body>
 </html>

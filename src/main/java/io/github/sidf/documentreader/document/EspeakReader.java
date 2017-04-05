@@ -1,5 +1,6 @@
 package io.github.sidf.documentreader.document;
 
+import java.io.File;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -13,8 +14,8 @@ public class EspeakReader extends Reader {
 	private Map<Language, String> languageMap = new HashMap<>();
 	private static final String espeakCommandTemplate =  "/usr/bin/espeak -s %s -v %s \"%s\" --stdout | aplay";
 	
-	public EspeakReader(Document document) throws Exception {
-		super(document);
+	public EspeakReader(Document document, File isReadingPath) throws Exception {
+		super(document, isReadingPath);
 		
 		speedMap.put(Speed.FAST, "200");
 		speedMap.put(Speed.MEDIUM, "150");

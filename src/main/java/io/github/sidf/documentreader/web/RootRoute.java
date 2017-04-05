@@ -327,4 +327,8 @@ class RootRoute implements Route {
 			errorMessage = "Could not store settings";
 		}
 	}
+	
+	public void setIsReading(boolean flag) {
+		isReading = flag;
+	}
 }

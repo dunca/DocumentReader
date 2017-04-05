@@ -50,7 +50,13 @@ public class Application {
 		
 		String currentPagePath = ini.get("Document", "currentPagePath");
 		if (currentPagePath == null) {
-			logger.severe("The currentPagePath is invalid");
+			logger.severe("The currentPagePath setting is invalid");
+			return;
+		}
+		
+		String isReadingPath = ini.get("Document", "isReadingPath");
+		if (isReadingPath == null) {
+			logger.severe("The isReadingPath setting is invalid");
 			return;
 		}
 		
@@ -58,8 +64,9 @@ public class Application {
 		AccessPoint accessPoint = new AccessPoint(ipAddress, args[2]);
 		accessPoint.start();
 		
-		WebInterface webInterface = new WebInterface(args[0], args[1], logPath,
-													 new DocumentReaderService(new File(args[0]), new File(args[3]), new File(currentPagePath)));
+		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]), 
+																  new File(currentPagePath), new File(isReadingPath));
+		WebInterface webInterface = new WebInterface(args[0], args[1], logPath, isReadingPath, service);
 		webInterface.start();
 	}
 	

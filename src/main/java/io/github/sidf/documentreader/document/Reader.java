@@ -1,5 +1,6 @@
 package io.github.sidf.documentreader.document;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -12,11 +13,13 @@ public abstract class Reader implements Runnable {
 	private Speed speed;
 	private Language language;
 	private Document document;
+	private File isReadingPath;
 	private boolean isStillRunning;
 	private static Logger logger = Logger.getLogger(Reader.class.getName());
 	
-	public Reader(Document document) throws Exception {
+	public Reader(Document document, File isReadingPath) throws Exception {
 		this.document = document;
+		this.isReadingPath = isReadingPath;
 	}
 
 	public Document getDocument() {
@@ -65,6 +68,12 @@ public abstract class Reader implements Runnable {
 		
 		int pageIndex = 0;
 		
+		try {
+			isReadingPath.createNewFile();
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Could not create the file that represents the reading status", e);
+		}
+		
 		outerLoop:
 		for (DocumentPage page : document) {
 			logger.info(String.format("Reading page with the session index of %d", pageIndex));
@@ -95,6 +104,8 @@ public abstract class Reader implements Runnable {
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Could not stop fully stop the reader", e);
 		}
+		
+		isReadingPath.delete();
 	}
 	
 	public abstract String[] getSupportedSpeed();

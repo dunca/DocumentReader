@@ -16,10 +16,12 @@ public class WebInterface {
 	private String logPath;
 	private String configPath;
 	private String libraryPath;
+	private String isReadingPath;
 	private String currentPagePath;
 	private static DocumentReaderService service;
 	
-	public WebInterface(String libraryPath, String configPath, String logPath, DocumentReaderService documentReaderService) throws IOException {
+	public WebInterface(String libraryPath, String configPath, String logPath, String isReadingPath,
+						DocumentReaderService documentReaderService) throws IOException {
 		ConfigUtil configUtil = new ConfigUtil(configPath);
 		
 		this.port = Integer.valueOf(configUtil.getPort());
@@ -28,6 +30,7 @@ public class WebInterface {
 		this.configPath = configPath;
 		this.libraryPath = libraryPath;
 		service = documentReaderService;
+		this.isReadingPath = isReadingPath;
 		
 		currentPagePath = configUtil.getCurrentPagePath();
 	}
@@ -36,11 +39,11 @@ public class WebInterface {
 		Spark.port(port);
 		Spark.ipAddress("0.0.0.0");
 		Spark.staticFileLocation("/spark/public");
-		Route route = new RootRoute(libraryPath, configPath, service);
+		RootRoute rootRoute = new RootRoute(libraryPath, configPath, service);
 		
-		Spark.get("/", route);
+		Spark.get("/", rootRoute);
 		
-		Spark.post("/", route);
+		Spark.post("/", rootRoute);
 		
 		Spark.get("/log", new Route() {
 			@Override
@@ -53,6 +56,17 @@ public class WebInterface {
 			@Override
 			public Object handle(Request request, Response response) throws Exception {
 				return FileUtil.fileToString(new File(currentPagePath));
+			}
+		});
+		
+		Spark.get("/isReading", new Route() {
+			@Override
+			public Object handle(Request request, Response response) throws Exception {
+				boolean isReading = new File(isReadingPath).exists();
+				if (!isReading) {
+					rootRoute.setIsReading(false);
+				}
+				return isReading;
 			}
 		});
 	}

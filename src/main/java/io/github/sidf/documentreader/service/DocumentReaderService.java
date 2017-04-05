@@ -30,7 +30,11 @@ public class DocumentReaderService {
 	private static Thread lightingThread;
 	private static Thread featureDetectionThread;
 	
-	public DocumentReaderService(File libraryPath, File bookmarkFilePath, File currentPagePath) throws FileNotFoundException {
+	private static File isReadingPath;
+	
+	public DocumentReaderService(File libraryPath, File bookmarkFilePath, File currentPagePath, File isReadingPath)
+			                    throws FileNotFoundException {
+		this.isReadingPath = isReadingPath;
 		documentLibrary = new DocumentLibrary(libraryPath, bookmarkFilePath, currentPagePath);
 	}
 	
@@ -47,7 +51,7 @@ public class DocumentReaderService {
 	}
 	
 	public void setCurrentReader(String readerName) throws Exception {
-		readerInstance = ReaderFactory.getInstance(readerName, document);
+		readerInstance = ReaderFactory.getInstance(readerName, document, isReadingPath);
 	}
 	
 	public void startReading(boolean featureDetectionEnabled) throws IOException {
