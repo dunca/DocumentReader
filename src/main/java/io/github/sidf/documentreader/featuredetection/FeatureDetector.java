@@ -25,8 +25,7 @@ import io.github.sidf.documentreader.util.CommandUtil;
 public class FeatureDetector implements Runnable, AutoCloseable {
 	private boolean isStillRunning;
 	private VideoCapture captureDevice;
-	private static FeatureDetector instance;
-	private ScheduledFuture scheduledFuture;
+	private ScheduledFuture<?> scheduledFuture;
 	private static CascadeClassifier faceClassifier;
 	private static CascadeClassifier leftEyeClassifier;
 	private static CascadeClassifier rightEyeClassifier;
@@ -55,14 +54,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 			faceClassifier = new CascadeClassifier(PathUtil.resourcePathToFile("cascades/lbpcascade_frontalface.xml"));
 		}
 	}
-	
-//	public static FeatureDetector getInstance() throws IOException {
-//		if (instance == null) {
-//			instance = new FeatureDetector();
-//		}
-//		return instance;
-//	}
-	
+		
 	public void run() {
 		featureDetectorLoop();
 	}

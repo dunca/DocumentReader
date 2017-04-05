@@ -6,7 +6,6 @@ import java.io.File;
 import spark.Request;
 import spark.Response;
 import java.io.IOException;
-import org.ini4j.InvalidFileFormatException;
 
 import io.github.sidf.documentreader.util.FileUtil;
 import io.github.sidf.documentreader.web.util.ConfigUtil;
@@ -20,7 +19,7 @@ public class WebInterface {
 	private String currentPagePath;
 	private static DocumentReaderService service;
 	
-	public WebInterface(String libraryPath, String configPath, String logPath, DocumentReaderService documentReaderService) throws InvalidFileFormatException, IOException {
+	public WebInterface(String libraryPath, String configPath, String logPath, DocumentReaderService documentReaderService) throws IOException {
 		ConfigUtil configUtil = new ConfigUtil(configPath);
 		
 		this.port = Integer.valueOf(configUtil.getPort());
@@ -37,7 +36,7 @@ public class WebInterface {
 		Spark.port(port);
 		Spark.ipAddress("0.0.0.0");
 		Spark.staticFileLocation("/spark/public");
-		Route route = new RootRoute(libraryPath, configPath ,service);
+		Route route = new RootRoute(libraryPath, configPath, service);
 		
 		Spark.get("/", route);
 		

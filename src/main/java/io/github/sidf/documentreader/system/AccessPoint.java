@@ -3,23 +3,18 @@ package io.github.sidf.documentreader.system;
 import java.io.File;
 import java.util.HashMap;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.ini4j.InvalidFileFormatException;
 
-import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.FileUtil;
+import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.ValidatableCommand;
 
-public class AccessPoint implements AutoCloseable {
+public class AccessPoint {
 	private static Logger logger = Logger.getLogger(AccessPoint.class.getName());
 
-	private final String ipAddress;
-	private final String ipAddress24;
 	private String hostapdConfigPath;
 	private static String flushCommand;
-	private static AccessPoint instance;
 	private static String wlanInterface;
 	private static final String[] wlanInterfacePatterns = { "wlan", "wlp" };
 	private static final String wlanSearchCommandTemplate = "ls /sys/class/net | grep %s";
@@ -36,8 +31,7 @@ public class AccessPoint implements AutoCloseable {
 		wlanInterface = getWlanInterfaceName();
 		updateConfigFile();
 		
-		this.ipAddress = ipAddress;
-		ipAddress24 = ipAddress.substring(0, ipAddress.lastIndexOf('.'));
+		String ipAddress24 = ipAddress.substring(0, ipAddress.lastIndexOf('.'));
 		flushCommand = String.format("ip addr flush dev %s", wlanInterface);
 		
 		ValidatableCommand staticIpCmd = new ValidatableCommand(String.format("ip addr add %s/24 broadcast %s.255 dev %s"
@@ -104,10 +98,5 @@ public class AccessPoint implements AutoCloseable {
 		String content = FileUtil.fileToString(new File(hostapdConfigPath));
 		content = content.replaceFirst("interface=.*", "interface=" + wlanInterface);
 		FileUtil.stringToFile(content, hostapdConfigPath);
-	}
-	
-	@Override
-	public void close() throws Exception {
-		cleanup();
 	}
 }

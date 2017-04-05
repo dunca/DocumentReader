@@ -3,13 +3,10 @@ package io.github.sidf.documentreader.web;
 import spark.Route;
 import spark.Spark;
 import java.util.Map;
-import org.ini4j.Ini;
 import spark.Request;
 import spark.Response;
 import java.util.HashMap;
 import spark.ModelAndView;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -19,6 +16,7 @@ import javax.servlet.http.Part;
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
+
 import io.github.sidf.documentreader.util.FileUtil;
 import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.web.util.ConfigUtil;
