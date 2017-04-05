@@ -100,12 +100,10 @@ public class AccessPoint implements AutoCloseable {
 		}
 	}
 	
-	public void updateConfigFile() throws InvalidFileFormatException, IOException {
+	public void updateConfigFile() throws IOException {
 		String content = FileUtil.fileToString(new File(hostapdConfigPath));
 		content = content.replaceFirst("interface=.*", "interface=" + wlanInterface);
-		try (PrintWriter writer = new PrintWriter(hostapdConfigPath, "UTF-8")) {
-			writer.print(content);
-		}
+		FileUtil.stringToFile(content, hostapdConfigPath);
 	}
 	
 	@Override
