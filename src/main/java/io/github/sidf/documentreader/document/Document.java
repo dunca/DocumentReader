@@ -38,9 +38,6 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		
 		if (bookmarkIni == null) {
 			bookmarkIni = new Ini(new FileReader(bookmarkIniFilePath));
-		}
-		
-		if (bookmarkIniMap == null) {
 			bookmarkIniMap = parseBookmarkIniFile();
 		}
 		
