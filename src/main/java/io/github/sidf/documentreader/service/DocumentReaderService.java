@@ -68,17 +68,20 @@ public class DocumentReaderService {
 				@Override
 				public void run() {
 					if (!readerThread.isAlive()) {
-						lightingInstance.stop();
 						featureDetectorInstance.stop();
-						scheduledExecutorService.shutdown();
+						commonExecutorServiceTasks(scheduledExecutorService);
 					} else if (!featureDetectionThread.isAlive()) {
 						readerInstance.stop();
-						lightingInstance.stop();
-						scheduledExecutorService.shutdown();
+						commonExecutorServiceTasks(scheduledExecutorService);
 					}
 				}
 			}, 1000, 500, TimeUnit.MILLISECONDS);
 		}
+	}
+	
+	private void commonExecutorServiceTasks(ScheduledExecutorService scheduledExecutorService) {
+		lightingInstance.stop();
+		scheduledExecutorService.shutdown();
 	}
 	
 	public void stopReading() {
