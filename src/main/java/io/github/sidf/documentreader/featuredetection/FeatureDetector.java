@@ -22,7 +22,7 @@ import org.opencv.objdetect.CascadeClassifier;
 import io.github.sidf.documentreader.util.PathUtil;
 import io.github.sidf.documentreader.util.CommandUtil;
 
-public class FeatureDetector implements Runnable, AutoCloseable {
+public class FeatureDetector implements Runnable {
 	private boolean isStillRunning;
 	private VideoCapture captureDevice;
 	private ScheduledFuture<?> scheduledFuture;
@@ -118,7 +118,7 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 	}
 	
 	private void managerSchedule(Mat eyeDetections) {
-		if (eyeDetections.elemSize() == 0) {
+		if (eyeDetections.empty()) {
 			if (scheduledFuture != null) {
 				scheduledFuture.cancel(false);
 				scheduledFuture = null;
@@ -128,9 +128,9 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 			scheduledFuture = scheduledExecutorService.schedule(new Runnable() {
 				public void run() {
 					stop();
-					logger.info("Enabled schedule");
 				}
 			}, 15, TimeUnit.SECONDS);
+			logger.info("Enabled schedule");
 		}
 	}
 	
@@ -187,10 +187,6 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 			scheduledExecutorService.shutdown();
 		}
 	}
-
-	public void close() throws Exception {
-		
-	}
 	
 	private void disableAutofocus() {
 		logger.info("Trying to disable autofocus");
@@ -201,10 +197,5 @@ public class FeatureDetector implements Runnable, AutoCloseable {
 				logger.log(Level.WARNING, "Something went wrong while trying to disable autofocus", e);
 			}
 		}
-	}
-	
-	public static void main(String[] arr) throws IOException {
-		FeatureDetector fDetector = new FeatureDetector();
-		fDetector.run();
 	}
 }

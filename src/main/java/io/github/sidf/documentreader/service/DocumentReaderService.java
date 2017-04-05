@@ -3,7 +3,10 @@ package io.github.sidf.documentreader.service;
 import java.io.File;
 import java.util.Map;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.io.FileNotFoundException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.system.Lighting;
@@ -26,7 +29,6 @@ public class DocumentReaderService {
 	private static Thread readerThread;
 	private static Thread lightingThread;
 	private static Thread featureDetectionThread;
-	
 	
 	public DocumentReaderService(File libraryPath, File bookmarkFilePath, File currentPagePath) throws FileNotFoundException {
 		documentLibrary = new DocumentLibrary(libraryPath, bookmarkFilePath, currentPagePath);
@@ -60,6 +62,22 @@ public class DocumentReaderService {
 			lightingInstance = new Lighting();
 			lightingThread = new Thread(lightingInstance);
 			lightingThread.start();
+			
+			ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+			scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+				@Override
+				public void run() {
+					if (!readerThread.isAlive()) {
+						lightingInstance.stop();
+						featureDetectorInstance.stop();
+						scheduledExecutorService.shutdown();
+					} else if (!featureDetectionThread.isAlive()) {
+						readerInstance.stop();
+						lightingInstance.stop();
+						scheduledExecutorService.shutdown();
+					}
+				}
+			}, 1000, 500, TimeUnit.MILLISECONDS);
 		}
 	}
 	
