@@ -127,9 +127,9 @@ public class DocumentReaderService {
 		return readerInstance.getSupportedSpeed();
 	}
 	
-	public int getCurrentDocumentPageCount() {
+	public Integer getCurrentDocumentPageCount() {
 		if (document == null) {
-			return -1;
+			return null;
 		}
 		return document.getPageCount();
 	}
