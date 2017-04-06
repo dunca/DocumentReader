@@ -29,7 +29,7 @@ class RootRoute implements Route {
 	private String libraryPath;
 	private Map<String, Object> map;
 	
-	private String message;
+	private String infoMessage;
 	private String errorMessage;
 	
 	private boolean isReading;
@@ -84,7 +84,7 @@ class RootRoute implements Route {
 	private Object handleGet() {
 		updateDocumentInfo(config.getDocumentHash());
 
-		map.put("message", message);
+		map.put("message", infoMessage);
 		map.put("errorMessage", errorMessage);
 		
 		map.put("isReading", isReading);
@@ -107,7 +107,7 @@ class RootRoute implements Route {
 		map.put("selectedDocumentHash", config.getDocumentHash());
 		map.put("availableDocuments", service.getDocumentMap());
 		
-		message = errorMessage = null;
+		infoMessage = errorMessage = null;
 		return new FreeMarkerEngine().render(new ModelAndView(map, "index.ftl"));
 	}
 	
@@ -129,7 +129,7 @@ class RootRoute implements Route {
 			    	FileUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
 			    	service.updateDocumentLibrary();
 			    	availableDocuments = service.getDocumentMap();
-			    	message = "Successful upload";
+			    	infoMessage = "Successful upload";
 			    } catch (IOException e) {
 					errorMessage = "Could not save the file";
 			    }
@@ -143,7 +143,7 @@ class RootRoute implements Route {
 			}
 	    }
 	    
-	    map.put("message", message);
+	    map.put("infoMessage", infoMessage);
 	    map.put("errorMessage", errorMessage);
 		response.redirect("/");
 		return null;

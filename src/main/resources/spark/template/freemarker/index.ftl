@@ -3,12 +3,13 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>DocumentReader</title>
+		<link rel="stylesheet" href="/css/w3.css">
 	</head>
-		<#assign logUrl = "log">
-		<#assign logDiv = "logDiv">
-		<#assign isReadingUrl = "isReading">
-		
 		<script>
+			<#assign logUrl = "log">
+			<#assign logDiv = "logDiv">
+			<#assign isReadingUrl = "isReading">
+			
 	        function asyncRequest(url) {
 			  var xhttp = new XMLHttpRequest();
 			  xhttp.onreadystatechange = function() {
@@ -45,15 +46,22 @@
 		</script>
 	
 	<body>
-	<div id="abcdef123"></div>
 		<#assign disabled = isReading?then('disabled', '')>
-	
-		<#if message??>
-			Info: ${message}
+		
+		<#macro messageMacro header message color>
+			<div class="w3-panel ${color} w3-display-container">
+	  			<span onclick="this.parentElement.style.display='none'"
+	  			class="w3-button ${color} w3-normal w3-display-topright">X</span>
+	  			<h3>${header}</h3>
+	  			<p>${message}</p>
+			</div>
+		</#macro>
+		
+		<#if infoMessage??>
+			<@messageMacro header="Info" message=infoMessage color="w3-blue"/>
+		<#elseif errorMessage??>
+			<@messageMacro header="Error" message=errorMessage color="w3-red"/>
 		</#if>
-		<#if errorMessage??>
-			Altert: ${errorMessage}
-		</#if>	
 		
 		Library size: ${availableDocuments?size}
 		
