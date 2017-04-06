@@ -57,6 +57,10 @@
 			</div>
 		</#macro>
 		
+		<#macro buttonMacro nameSuffix text="Apply" disabled="">
+			<button class="w3-button w3-border w3-tiny w3-round w3-blue" name="btn_${nameSuffix}" ${disabled}>${text}</button>
+		</#macro>
+		
 		<#if infoMessage??>
 			<@messageMacro header="Info" message=infoMessage color="w3-blue"/>
 		<#elseif errorMessage??>
@@ -70,12 +74,12 @@
 			
 			<form method='post' action="/">
 				<#if isReading == true>
-					<button name="btn_set_stop">Stop</button>
+					<@buttonMacro nameSuffix="stop_reading" text="Stop"/>
 				<#else>
-					<button name="btn_set_read">Read</button>
+					<@buttonMacro nameSuffix="start_reading" text="Read"/>
 				</#if>
-				<button name="btn_set_reset_bookmark" ${disabled}>Remove bookmark</button>
-				<button name="btn_set_delete" ${disabled}>Delete document</button>
+				<@buttonMacro nameSuffix="delete_document" text="Delete document" disabled=disabled/>
+				<@buttonMacro nameSuffix="reset_bookmark" text="Remove bookmark" disabled=disabled/>
 			</form>
 			
 		</#if>
@@ -83,7 +87,7 @@
 		<form method='post' enctype='multipart/form-data' action="/">
 			<label for="uploaded_file">Load a document</label>
 		    <input id="uploaded_file" type='file' name='uploaded_file'>
-		    <button>Upload</button>
+		    <@buttonMacro nameSuffix="upload" text="Upload"/>
 		</form>
 		
 		<br />
@@ -99,7 +103,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_document" ${disabled}>Apply</button>
+			<@buttonMacro nameSuffix="set_document" disabled=disabled/>
 		    
 		    <br />
 			
@@ -113,12 +117,12 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_reader" ${disabled}>Apply</button>
+			<@buttonMacro nameSuffix="set_reader" disabled=disabled/>
 		    
 		    <br />
 			
-			<label for="set_lang">Language</label>
-		    <select id="set_lang" name="set_lang">
+			<label for="set_language">Language</label>
+		    <select id="set_language" name="set_language">
 	    		<#list supportedReaderLanguages as language>
 	    			<#if selectedReaderLang?? && selectedReaderLang == language>
 	    				<option selected value="${language}">${language}</option>
@@ -127,7 +131,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_lang">Apply</button>
+		    <@buttonMacro nameSuffix="set_language"/>
 		    
 		    <br />
 		    
@@ -141,7 +145,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_reading_speed">Apply</button>
+			<@buttonMacro nameSuffix="set_reading_speed"/>
 		    
 		    <br />
 			
@@ -156,7 +160,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_volume">Apply</button>
+		    <@buttonMacro nameSuffix="set_volume"/>
 		    
 		    <br />
 			
@@ -170,7 +174,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_feature_detection" ${disabled}>Apply</button>
+			<@buttonMacro nameSuffix="set_feature_detection" disabled=disabled/>
 		    
 		    <br /><br />
 			
@@ -184,7 +188,7 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_logs">Apply</button>
+			<@buttonMacro nameSuffix="set_logs"/>
 		    
 		    <br />
 		    
@@ -198,16 +202,16 @@
 					</#if>
 				</#list>
 			</select>
-		    <button name="btn_set_page_content">Apply</button>
+			<@buttonMacro nameSuffix="set_page_content"/>
 		    
 		    <br />
 			
-			<label for="set_manage_device">Device</label>
-		    <select id="set_manage_device" name="set_manage_device">
+			<label for="set_device_state">Device</label>
+		    <select id="set_device_state" name="set_device_state">
 			  <option value="reboot">reboot</option>
 			  <option value="shutdown">shut down</option>
 			</select>
-		    <button name="btn_set_manage_device" ${disabled}>Apply</button>
+			<@buttonMacro nameSuffix="set_device_state" disabled=disabled/>
 	    </form>
 	    
 	    <div id="${logDiv}">

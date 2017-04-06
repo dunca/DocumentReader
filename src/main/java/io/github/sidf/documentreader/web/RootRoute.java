@@ -44,7 +44,7 @@ class RootRoute implements Route {
 	
 	private static ConfigUtil config;
 	private static DocumentReaderService service;
-	private static final Pattern buttonPattern = Pattern.compile("btn_set\\w+(?=\\=)");
+	private static final Pattern buttonPattern = Pattern.compile("btn_\\w+(?=\\=)");
 	
 	public RootRoute(String libraryPath, String configPath, DocumentReaderService documentReaderService) throws Exception {
 		this.libraryPath = libraryPath;
@@ -238,13 +238,13 @@ class RootRoute implements Route {
 	
 	private void handleButtonPress(String buttonName, Request request) {
 		switch (buttonName) {
-		case "btn_set_delete":
+		case "btn_delete_document":
 			String documentHash = config.getDocumentHash();
 			service.deleteDocument(documentHash);
 			availableDocuments.remove(documentHash);
 			updateDocumentInfo(null);
 			break;
-		case "btn_set_read":
+		case "btn_start_reading":
 			try {
 				service.startReading(config.getFeatureDetection().equals("on"));
 				isReading = true;
@@ -252,11 +252,11 @@ class RootRoute implements Route {
 				errorMessage = "Coult not start the reader";
 			}
 			break;
-		case "btn_set_stop":
+		case "btn_stop_reading":
 			service.stopReading();
 			isReading = false;
 			break;
-		case "btn_set_reset_bookmark":
+		case "btn_reset_bookmark":
 			service.resetCurrentDocumentBookmark();
 			break;
 		case "btn_set_document":
@@ -265,11 +265,11 @@ class RootRoute implements Route {
 		case "btn_set_reader":
 			updateReaderInfo(RequestUtil.parseBodyString(request.body(), "set_reader"));
 			break;
-		case "btn_set_lang":
-			String selectedReaderLang = RequestUtil.parseBodyString(request.body(), "set_lang");
+		case "btn_set_language":
+			String selectedReaderLanguage = RequestUtil.parseBodyString(request.body(), "set_language");
 			try {
-				service.setCurrentReaderLanguage(selectedReaderLang);
-				config.setReaderLanguage(selectedReaderLang);
+				service.setCurrentReaderLanguage(selectedReaderLanguage);
+				config.setReaderLanguage(selectedReaderLanguage);
 			} catch (IOException e) {
 				errorMessage = "Could not set the reader's language" + e.getMessage();
 			}
@@ -301,8 +301,8 @@ class RootRoute implements Route {
 		case "btn_set_page_content":
 			config.setContent(RequestUtil.parseBodyString(request.body(), "set_page_content"));
 			break;
-		case "btn_set_manage_device":
-			String action = RequestUtil.parseBodyString(request.body(), "set_manage_device");
+		case "btn_set_device_state":
+			String action = RequestUtil.parseBodyString(request.body(), "set_device_state");
 			if (action.equals("reboot")) {
 				try {
 					service.rebootDevice();
