@@ -58,7 +58,7 @@
 		</#macro>
 		
 		<#macro buttonMacro nameSuffix text="Apply" disabled="">
-			<button class="w3-button w3-border w3-tiny w3-round w3-blue" name="btn_${nameSuffix}" ${disabled}>${text}</button>
+			<button class="w3-button w3-border w3-small w3-round w3-blue w3-padding-small" name="btn_${nameSuffix}" ${disabled}>${text}</button>
 		</#macro>
 		
 		<#if infoMessage??>
