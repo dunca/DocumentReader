@@ -96,6 +96,7 @@ class RootRoute implements Route {
 		map.put("selectedVolumeLevel", config.getVolume());
 		map.put("supportedVolumeLevels", supportedVolumeLevels);
 		
+		map.put("selectedDocumentPageCount", service.getCurrentDocumentPageCount());
 		map.put("selectedDocument", availableDocuments.get(config.getDocumentHash()));
 		map.put("availableReaderProviders", availableReaderProviders);
 		map.put("selectedReaderLanguage", config.getReaderLanguage());

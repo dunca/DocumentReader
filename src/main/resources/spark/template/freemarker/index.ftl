@@ -96,7 +96,7 @@
 		Library size: ${availableDocuments?size}
 		
 		<#if selectedDocument??>
-			Selected document: ${selectedDocument}
+			Selected document: ${selectedDocument} (${selectedDocumentPageCount} pages)
 			
 			<form method='post' action="/">
 				<#if isReading == true>
@@ -110,6 +110,8 @@
 			
 		</#if>
 	
+		<br />
+		
 		<form method='post' enctype='multipart/form-data' action="/">
 			<label for="uploaded_file">Load a document</label>
 		    <input id="uploaded_file" type='file' name='uploaded_file'>
@@ -119,7 +121,7 @@
 		<br />
 		
 		<form method='post' action="/">
-			<@mappingSelectMacro name="set_document" label="Document" mapping=availableDocuments selectedValue=selectedDocumentHash/>
+			<@mappingSelectMacro name="set_document" label="Document" mapping=availableDocuments selectedValue=selectedDocumentHash!""/>
 			<@buttonMacro nameSuffix="set_document" disabled=disabled/>
 		    
 		    <br />

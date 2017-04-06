@@ -126,6 +126,13 @@ public class DocumentReaderService {
 	public String[] getCurrentSupportedSpeed() {
 		return readerInstance.getSupportedSpeed();
 	}
+	
+	public int getCurrentDocumentPageCount() {
+		if (document == null) {
+			return -1;
+		}
+		return document.getPageCount();
+	}
 
 	public void updateDocumentLibrary() {
 		documentLibrary.update();
