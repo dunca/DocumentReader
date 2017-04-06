@@ -20,6 +20,7 @@ public class Application {
 		String packageName = Application.class.getPackage().getName();
 		logger = Logger.getLogger(packageName);
 		logPath = String.format("%s-log.html", packageName.substring(packageName.lastIndexOf('.') + 1));
+		removeOldLogFiles();
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -82,5 +83,13 @@ public class Application {
 		}
 		
 		return true;
+	}
+	
+	private static void removeOldLogFiles() {
+		for (File file : new File(".").listFiles()) {
+			if (file.getName().startsWith(logPath)) {
+				file.delete();
+			}
+		}
 	}
 }
