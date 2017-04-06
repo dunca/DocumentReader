@@ -51,10 +51,10 @@ class RootRoute implements Route {
 		service = documentReaderService;
 		config = new ConfigUtil(configPath);
 		
-		supportedVolumeLevels.put("100 %", "100");
-		supportedVolumeLevels.put("50 %", "50");
-		supportedVolumeLevels.put("25 %", "25");
-		supportedVolumeLevels.put("0 %", "0");
+		supportedVolumeLevels.put("100", "100 %");
+		supportedVolumeLevels.put("50", "50 %");
+		supportedVolumeLevels.put("25", "25 %");
+		supportedVolumeLevels.put("0", "0 %");
 		
 		availableReaderProviders = service.getReaderProviders();
 		availableDocuments = service.getDocumentMap();
@@ -84,7 +84,7 @@ class RootRoute implements Route {
 	private Object handleGet() {
 		updateDocumentInfo(config.getDocumentHash());
 
-		map.put("message", infoMessage);
+		map.put("infoMessage", infoMessage);
 		map.put("errorMessage", errorMessage);
 		
 		map.put("isReading", isReading);
@@ -98,7 +98,7 @@ class RootRoute implements Route {
 		
 		map.put("selectedDocument", availableDocuments.get(config.getDocumentHash()));
 		map.put("availableReaderProviders", availableReaderProviders);
-		map.put("selectedReaderLang", config.getReaderLanguage());
+		map.put("selectedReaderLanguage", config.getReaderLanguage());
 		map.put("selectedReaderSpeed", config.getReaderSpeed());
 		map.put("selectedReaderProvider", config.getReaderProvider());
 		map.put("supportedReaderSpeed", supportedReaderSpeed);
@@ -117,9 +117,9 @@ class RootRoute implements Route {
 		    Part uploadedFile = null;
 			try {
 				uploadedFile = request.raw().getPart("uploaded_file");
-			} catch (IOException e1) {
+			} catch (IOException e) {
 				errorMessage = "Could not retrieve the file";
-			} catch (ServletException e1) {
+			} catch (ServletException e) {
 				// ignore, since with actually check this manually
 			}
 			
@@ -151,7 +151,7 @@ class RootRoute implements Route {
 	
 	private void preconfiguration() throws Exception {
 		if (!supportedVolumeLevels.containsValue(config.getVolume())) {
-			String firstVolume = supportedVolumeLevels.values().iterator().next();
+			String firstVolume = supportedVolumeLevels.keySet().iterator().next();
 			config.setVolume(firstVolume);
 			int volume = Integer.valueOf(firstVolume);
 			if (service.getAudioVolume() != volume) {

@@ -57,6 +57,32 @@
 			</div>
 		</#macro>
 		
+		<#macro simpleSelectMacro name label iterable selectedValue>
+			<label for="${name}">${label}</label>
+		    <select id="${name}" name="${name}">
+    		<#list iterable as option>
+    			<#if selectedValue?? && selectedValue == option>
+    				<option selected value="${option}">${option}</option>
+    			<#else>
+					<option value="${option}">${option}</option>
+				</#if>
+			</#list>
+			</select>
+		</#macro>
+		
+		<#macro mappingSelectMacro name label mapping selectedValue>
+			<label for="${name}">${label}</label>
+		    <select id="${name}" name="${name}">	
+			<#list mapping?keys as key>
+				<#if selectedValue?? && selectedValue == key>
+    				<option selected value="${key}">${mapping[key]}</option>
+    			<#else>
+					<option value="${key}">${mapping[key]}</option>
+				</#if>
+			</#list>
+			</select>
+		</#macro>
+		
 		<#macro buttonMacro nameSuffix text="Apply" disabled="">
 			<button class="w3-button w3-border w3-small w3-round w3-blue w3-padding-small" name="btn_${nameSuffix}" ${disabled}>${text}</button>
 		</#macro>
@@ -93,115 +119,42 @@
 		<br />
 		
 		<form method='post' action="/">
-			<label for="set_document">Document</label>
-		    <select id="set_document" name="set_document">
-	    		<#list availableDocuments?keys as key>
-	    			<#if selectedDocumentHash?? && selectedDocumentHash == key>
-	    				<option selected value="${key}">${availableDocuments[key]}</option>
-	    			<#else>
-						<option value="${key}">${availableDocuments[key]}</option>
-					</#if>
-				</#list>
-			</select>
+			<@mappingSelectMacro name="set_document" label="Document" mapping=availableDocuments selectedValue=selectedDocumentHash/>
 			<@buttonMacro nameSuffix="set_document" disabled=disabled/>
 		    
 		    <br />
 			
-			<label for="set_reader">Reader</label>
-		    <select id="set_reader" name="set_reader">
-	    		<#list availableReaderProviders as reader>
-	    			<#if selectedReaderProvider?? && selectedReaderProvider == reader>
-	    				<option selected value="${reader}">${reader}</option>
-	    			<#else>
-						<option value="${reader}">${reader}</option>
-					</#if>
-				</#list>
-			</select>
+			<@simpleSelectMacro name="set_reader" label="Reader" iterable=availableReaderProviders selectedValue=selectedReaderProvider/>
 			<@buttonMacro nameSuffix="set_reader" disabled=disabled/>
 		    
 		    <br />
 			
-			<label for="set_language">Language</label>
-		    <select id="set_language" name="set_language">
-	    		<#list supportedReaderLanguages as language>
-	    			<#if selectedReaderLang?? && selectedReaderLang == language>
-	    				<option selected value="${language}">${language}</option>
-	    			<#else>
-						<option value="${language}">${language}</option>
-					</#if>
-				</#list>
-			</select>
+			<@simpleSelectMacro name="set_language" label="Language" iterable=supportedReaderLanguages selectedValue=selectedReaderLanguage/>
 		    <@buttonMacro nameSuffix="set_language"/>
 		    
 		    <br />
 		    
-			<label for="set_reading_speed">Reading speed</label>
-		    <select id="set_reading_speed" name="set_reading_speed">
-	    		<#list supportedReaderSpeed as speed>
-	    			<#if selectedReaderSpeed?? && selectedReaderSpeed == speed>
-	    				<option selected value="${speed}">${speed}</option>
-	    			<#else>
-						<option value="${speed}">${speed}</option>
-					</#if>
-				</#list>
-			</select>
+			<@simpleSelectMacro name="set_reading_speed" label="Reading speed" iterable=supportedReaderSpeed selectedValue=selectedReaderSpeed/>
 			<@buttonMacro nameSuffix="set_reading_speed"/>
 		    
 		    <br />
 			
-			<label for="set_volume">Volume</label>
-		    <select id="set_volume" name="set_volume">
-  	    		<#list supportedVolumeLevels?keys as key>
-  	    			<#assign value = supportedVolumeLevels[key]>
-	    			<#if selectedVolumeLevel?? && selectedVolumeLevel == value>
-	    				<option selected value="${value}">${key}</option>
-	    			<#else>
-						<option value="${value}">${key}</option>
-					</#if>
-				</#list>
-			</select>
+			<@mappingSelectMacro name="set_volume" label="Volume" mapping=supportedVolumeLevels selectedValue=selectedVolumeLevel/>
 		    <@buttonMacro nameSuffix="set_volume"/>
 		    
 		    <br />
 			
-			<label for="set_feature_detection">Feature detection</label>
-		    <select id="set_feature_detection" name="set_feature_detection">
-  	    		<#list standardSwitchOptions as option>
-	    			<#if selectedFeatureDetection?? && selectedFeatureDetection == option>
-	    				<option selected value="${option}">${option}</option>
-	    			<#else>
-						<option value="${option}">${option}</option>
-					</#if>
-				</#list>
-			</select>
+			<@simpleSelectMacro name="set_feature_detection" label="Feature detection" iterable=standardSwitchOptions selectedValue=selectedFeatureDetection/>
 			<@buttonMacro nameSuffix="set_feature_detection" disabled=disabled/>
 		    
-		    <br /><br />
+		    <br />
 			
-			<label for="set_logs">Logs</label>
-		    <select id="set_logs" name="set_logs">
-  	    		<#list standardSwitchOptions as option>
-	    			<#if selectedLog?? && selectedLog == option>
-	    				<option selected value="${option}">${option}</option>
-	    			<#else>
-						<option value="${option}">${option}</option>
-					</#if>
-				</#list>
-			</select>
+			<@simpleSelectMacro name="set_logs" label="Logs" iterable=standardSwitchOptions selectedValue=selectedLog/>
 			<@buttonMacro nameSuffix="set_logs"/>
 		    
 		    <br />
-		    
-			<label for="set_page_content">Page content</label>
-		    <select id="set_page_content" name="set_page_content">
-  	    		<#list standardSwitchOptions as option>
-	    			<#if selectedPageContent?? && selectedPageContent == option>
-	    				<option selected value="${option}">${option}</option>
-	    			<#else>
-						<option value="${option}">${option}</option>
-					</#if>
-				</#list>
-			</select>
+
+			<@simpleSelectMacro name="set_page_content" label="Page content" iterable=standardSwitchOptions selectedValue=selectedPageContent/>
 			<@buttonMacro nameSuffix="set_page_content"/>
 		    
 		    <br />
