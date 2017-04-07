@@ -38,8 +38,8 @@ public class Application {
 			return;
 		}
 		
-//		if (!Device.isRoot()) {
-//			logger.severe("This application requires root permissions");
+//		if (!Device.isSupported()) {
+//			logger.severe("Your system is not supported");
 //			return;
 //		}
 //		

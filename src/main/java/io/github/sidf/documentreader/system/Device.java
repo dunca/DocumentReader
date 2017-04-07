@@ -1,5 +1,6 @@
 package io.github.sidf.documentreader.system;
 
+import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.IOException;
@@ -9,8 +10,6 @@ import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.CommandResult;
-import io.github.sidf.documentreader.system.enums.JvmArchitecture;
-import io.github.sidf.documentreader.system.enums.OperatingSystem;
 
 public class Device {
 	private static final String debianPackageCheckTemplate = "dpkg -s %s";
@@ -19,32 +18,32 @@ public class Device {
 	private static String[] dependecies = { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", "poppler-utils",
 											"psmisc", "grep", "iproute2", "uvcdynctrl"};
 	
-	public static OperatingSystem getOperatingSystem() {
-		if (System.getProperty("os.name").contains("Windows")) {
-			return OperatingSystem.WINDOWS;
-		}
-		return OperatingSystem.LINUX;
+	private Device() {
+		
 	}
 	
-	public static JvmArchitecture getJvmArchitecture() {
-		String arch = System.getProperty("sun.arch.data.model");
-		return arch == "64" ? JvmArchitecture.JVM64 : JvmArchitecture.JVM32;
+	public static boolean isOsSupported() {
+		if (System.getProperty("os.name").contains("Windows")) {
+			return false;
+		}
+		
+		return new File("/etc/debian_version").exists();
+	}
+	
+	public static boolean isSupported() {
+		boolean isRooted = false;
+		
+		try {
+			isRooted();
+		} catch (Exception e) {
+			isRooted = false;
+		}
+		
+		return isOsSupported() && isRooted;
 	}
 	
 	private static void togglePowerState(boolean reboot) throws IOException {
-		String command = null;
-		
-		switch (getOperatingSystem()) {
-			case WINDOWS:
-				command = "shutdown.exe " + (reboot ? "-r" : "-s");
-				break;
-	
-			case LINUX:
-				command = "shutdown "  + (reboot ? "-r now" : "-h now");;
-				break;
-		}
-		
-		Runtime.getRuntime().exec(command);
+		Runtime.getRuntime().exec(reboot ? "reboot" : "poweroff");
 	}
 	
 	public static void shutDown() throws IOException {
@@ -89,7 +88,7 @@ public class Device {
 		return true;
 	}
 	
-	public static boolean isRoot() throws Exception {
+	public static boolean isRooted() throws Exception {
 		CommandResult commandResult = CommandUtil.launchNonBlockingCommand("whoami");
 		return commandResult.getStdout().equals("root");
 	}

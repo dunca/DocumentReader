@@ -4,11 +4,7 @@ import java.util.UUID;
 import java.io.IOException;
 import java.io.InputStream;
 
-import io.github.sidf.documentreader.system.Device;
-import io.github.sidf.documentreader.system.enums.OperatingSystem;
-
 public class PathUtil {
-	private static boolean runsLinux;
 	private static ClassLoader classLoader;
 	
 	private PathUtil() {
@@ -17,12 +13,10 @@ public class PathUtil {
 	
 	static {
 		classLoader = PathUtil.class.getClassLoader();
-		runsLinux = Device.getOperatingSystem() == OperatingSystem.LINUX;
 	}
 	
 	public static String getResourcePath(String relativeResourcePath) {
-		String path = classLoader.getResource(relativeResourcePath).getPath();
-		return runsLinux ? path : path.substring(1);
+		return classLoader.getResource(relativeResourcePath).getPath();
 	}
 	
 	public static String resourcePathToFile(String relativeResourcePath) throws IOException {
