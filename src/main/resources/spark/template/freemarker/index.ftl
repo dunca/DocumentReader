@@ -15,7 +15,7 @@
 			<#assign currentPageUrl = "currentPage">
 			
 			function changeText(elementId, text) {
-				document.getElementById(elementId).innerHTML = text;
+				document.getElementById(elementId+"Content").innerHTML = text;
 			}
 			
 	        function asyncRequest(url) {
@@ -173,14 +173,22 @@
 	    </form>
 	    </div>
 	    
+	    <#if selectedLog=="on">
+		    <div id="${logDiv}" class="w3-half w3-pale-yellow">
+			  	<p><strong>System log</strong></p>
+    	    	<div id="${logDiv}Content">
+				</div>
+	    	</div>
+	    </#if>
+	    
 	    <#if isReading==true>
-    	    <div id="${contentDiv}" class="w3-half">
+    	    <div id="${contentDiv}" class="w3-half w3-pale-red">
+			  	<p><strong>Page content</strong></p>
+	    		<div id="${contentDiv}Content">
+				</div>
     		</div>
 	    </#if>
 	    
-	    <#if selectedLog=="on">
-		    <div id="${logDiv}" class="w3-half">
-	    	</div>
-	    </#if>
+
 	</body>
 </html>
