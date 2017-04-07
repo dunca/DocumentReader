@@ -38,14 +38,14 @@ public class Application {
 			return;
 		}
 		
-		if (!Device.isRoot()) {
-			logger.severe("This application requires root permissions");
-			return;
-		}
-		
-		if (!Device.dependenciesAreSatisfied()) {
-			return;
-		}
+//		if (!Device.isRoot()) {
+//			logger.severe("This application requires root permissions");
+//			return;
+//		}
+//		
+//		if (!Device.dependenciesAreSatisfied()) {
+//			return;
+//		}
 		
 		Ini ini = new Ini(new File(args[1]));
 		
@@ -61,10 +61,10 @@ public class Application {
 			return;
 		}
 		
-		String ipAddress = ini.get("Access point", "ipAddress");
-		AccessPoint accessPoint = new AccessPoint(ipAddress, args[2]);
-		accessPoint.start();
-		
+//		String ipAddress = ini.get("Access point", "ipAddress");
+//		AccessPoint accessPoint = new AccessPoint(ipAddress, args[2]);
+//		accessPoint.start();
+//		
 		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]), 
 																  new File(currentPagePath), new File(isReadingPath));
 		WebInterface webInterface = new WebInterface(args[0], args[1], logPath, isReadingPath, service);
