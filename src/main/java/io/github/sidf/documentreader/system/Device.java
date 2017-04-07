@@ -40,7 +40,7 @@ public class Device {
 				break;
 	
 			case LINUX:
-				command = "shutdown "  + (reboot ? "-r" : "-h");;
+				command = "shutdown "  + (reboot ? "-r now" : "-h now");;
 				break;
 		}
 		
