@@ -41,9 +41,9 @@
 				</#if>
 				
 				<#if isReading == true>
-				setTimeout(function() {
+				<#-- setTimeout(function() {
 					asyncRequest("${isReadingUrl}");
-				}, 4000);
+				}, 4000);-->
 				
 				setTimeout(function() {
 					asyncRequest("${currentPageUrl}");
