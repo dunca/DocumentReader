@@ -13,11 +13,6 @@ public class PdfDocument extends Document {
 		
 		setPageCount(fetchPageCount());
 	}
-	
-	@Override
-	public void close() throws IOException {
-		
-	}
 
 	@Override
 	public DocumentPage fetchPage(int index) throws Exception {

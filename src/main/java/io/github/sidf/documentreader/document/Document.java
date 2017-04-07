@@ -13,7 +13,7 @@ import java.io.InvalidObjectException;
 
 import io.github.sidf.documentreader.util.FileUtil;
 
-public abstract class Document implements AutoCloseable, Iterable<DocumentPage> {
+public abstract class Document implements Iterable<DocumentPage> {
 	private File file;
 	private int pageCount;
 	private String documentId;
@@ -143,6 +143,5 @@ public abstract class Document implements AutoCloseable, Iterable<DocumentPage> 
 		}
 	}
 	
-	public abstract void close() throws Exception;
 	public abstract DocumentPage fetchPage(int index) throws Exception;
 }

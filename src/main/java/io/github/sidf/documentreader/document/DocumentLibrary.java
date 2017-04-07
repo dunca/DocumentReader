@@ -8,15 +8,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.eclipse.jetty.util.log.Log;
-
 import java.util.function.Consumer;
 import java.io.FileNotFoundException;
 
-public class DocumentLibrary implements AutoCloseable {
+public class DocumentLibrary {
 	private File libraryPath;
 	private File currentPagePath;
 	private File bookmarkIniFilePath;
@@ -107,13 +103,6 @@ public class DocumentLibrary implements AutoCloseable {
 		return map;
 	}
 	
-	@Override
-	public void close() throws Exception {
-		for (Document document : documents) {
-			document.close();
-		}
-	}
-
 	public boolean deleteDocument(String documentId) {
 		for (Document document : documents) {
 			if (document.getDocumentId().equals(documentId)) {
