@@ -2,12 +2,17 @@ package io.github.sidf.documentreader.document;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 import java.util.List;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.eclipse.jetty.util.log.Log;
+
 import java.util.function.Consumer;
 import java.io.FileNotFoundException;
 
@@ -37,20 +42,31 @@ public class DocumentLibrary implements AutoCloseable {
 	
 	public void update() {
 		clear();
+		Set<File> brokenDocuments = new HashSet<>();
 		
 		for (File file : libraryPath.listFiles()) {
 			for (String documentProvider : DocumentFactory.getDocumentProviders()) {
 				Document document = null;
 				try {
 					document = DocumentFactory.getInstance(documentProvider, file, bookmarkIniFilePath, currentPagePath);
+					if (brokenDocuments.contains(file)) {
+						brokenDocuments.remove(file);
+					}
 				} catch (Exception e) {
-					file.delete();
-					logger.log(Level.WARNING, "Could not initialize document, deleted", e);
+					brokenDocuments.add(file);
 					continue;
 				}
+				
 				documents.add(document);
 				logger.info(String.format("Document %s with id %s was added to the library", document.getDocumentName(), 
 										  document.getDocumentId()));
+			}
+		}
+		
+		if (!brokenDocuments.isEmpty()) {
+			for (File file : brokenDocuments) {
+				logger.warning(String.format("No document provider was able to initialize %s, deleting", file.getPath()));
+				file.delete();
 			}
 		}
 	}
