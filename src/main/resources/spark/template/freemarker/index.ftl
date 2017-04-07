@@ -12,13 +12,20 @@
 			<#assign logDiv = "logDiv">
 			<#assign contentDiv = "contentDiv">
 			<#assign isReadingUrl = "isReading">
+			<#assign currentPageUrl = "currentPage">
+			
+			function changeText(elementId, text) {
+				document.getElementById(elementId).innerHTML = text;
+			}
 			
 	        function asyncRequest(url) {
 			  var xhttp = new XMLHttpRequest();
 			  xhttp.onreadystatechange = function() {
 			    if (this.readyState == 4 && this.status == 200) {
 			    	if (url === "${logUrl}") {
-			    		document.getElementById("${logDiv}").innerHTML = this.responseText;
+			    		changeText("${logDiv}", this.responseText);
+			    	} else if (url === "${currentPageUrl}") {
+			    		changeText("${contentDiv}", this.responseText);   	
 			    	} else if (url === "${isReadingUrl}" && this.responseText === "false") {
 			    		location.reload();
 			    	}
@@ -30,13 +37,17 @@
 				<#if selectedLog == "on">
 				setTimeout(function() {
 					asyncRequest("${logUrl}");
-				}, 2000);
+				}, 2500);
 				</#if>
 				
 				<#if isReading == true>
 				setTimeout(function() {
 					asyncRequest("${isReadingUrl}");
 				}, 4000);
+				
+				setTimeout(function() {
+					asyncRequest("${currentPageUrl}");
+				}, 2500);
 				</#if>
 			}
 			<#if selectedLog == "on">
@@ -162,10 +173,14 @@
 	    </form>
 	    </div>
 	    
-	    <div id="${logDiv}" class="w3-half">
-    	</dir>
-    	
-	    <div id="${contentDiv}" class="w3-half">
-    	</dir>
+	    <#if isReading==true>
+    	    <div id="${contentDiv}" class="w3-half">
+    		</div>
+	    </#if>
+	    
+	    <#if selectedLog=="on">
+		    <div id="${logDiv}" class="w3-half">
+	    	</div>
+	    </#if>
 	</body>
 </html>
