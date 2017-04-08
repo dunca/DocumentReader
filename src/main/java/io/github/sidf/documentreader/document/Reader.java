@@ -1,6 +1,5 @@
 package io.github.sidf.documentreader.document;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,15 +10,13 @@ import io.github.sidf.documentreader.util.enums.Language;
 
 public abstract class Reader implements Runnable {
 	private Speed speed;
+	private boolean reading;
 	private Language language;
 	private Document document;
-	private File isReadingPath;
-	private boolean isStillRunning;
 	private static Logger logger = Logger.getLogger(Reader.class.getName());
 	
-	public Reader(Document document, File isReadingPath) throws Exception {
+	public Reader(Document document) throws Exception {
 		this.document = document;
-		this.isReadingPath = isReadingPath;
 	}
 
 	public Document getDocument() {
@@ -62,17 +59,11 @@ public abstract class Reader implements Runnable {
 	}
 	
 	private void readerLoop() {
-		isStillRunning = true;
+		reading = true;
 		
 		logger.info("Entered reader loop");
 		
 		int pageIndex = 0;
-		
-		try {
-			isReadingPath.createNewFile();
-		} catch (IOException e) {
-			logger.log(Level.WARNING, "Could not create the file that represents the reading status", e);
-		}
 		
 		outerLoop:
 		for (DocumentPage page : document) {
@@ -85,7 +76,7 @@ public abstract class Reader implements Runnable {
 					throw new RuntimeException(e.getMessage());
 				}
 				
-				if (!isStillRunning) {
+				if (!reading) {
 					break outerLoop;
 				}
 			}
@@ -97,15 +88,17 @@ public abstract class Reader implements Runnable {
 	}
 	
 	public void stop() {
-		isStillRunning = false;
+		reading = false;
 		
 		try {
 			stopInternal();
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Could not stop fully stop the reader", e);
 		}
-		
-		isReadingPath.delete();
+	}
+	
+	public boolean isReading() {
+		return reading;
 	}
 	
 	public abstract String[] getSupportedSpeed();

@@ -30,11 +30,8 @@ public class DocumentReaderService {
 	private static Thread lightingThread;
 	private static Thread featureDetectionThread;
 	
-	private static File isReadingPath;
-	
-	public DocumentReaderService(File libraryPath, File bookmarkFilePath, File currentPagePath, File isReadingPath)
+	public DocumentReaderService(File libraryPath, File bookmarkFilePath, File currentPagePath)
 			                    throws FileNotFoundException {
-		this.isReadingPath = isReadingPath;
 		documentLibrary = new DocumentLibrary(libraryPath, bookmarkFilePath, currentPagePath);
 	}
 	
@@ -51,7 +48,7 @@ public class DocumentReaderService {
 	}
 	
 	public void setCurrentReader(String readerName) throws Exception {
-		readerInstance = ReaderFactory.getInstance(readerName, document, isReadingPath);
+		readerInstance = ReaderFactory.getInstance(readerName, document);
 	}
 	
 	public void startReading(boolean featureDetectionEnabled) throws IOException {
@@ -147,14 +144,18 @@ public class DocumentReaderService {
 	}
 	
 	public void deleteDocument(String documentId) {
-		boolean changed = documentLibrary.deleteDocument(documentId);
+		boolean libraryChanged = documentLibrary.deleteDocument(documentId);
 		
-		if (changed) {
+		if (libraryChanged) {
 			documentLibrary.update();
 		}
 	}
 	
 	public void resetCurrentDocumentBookmark() {
 		document.resetBookmark();
+	}
+	
+	public boolean isReading() {
+		return readerInstance.isReading();
 	}
 }

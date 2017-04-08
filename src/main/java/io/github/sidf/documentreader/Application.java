@@ -55,19 +55,12 @@ public class Application {
 			return;
 		}
 		
-		String isReadingPath = ini.get("Document", "isReadingPath");
-		if (isReadingPath == null) {
-			logger.severe("The isReadingPath setting is invalid");
-			return;
-		}
-		
 //		String ipAddress = ini.get("Access point", "ipAddress");
 //		AccessPoint accessPoint = new AccessPoint(ipAddress, args[2]);
 //		accessPoint.start();
 //		
-		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]), 
-																  new File(currentPagePath), new File(isReadingPath));
-		WebInterface webInterface = new WebInterface(args[0], args[1], logPath, isReadingPath, service);
+		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]), new File(currentPagePath));
+		WebInterface webInterface = new WebInterface(args[0], args[1], logPath, service);
 		webInterface.start();
 	}
 	

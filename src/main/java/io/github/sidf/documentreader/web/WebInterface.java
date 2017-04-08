@@ -16,11 +16,10 @@ public class WebInterface {
 	private String logPath;
 	private String configPath;
 	private String libraryPath;
-	private String isReadingPath;
 	private String currentPagePath;
 	private static DocumentReaderService service;
 	
-	public WebInterface(String libraryPath, String configPath, String logPath, String isReadingPath,
+	public WebInterface(String libraryPath, String configPath, String logPath,
 						DocumentReaderService documentReaderService) throws IOException {
 		ConfigUtil configUtil = new ConfigUtil(configPath);
 		
@@ -30,7 +29,6 @@ public class WebInterface {
 		this.configPath = configPath;
 		this.libraryPath = libraryPath;
 		service = documentReaderService;
-		this.isReadingPath = isReadingPath;
 		
 		currentPagePath = configUtil.getCurrentPagePath();
 	}
@@ -62,10 +60,12 @@ public class WebInterface {
 		Spark.get("/isReading", new Route() {
 			@Override
 			public Object handle(Request request, Response response) throws Exception {
-				boolean isReading = new File(isReadingPath).exists();
-				if (!isReading) {
+				boolean isReading = service.isReading();
+				
+				if (!service.isReading()) {
 					rootRoute.setIsReading(false);
 				}
+				
 				return isReading;
 			}
 		});
