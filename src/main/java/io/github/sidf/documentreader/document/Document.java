@@ -96,6 +96,10 @@ public abstract class Document implements Iterable<DocumentPage> {
 		return bookmark.getPage().getContent();
 	}
 	
+	public int getCurrentPageIndex() {
+		return bookmark.getPageIndex();
+	}
+	
 	public Iterator<DocumentPage> iterator() {
 		return new DocumentIterator(this);
 	}

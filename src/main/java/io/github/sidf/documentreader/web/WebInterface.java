@@ -52,7 +52,7 @@ public class WebInterface {
 		Spark.get("/currentPage", new Route() {
 			@Override
 			public Object handle(Request request, Response response) {
-				return service.getCurrentPageContent();
+				return String.format("<p><b>Page %s</b></p>", service.getCurrentPageNumber()) + service.getCurrentPageContent();
 			}
 		});
 		

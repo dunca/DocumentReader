@@ -133,6 +133,10 @@ public class DocumentReaderService {
 	public String getCurrentPageContent() {
 		return document.getCurrentPageContent();
 	}
+	
+	public int getCurrentPageNumber() {
+		return document.getCurrentPageIndex() + 1;
+	}
 
 	public void updateDocumentLibrary() {
 		documentLibrary.update();
