@@ -184,6 +184,9 @@
 			</select>
 			<@buttonMacro nameSuffix="set_device_state" disabled=disabled/>
 			
+			
+			<@textImputMacro name="set_ap_ssid" label="Access point name"/>
+			<@buttonMacro nameSuffix="set_ap_ssid"/>
 			<@textImputMacro name="set_ap_password" label="Access point password"/>
 			<@buttonMacro nameSuffix="set_ap_password"/>
 	    </form>

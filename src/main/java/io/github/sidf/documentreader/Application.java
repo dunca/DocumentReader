@@ -49,9 +49,10 @@ public class Application {
 		
 		Ini ini = new Ini(new File(args[1]));
 		
+		String ssid =  ini.get("Access point", "ssid");
 		String password =  ini.get("Access point", "password");
 		String ipAddress = ini.get("Access point", "ipAddress");
-		AccessPoint accessPoint = new AccessPoint(ipAddress, password, args[2]);
+		AccessPoint accessPoint = new AccessPoint(ipAddress, password, ssid, args[2]);
 		accessPoint.start();
 		
 		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]));

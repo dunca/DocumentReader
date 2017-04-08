@@ -318,6 +318,15 @@ class RootRoute implements Route {
 				}
 			}
 			break;
+		case "btn_set_ap_ssid":
+			String ssid= RequestUtil.parseBodyString(request.body(), "set_ap_ssid");
+			if (ssid != null && ssid.matches("^\\p{ASCII}{1,32}$")) {
+				config.setApName(ssid);
+				infoMessage = "Access point name updated";
+			} else {
+				errorMessage = "The name should be between 1 and 32 ASCII characters long";
+			}
+			break;
 		case "btn_set_ap_password":
 			String password = RequestUtil.parseBodyString(request.body(), "set_ap_password");
 			if (password != null && password.matches("^\\p{ASCII}{8,63}$")) {

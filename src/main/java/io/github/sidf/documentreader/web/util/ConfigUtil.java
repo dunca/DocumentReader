@@ -91,6 +91,10 @@ public class ConfigUtil {
 		ini.put("Access point", "password", password);
 	}
 	
+	public void setApName(String ssid) {
+		ini.put("Access point", "ssid", ssid);
+	}
+	
 	public void store() throws IOException {
 		ini.store();
 	}

@@ -13,6 +13,7 @@ import io.github.sidf.documentreader.util.ValidatableCommand;
 public class AccessPoint {
 	private static Logger logger = Logger.getLogger(AccessPoint.class.getName());
 
+	private static String ssid;
 	private static String password;
 	private String hostapdConfigPath;
 	private static String flushCommand;
@@ -21,13 +22,14 @@ public class AccessPoint {
 	private static final String wlanSearchCommandTemplate = "ls /sys/class/net | grep %s";
 	private static final HashMap<String, ValidatableCommand> nonBlockingCommands = new HashMap<>();
 	
-	public AccessPoint(String ipAddress, String password, String hostapdConfigPath) throws Exception {
+	public AccessPoint(String ipAddress, String password, String ssid, String hostapdConfigPath) throws Exception {
 		if (!(new File(hostapdConfigPath).exists())) {
 			String message = String.format("File % does not exit", hostapdConfigPath);
 			logger.severe(message);
 			throw new IOException(message);
 		}
 		
+		this.ssid = ssid;
 		this.password = password;
 		this.hostapdConfigPath = hostapdConfigPath;
 		wlanInterface = getWlanInterfaceName();
@@ -100,6 +102,7 @@ public class AccessPoint {
 		String content = FileUtil.fileToString(new File(hostapdConfigPath));
 		content = content.replaceFirst("(?<=interface\\=).*", wlanInterface);
 		content = content.replaceFirst("(?<=wpa_passphrase\\=).*", password);
+		content = content.replaceFirst("(?<=ssid\\=).*", ssid);
 		FileUtil.stringToFile(content, hostapdConfigPath);
 	}
 }
