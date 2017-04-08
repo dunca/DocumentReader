@@ -56,7 +56,7 @@ public class Application {
 		accessPoint.start();
 		
 		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]));
-		WebInterface webInterface = new WebInterface(args[0], args[1], logPath, service);
+		WebInterface webInterface = new WebInterface(args[0], ini, logPath, service);
 		webInterface.start();
 	}
 	

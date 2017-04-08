@@ -1,14 +1,13 @@
 package io.github.sidf.documentreader.web.util;
 
-import java.io.File;
 import org.ini4j.Ini;
 import java.io.IOException;
 
 public class ConfigUtil {
 	private Ini ini;
 	
-	public ConfigUtil(String configPath) throws IOException {
-		this.ini = new Ini(new File(configPath));
+	public ConfigUtil(Ini ini) throws IOException {
+		this.ini = ini;
 	}
 	
 	public String getDocumentHash() {

@@ -1,8 +1,10 @@
 package io.github.sidf.documentreader.web;
 
+
 import spark.Route;
 import spark.Spark;
 import java.io.File;
+import org.ini4j.Ini;
 import spark.Request;
 import spark.Response;
 import java.io.IOException;
@@ -12,20 +14,20 @@ import io.github.sidf.documentreader.web.util.ConfigUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
 public class WebInterface {
+	private Ini ini;
 	private int port;
 	private String logPath;
-	private String configPath;
 	private String libraryPath;
 	private static DocumentReaderService service;
 	
-	public WebInterface(String libraryPath, String configPath, String logPath,
+	public WebInterface(String libraryPath, Ini ini, String logPath,
 						DocumentReaderService documentReaderService) throws IOException {
-		ConfigUtil configUtil = new ConfigUtil(configPath);
+		ConfigUtil configUtil = new ConfigUtil(ini);
 		
 		this.port = Integer.valueOf(configUtil.getPort());
 		
+		this.ini = ini;
 		this.logPath = logPath;
-		this.configPath = configPath;
 		this.libraryPath = libraryPath;
 		service = documentReaderService;
 	}
@@ -34,7 +36,7 @@ public class WebInterface {
 		Spark.port(port);
 		Spark.ipAddress("0.0.0.0");
 		Spark.staticFileLocation("/spark/public");
-		RootRoute rootRoute = new RootRoute(libraryPath, configPath, service);
+		RootRoute rootRoute = new RootRoute(libraryPath, ini, service);
 		
 		Spark.get("/", rootRoute);
 		

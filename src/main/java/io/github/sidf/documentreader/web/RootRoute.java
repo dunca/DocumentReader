@@ -13,6 +13,9 @@ import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
+
+import org.ini4j.Ini;
+
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
@@ -46,10 +49,10 @@ class RootRoute implements Route {
 	private static DocumentReaderService service;
 	private static final Pattern buttonPattern = Pattern.compile("btn_\\w+(?=\\=)");
 	
-	public RootRoute(String libraryPath, String configPath, DocumentReaderService documentReaderService) throws Exception {
+	public RootRoute(String libraryPath, Ini ini, DocumentReaderService documentReaderService) throws Exception {
 		this.libraryPath = libraryPath;
 		service = documentReaderService;
-		config = new ConfigUtil(configPath);
+		config = new ConfigUtil(ini);
 		
 		supportedVolumeLevels.put("100", "100 %");
 		supportedVolumeLevels.put("50", "50 %");
