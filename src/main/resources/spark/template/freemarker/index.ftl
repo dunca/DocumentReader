@@ -113,6 +113,11 @@
 				<br />
 			</#if>
 		</#macro>
+		
+		<#macro textImputMacro name label>
+			<label for="${name}">${label}</label>
+			<input id="${name}" name = "${name}" type="text" class="w3-input"/>
+		</#macro>
 
 		<div class="w3-container w3-center">
 		<#if infoMessage??>
@@ -178,6 +183,9 @@
 			  <option value="shutdown">shut down</option>
 			</select>
 			<@buttonMacro nameSuffix="set_device_state" disabled=disabled/>
+			
+			<@textImputMacro name="set_ap_password" label="Access point password"/>
+			<@buttonMacro nameSuffix="set_ap_password"/>
 	    </form>
 	    </div>
 

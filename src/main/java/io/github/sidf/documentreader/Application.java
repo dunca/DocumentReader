@@ -1,6 +1,7 @@
 package io.github.sidf.documentreader;
 
 import java.io.File;
+import org.ini4j.Ini;
 import java.util.logging.Logger;
 import java.util.logging.FileHandler;
 
@@ -46,10 +47,13 @@ public class Application {
 //			return;
 //		}
 		
-//		String ipAddress = ini.get("Access point", "ipAddress");
-//		AccessPoint accessPoint = new AccessPoint(ipAddress, args[2]);
-//		accessPoint.start();
-//		
+		Ini ini = new Ini(new File(args[1]));
+		
+		String password =  ini.get("Access point", "password");
+		String ipAddress = ini.get("Access point", "ipAddress");
+		AccessPoint accessPoint = new AccessPoint(ipAddress, password, args[2]);
+		accessPoint.start();
+		
 		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]));
 		WebInterface webInterface = new WebInterface(args[0], args[1], logPath, service);
 		webInterface.start();

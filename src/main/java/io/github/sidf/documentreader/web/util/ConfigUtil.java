@@ -47,6 +47,14 @@ public class ConfigUtil {
 		return ini.get("Web UI", "port");
 	}
 	
+	public String getApPassword() {
+		return ini.get("Access point", "password");
+	}
+	
+	public String getIpAddress() {
+		return ini.get("Access point", "ipAddress");
+	}
+	
 	public void setDocumentHash(String hash) {
 		ini.put("Document", "selectedDocumentHash", hash);
 	}
@@ -77,6 +85,10 @@ public class ConfigUtil {
 	
 	public void setContent(String mode) {
 		ini.put("Web UI", "content", mode);
+	}
+	
+	public void setApPassword(String password) {
+		ini.put("Access point", "password", password);
 	}
 	
 	public void store() throws IOException {

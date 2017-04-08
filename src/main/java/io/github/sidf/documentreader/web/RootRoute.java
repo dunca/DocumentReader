@@ -318,6 +318,15 @@ class RootRoute implements Route {
 				}
 			}
 			break;
+		case "btn_set_ap_password":
+			String password = RequestUtil.parseBodyString(request.body(), "set_ap_password");
+			if (password != null && password.matches("^\\p{ASCII}{8,63}$")) {
+				config.setApPassword(password);
+				infoMessage = "Access point password updated";
+			} else {
+				errorMessage = "The password should be between 8 and 63 ASCII characters long";
+			}
+			break;
 		default:
 			Spark.halt(404);
 		}
