@@ -137,6 +137,8 @@ class RootRoute implements Route {
 			    } catch (IOException e) {
 					errorMessage = "Could not save the file";
 			    }
+			} else {
+				errorMessage = "Select a file before trying to upload";
 			}
 	    } else {
 	    	Matcher matcher = buttonPattern.matcher(request.body());
