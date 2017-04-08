@@ -143,9 +143,7 @@ class RootRoute implements Route {
 				handleButtonPress(pressedButton, request);
 			}
 	    }
-	    
-	    map.put("infoMessage", infoMessage);
-	    map.put("errorMessage", errorMessage);
+
 		response.redirect("/");
 		return null;
 	}
@@ -337,7 +335,7 @@ class RootRoute implements Route {
 			}
 			break;
 		default:
-			Spark.halt(404);
+			Spark.halt(404, "No logic implemented for button " + buttonName);
 		}
 		
 		try {
