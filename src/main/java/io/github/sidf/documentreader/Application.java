@@ -1,7 +1,6 @@
 package io.github.sidf.documentreader;
 
 import java.io.File;
-import org.ini4j.Ini;
 import java.util.logging.Logger;
 import java.util.logging.FileHandler;
 
@@ -47,19 +46,11 @@ public class Application {
 //			return;
 //		}
 		
-		Ini ini = new Ini(new File(args[1]));
-		
-		String currentPagePath = ini.get("Document", "currentPagePath");
-		if (currentPagePath == null) {
-			logger.severe("The currentPagePath setting is invalid");
-			return;
-		}
-		
 //		String ipAddress = ini.get("Access point", "ipAddress");
 //		AccessPoint accessPoint = new AccessPoint(ipAddress, args[2]);
 //		accessPoint.start();
 //		
-		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]), new File(currentPagePath));
+		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]));
 		WebInterface webInterface = new WebInterface(args[0], args[1], logPath, service);
 		webInterface.start();
 	}

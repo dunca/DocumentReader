@@ -43,10 +43,6 @@ public class ConfigUtil {
 		return ini.get("Web UI", "content");
 	}
 	
-	public String getCurrentPagePath() {
-		return ini.get("Document", "currentPagePath");
-	}
-	
 	public String getPort() {
 		return ini.get("Web UI", "port");
 	}

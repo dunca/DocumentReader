@@ -30,9 +30,8 @@ public class DocumentReaderService {
 	private static Thread lightingThread;
 	private static Thread featureDetectionThread;
 	
-	public DocumentReaderService(File libraryPath, File bookmarkFilePath, File currentPagePath)
-			                    throws FileNotFoundException {
-		documentLibrary = new DocumentLibrary(libraryPath, bookmarkFilePath, currentPagePath);
+	public DocumentReaderService(File libraryPath, File bookmarkFilePath) throws FileNotFoundException {
+		documentLibrary = new DocumentLibrary(libraryPath, bookmarkFilePath);
 	}
 	
 	public void setDocument(String documentId) throws Exception {
@@ -129,6 +128,10 @@ public class DocumentReaderService {
 			return null;
 		}
 		return document.getPageCount();
+	}
+	
+	public String getCurrentPageContent() {
+		return document.getCurrentPageContent();
 	}
 
 	public void updateDocumentLibrary() {

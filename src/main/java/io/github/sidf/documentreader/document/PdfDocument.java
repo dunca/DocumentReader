@@ -8,8 +8,8 @@ import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.CommandResult;
 
 public class PdfDocument extends Document {
-	public PdfDocument(File file, File bookmarkIniFilePath, File currentPagePath) throws Exception {
-		super(file, bookmarkIniFilePath, currentPagePath);
+	public PdfDocument(File file, File bookmarkIniFilePath) throws Exception {
+		super(file, bookmarkIniFilePath);
 		
 		setPageCount(fetchPageCount());
 	}

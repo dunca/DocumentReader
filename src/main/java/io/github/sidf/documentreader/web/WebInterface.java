@@ -16,7 +16,6 @@ public class WebInterface {
 	private String logPath;
 	private String configPath;
 	private String libraryPath;
-	private String currentPagePath;
 	private static DocumentReaderService service;
 	
 	public WebInterface(String libraryPath, String configPath, String logPath,
@@ -29,8 +28,6 @@ public class WebInterface {
 		this.configPath = configPath;
 		this.libraryPath = libraryPath;
 		service = documentReaderService;
-		
-		currentPagePath = configUtil.getCurrentPagePath();
 	}
 	
 	public void start() throws Exception {
@@ -52,14 +49,14 @@ public class WebInterface {
 		
 		Spark.get("/currentPage", new Route() {
 			@Override
-			public Object handle(Request request, Response response) throws Exception {
-				return FileUtil.fileToString(new File(currentPagePath));
+			public Object handle(Request request, Response response) {
+				return service.getCurrentPageContent();
 			}
 		});
 		
 		Spark.get("/isReading", new Route() {
 			@Override
-			public Object handle(Request request, Response response) throws Exception {
+			public Object handle(Request request, Response response) {
 				boolean isReading = service.isReading();
 				
 				if (!service.isReading()) {

@@ -14,12 +14,11 @@ import java.io.FileNotFoundException;
 
 public class DocumentLibrary {
 	private File libraryPath;
-	private File currentPagePath;
 	private File bookmarkIniFilePath;
 	private List<Document> documents = new ArrayList<Document>();
 	private static Logger logger = Logger.getLogger(DocumentLibrary.class.getName());
 	
-	public DocumentLibrary(File libraryPath, File bookmarkFilePath, File currentPagePath) throws FileNotFoundException {
+	public DocumentLibrary(File libraryPath, File bookmarkFilePath) throws FileNotFoundException {
 		if (!libraryPath.exists() || !libraryPath.isDirectory()) {
 			throw new FileNotFoundException(String.format("%s does not exist as a directory", libraryPath));
 		} else if (!bookmarkFilePath.exists()) {
@@ -27,7 +26,6 @@ public class DocumentLibrary {
 		}
 		
 		this.bookmarkIniFilePath = bookmarkFilePath;
-		this.currentPagePath = currentPagePath;
 		this.libraryPath = libraryPath;
 		update();
 	}
@@ -44,7 +42,7 @@ public class DocumentLibrary {
 			for (String documentProvider : DocumentFactory.getDocumentProviders()) {
 				Document document = null;
 				try {
-					document = DocumentFactory.getInstance(documentProvider, file, bookmarkIniFilePath, currentPagePath);
+					document = DocumentFactory.getInstance(documentProvider, file, bookmarkIniFilePath);
 					if (brokenDocuments.contains(file)) {
 						brokenDocuments.remove(file);
 					}
