@@ -36,8 +36,9 @@ public abstract class Document implements Iterable<DocumentPage> {
 		
 		if (bookmarkIni == null) {
 			bookmarkIni = new Ini(bookmarkIniFilePath);
-			bookmarkIniMap = parseBookmarkIniFile();
 		}
+		
+		bookmarkIniMap = parseBookmarkIniFile();
 		
 		documentPath = file.getPath();
 		documentName = file.getName();
@@ -87,6 +88,7 @@ public abstract class Document implements Iterable<DocumentPage> {
 	}
 	
 	public void delete() {
+		resetBookmark();
 		file.delete();
 	}
 	
