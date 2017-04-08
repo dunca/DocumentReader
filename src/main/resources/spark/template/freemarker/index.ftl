@@ -153,8 +153,10 @@
 		<br />
 
 		<form method='post' action="/">
+			<#if availableDocuments?size != 0>
 			<@mappingSelectMacro name="set_document" label="Document" mapping=availableDocuments selectedValue=selectedDocumentHash!""/>
 			<@buttonMacro nameSuffix="set_document" disabled=disabled/>
+			</#if>
 
 			<@simpleSelectMacro name="set_reader" label="Reader" iterable=availableReaderProviders selectedValue=selectedReaderProvider/>
 			<@buttonMacro nameSuffix="set_reader" disabled=disabled/>
