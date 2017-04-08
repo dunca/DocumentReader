@@ -28,7 +28,7 @@ public class Application {
 		htmlHandler.setFormatter(new HtmlLogFormatter());
 		logger.addHandler(htmlHandler);
 		
-		if (!argsArValid(args)) {
+		if (!areArgsValid(args)) {
 			logger.severe("This app requires some arguments in this exact order:\n"
 					+ "a path to the document library directory\n"
 					+ "a path to the general configuration file (config.ini)\n"
@@ -60,7 +60,7 @@ public class Application {
 		webInterface.start();
 	}
 	
-	private static boolean argsArValid(String[] args) {
+	private static boolean areArgsValid(String[] args) {
 		if (args.length != requiredFileCount) {
 			return false;
 		}
