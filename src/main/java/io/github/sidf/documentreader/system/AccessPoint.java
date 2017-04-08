@@ -29,8 +29,8 @@ public class AccessPoint {
 			throw new IOException(message);
 		}
 		
-		this.ssid = ssid;
-		this.password = password;
+		AccessPoint.ssid = ssid;
+		AccessPoint.password = password;
 		this.hostapdConfigPath = hostapdConfigPath;
 		wlanInterface = getWlanInterfaceName();
 		updateConfigFile();
