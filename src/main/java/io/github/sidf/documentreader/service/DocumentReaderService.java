@@ -147,11 +147,7 @@ public class DocumentReaderService {
 	}
 	
 	public void deleteDocument(String documentId) {
-		boolean libraryChanged = documentLibrary.deleteDocument(documentId);
-		
-		if (libraryChanged) {
-			documentLibrary.update();
-		}
+		documentLibrary.deleteDocument(documentId);
 	}
 	
 	public void resetCurrentDocumentBookmark() {

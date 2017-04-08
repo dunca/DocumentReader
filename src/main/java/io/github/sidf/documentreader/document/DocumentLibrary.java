@@ -101,14 +101,18 @@ public class DocumentLibrary {
 		return map;
 	}
 	
-	public boolean deleteDocument(String documentId) {
+	public void deleteDocument(String documentId) {
+		Document documentToRemove = null;
 		for (Document document : documents) {
 			if (document.getDocumentId().equals(documentId)) {
+				documentToRemove = document;
 				document.delete();
-				return true;
+				break;
 			}
 		}
 		
-		return false;
+		if (documentToRemove != null) {
+			documents.remove(documentToRemove);
+		}
 	}
 }
