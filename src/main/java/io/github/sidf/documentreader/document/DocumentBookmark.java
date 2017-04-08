@@ -1,6 +1,5 @@
 package io.github.sidf.documentreader.document;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.BreakIterator;
 import java.util.logging.Logger;
@@ -16,12 +15,12 @@ public class DocumentBookmark {
 	private DocumentPage page;
 	private static Logger logger = Logger.getLogger(DocumentBookmark.class.getName());
 	
-	public DocumentBookmark(DocumentPage page, int pageIndex, int sentenceIndex, File bookmarkIniFilePath, Document document) throws InvalidFileFormatException, IOException {
+	public DocumentBookmark(DocumentPage page, int pageIndex, int sentenceIndex, Ini ini, Document document) throws InvalidFileFormatException, IOException {
 		this.page = page;
+		this.bookmarkIni = ini;
 		this.document = document;
 		this.pageIndex = pageIndex;
 		this.sentenceIndex = sentenceIndex;
-		this.bookmarkIni = new Ini(bookmarkIniFilePath);
 	}
 	
 	public DocumentPage getPage() {

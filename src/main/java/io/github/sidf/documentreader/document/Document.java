@@ -5,7 +5,6 @@ import java.util.Map;
 import org.ini4j.Ini;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.io.FileReader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
@@ -36,7 +35,7 @@ public abstract class Document implements Iterable<DocumentPage> {
 		}
 		
 		if (bookmarkIni == null) {
-			bookmarkIni = new Ini(new FileReader(bookmarkIniFilePath));
+			bookmarkIni = new Ini(bookmarkIniFilePath);
 			bookmarkIniMap = parseBookmarkIniFile();
 		}
 		
@@ -52,7 +51,7 @@ public abstract class Document implements Iterable<DocumentPage> {
 			sentenceIndex = Integer.valueOf(info[1]);
 		}
 		
-		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIniFilePath, this);
+		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIni, this);
 	}
 	
 	public int getPageCount() {
