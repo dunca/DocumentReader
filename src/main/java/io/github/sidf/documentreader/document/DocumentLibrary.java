@@ -18,7 +18,7 @@ public class DocumentLibrary {
 	private List<Document> documents = new ArrayList<Document>();
 	private static Logger logger = Logger.getLogger(DocumentLibrary.class.getName());
 	
-	public DocumentLibrary(String libraryPath, String bookmarkPath) throws FileNotFoundException {
+	public DocumentLibrary(String libraryPath, String bookmarkPath) throws Exception {
 		libraryFile = new File(libraryPath);
 		bookmarkFile = new File(bookmarkPath);
 		

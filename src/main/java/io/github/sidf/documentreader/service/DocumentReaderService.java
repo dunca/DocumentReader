@@ -3,7 +3,6 @@ package io.github.sidf.documentreader.service;
 import java.util.Map;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-import java.io.FileNotFoundException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -29,7 +28,7 @@ public class DocumentReaderService {
 	private static Lighting lightingInstance;
 	private static FeatureDetector featureDetectorInstance;
 	
-	public DocumentReaderService(String libraryPath, String bookmarkPath) throws FileNotFoundException {
+	public DocumentReaderService(String libraryPath, String bookmarkPath) throws Exception {
 		documentLibrary = new DocumentLibrary(libraryPath, bookmarkPath);
 	}
 	
