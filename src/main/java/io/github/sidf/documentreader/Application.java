@@ -55,7 +55,7 @@ public class Application {
 		AccessPoint accessPoint = new AccessPoint(ipAddress, password, ssid, args[2]);
 		accessPoint.start();
 		
-		DocumentReaderService service = new DocumentReaderService(new File(args[0]), new File(args[3]));
+		DocumentReaderService service = new DocumentReaderService(args[0], args[3]);
 		WebInterface webInterface = new WebInterface(args[0], ini, logPath, service);
 		webInterface.start();
 	}

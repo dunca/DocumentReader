@@ -6,13 +6,12 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
-import java.io.InvalidObjectException;
 
 import io.github.sidf.documentreader.util.FileUtil;
 
 public abstract class Document implements Iterable<Page> {
-	private File file;
 	private String id;
+	private File file;
 	private String path;
 	private String name;
 	private Bookmark bookmark;
@@ -20,22 +19,18 @@ public abstract class Document implements Iterable<Page> {
 	
 	private static Logger logger = Logger.getLogger(Document.class.getName());
 	
-	Document(File file, File bookmarkIniFile) throws Exception {
-		this.file = file;
+	Document(String filePath, File bookmarkFile) throws Exception {	
+		file = new File(filePath);
 		
-		String filePath = file.getPath();
-		
-		if (!file.exists()) {
-			throw new FileNotFoundException(String.format("%s does not exist", filePath));
-		} else if (file.isDirectory()) {
-			throw new InvalidObjectException(String.format("%s is not a file", filePath));
-		}
+		if (!file.isFile()) {
+			throw new FileNotFoundException(String.format("%s does not exist as a file", filePath));
+		} 
 		
 		if (bookmarkIni == null) {
-			bookmarkIni = new Ini(bookmarkIniFile);
+			bookmarkIni = new Ini(bookmarkFile);
 		}
 		
-		path = file.getPath();
+		path = filePath;
 		name = file.getName();
 		id = FileUtil.getMd5Hash(path);
 		

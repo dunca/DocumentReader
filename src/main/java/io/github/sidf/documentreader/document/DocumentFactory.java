@@ -13,10 +13,10 @@ public class DocumentFactory {
 	private static String[] documentProviders = ClassPathUtil.getSubclassNames(DocumentFactory.class.getPackage().getName(), 
 																			   Document.class).toArray(new String[0]);
 	
-	static Document getInstance(String className, File file, File bookmarkIniFilePath) throws Exception {
+	static Document getInstance(String className, String filePath, File bookmarkFile) throws Exception {
 		Class<?> theClass = Class.forName(className); 
-		Constructor<?> constructor = theClass.getConstructor(File.class, File.class);
-		return (Document) constructor.newInstance(file, bookmarkIniFilePath);
+		Constructor<?> constructor = theClass.getConstructor(String.class, File.class);
+		return (Document) constructor.newInstance(filePath, bookmarkFile);
 	}
 	 
 	static String[] getDocumentProviders() {

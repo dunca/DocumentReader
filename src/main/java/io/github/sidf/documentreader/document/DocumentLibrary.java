@@ -13,20 +13,21 @@ import java.util.function.Consumer;
 import java.io.FileNotFoundException;
 
 public class DocumentLibrary {
-	private File libraryPath;
-	private File bookmarkIniFilePath;
+	private File libraryFile;
+	private File bookmarkFile;
 	private List<Document> documents = new ArrayList<Document>();
 	private static Logger logger = Logger.getLogger(DocumentLibrary.class.getName());
 	
-	public DocumentLibrary(File libraryPath, File bookmarkFilePath) throws FileNotFoundException {
-		if (!libraryPath.exists() || !libraryPath.isDirectory()) {
-			throw new FileNotFoundException(String.format("%s does not exist as a directory", libraryPath));
-		} else if (!bookmarkFilePath.exists()) {
-			throw new FileNotFoundException(String.format("%s does not exist as a file", bookmarkFilePath));
-		}
+	public DocumentLibrary(String libraryPath, String bookmarkPath) throws FileNotFoundException {
+		libraryFile = new File(libraryPath);
+		bookmarkFile = new File(bookmarkPath);
 		
-		this.bookmarkIniFilePath = bookmarkFilePath;
-		this.libraryPath = libraryPath;
+		if (!libraryFile.isDirectory()) {
+			throw new FileNotFoundException(String.format("%s does not exist as a directory", libraryPath));
+		} else if (!bookmarkFile.isFile()) {
+			throw new FileNotFoundException(String.format("%s does not exist as a file", bookmarkPath));
+		} 
+		
 		update();
 	}
 	
@@ -38,11 +39,11 @@ public class DocumentLibrary {
 		clear();
 		Set<File> brokenDocuments = new HashSet<>();
 		
-		for (File file : libraryPath.listFiles()) {
+		for (File file : libraryFile.listFiles()) {
 			for (String documentProvider : DocumentFactory.getDocumentProviders()) {
 				Document document = null;
 				try {
-					document = DocumentFactory.getInstance(documentProvider, file, bookmarkIniFilePath);
+					document = DocumentFactory.getInstance(documentProvider, file.getPath(), bookmarkFile);
 					if (brokenDocuments.contains(file)) {
 						brokenDocuments.remove(file);
 					}
