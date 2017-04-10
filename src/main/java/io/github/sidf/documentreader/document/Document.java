@@ -10,16 +10,17 @@ import java.io.InvalidObjectException;
 
 import io.github.sidf.documentreader.util.FileUtil;
 
-public abstract class Document implements Iterable<DocumentPage> {
+public abstract class Document implements Iterable<Page> {
 	private File file;
-	private String documentId;
-	private String documentPath;
-	private String documentName;
+	private String id;
+	private String path;
+	private String name;
+	private Bookmark bookmark;
 	private static Ini bookmarkIni;
-	private DocumentBookmark bookmark;
+	
 	private static Logger logger = Logger.getLogger(Document.class.getName());
 	
-	public Document(File file, File bookmarkIniFilePath) throws Exception {
+	Document(File file, File bookmarkIniFile) throws Exception {
 		this.file = file;
 		
 		String filePath = file.getPath();
@@ -31,36 +32,36 @@ public abstract class Document implements Iterable<DocumentPage> {
 		}
 		
 		if (bookmarkIni == null) {
-			bookmarkIni = new Ini(bookmarkIniFilePath);
+			bookmarkIni = new Ini(bookmarkIniFile);
 		}
 		
-		documentPath = file.getPath();
-		documentName = file.getName();
-		documentId = FileUtil.getMd5Hash(documentPath);
+		path = file.getPath();
+		name = file.getName();
+		id = FileUtil.getMd5Hash(path);
 		
 		int pageIndex = 0;
 		int sentenceIndex = 0;
-		if (bookmarkIni.containsKey(documentId)) {
-			pageIndex = Integer.valueOf(bookmarkIni.get(documentId, "pageIndex"));
-			sentenceIndex = Integer.valueOf(bookmarkIni.get(documentId, "sentenceIndex"));
+		if (bookmarkIni.containsKey(id)) {
+			pageIndex = Integer.valueOf(bookmarkIni.get(id, "pageIndex"));
+			sentenceIndex = Integer.valueOf(bookmarkIni.get(id, "sentenceIndex"));
 		}
 		
-		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIni, this);
+		bookmark = new Bookmark(null, pageIndex, sentenceIndex, bookmarkIni, this);
 	}
 		
-	public String getDocumentId() {
-		return documentId;
+	public String getId() {
+		return id;
 	}
 	
-	public String getDocumentPath() {
-		return documentPath;
+	public String getPath() {
+		return path;
 	}
 	
-	public String getDocumentName() {
-		return documentName;
+	public String getName() {
+		return name;
 	}
 	
-	public DocumentBookmark getBookmark() {
+	Bookmark getBookmark() {
 		return bookmark;
 	}
 	
@@ -77,12 +78,12 @@ public abstract class Document implements Iterable<DocumentPage> {
 		return bookmark.getPageIndex();
 	}
 	
-	public Iterator<DocumentPage> iterator() {
+	public Iterator<Page> iterator() {
 		return new DocumentIterator(this);
 	}
 	
-	public DocumentPage updateBookmarkPage(int index, int sentenceIndex) throws Exception {
-		DocumentPage page = fetchPage(index);
+	Page updateBookmarkPage(int index, int sentenceIndex) throws Exception {
+		Page page = fetchPage(index);
 
 		bookmark.setPage(page);
 		bookmark.setPageIndex(index);
@@ -114,6 +115,5 @@ public abstract class Document implements Iterable<DocumentPage> {
 	}
 	
 	public abstract int getPageCount();
-	public abstract void setPageCount(int pageCount);
-	public abstract DocumentPage fetchPage(int index) throws Exception;
+	abstract Page fetchPage(int index) throws Exception;
 }

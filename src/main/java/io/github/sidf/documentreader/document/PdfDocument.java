@@ -17,18 +17,18 @@ public class PdfDocument extends Document {
 	}
 
 	@Override
-	public DocumentPage fetchPage(int index) throws Exception {
+	Page fetchPage(int index) throws Exception {
 		File tempFile = File.createTempFile("tempContent", null);
 		CommandUtil.launchNonBlockingCommand(String.format("pdftotext -layout -nopgbrk -f %d -l %d \"%s\" %s", index + 1, index + 1,
-														   getDocumentPath(), tempFile.getPath()));
+														   getPath(), tempFile.getPath()));
 		
-		DocumentPage page = new DocumentPage(getBookmark(), FileUtil.fileToString(tempFile));
+		Page page = new Page(getBookmark(), FileUtil.fileToString(tempFile));
 		tempFile.delete();
 		return page;
 	}
 	
 	private int fetchPageCount() throws IOException, InterruptedException {
-		CommandResult commandResult = CommandUtil.launchNonBlockingCommand(String.format("pdfinfo \"%s\" | grep Pages", getDocumentPath()));
+		CommandResult commandResult = CommandUtil.launchNonBlockingCommand(String.format("pdfinfo \"%s\" | grep Pages", getPath()));
 		int pageCount = Integer.valueOf(commandResult.getStdout().split("\\s+")[1]);
 		return pageCount;
 	}
@@ -36,10 +36,5 @@ public class PdfDocument extends Document {
 	@Override
 	public int getPageCount() {
 		return pageCount;
-	}
-
-	@Override
-	public void setPageCount(int pageCount) {
-		this.pageCount = pageCount;
 	}
 }

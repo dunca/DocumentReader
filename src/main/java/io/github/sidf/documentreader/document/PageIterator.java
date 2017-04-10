@@ -6,20 +6,20 @@ import java.text.BreakIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class DocumentPageSentenceIterator implements Iterator<String> {
-	private DocumentPage page;
+public class PageIterator implements Iterator<String> {
+	private Page page;
 	private int endBoundaryIndex;
 	private int startBoundaryIndex;
-	private DocumentBookmark sourceDocumentBookmark;
+	private Bookmark sourceBookmark;
 	private BreakIterator breakIterator = BreakIterator.getSentenceInstance();
-	private static Logger logger = Logger.getLogger(DocumentPageSentenceIterator.class.getName());
+	private static Logger logger = Logger.getLogger(PageIterator.class.getName());
 	
-	public DocumentPageSentenceIterator(DocumentBookmark sourceDocumentBookmark, DocumentPage page) {
-		this.sourceDocumentBookmark = sourceDocumentBookmark;
+	PageIterator(Bookmark sourceBookmark, Page page) {
+		this.sourceBookmark = sourceBookmark;
 		breakIterator.setText(page.getContent());
 		startBoundaryIndex = breakIterator.first();
 		
-		while (startBoundaryIndex < sourceDocumentBookmark.getSentenceIndex()) {
+		while (startBoundaryIndex < sourceBookmark.getSentenceIndex()) {
 			startBoundaryIndex = breakIterator.next();
 		}
 		
@@ -30,7 +30,7 @@ public class DocumentPageSentenceIterator implements Iterator<String> {
 		endBoundaryIndex = breakIterator.next();
 		boolean hasNext = endBoundaryIndex != BreakIterator.DONE;
 		
-		if (!hasNext && !sourceDocumentBookmark.onLastPage()) {
+		if (!hasNext && !sourceBookmark.onLastPage()) {
 			setSentenceIndex(0);
 		}
 		
@@ -46,7 +46,7 @@ public class DocumentPageSentenceIterator implements Iterator<String> {
 	
 	private void setSentenceIndex(int index) {
 		try {
-			sourceDocumentBookmark.setSentenceIndex(index);
+			sourceBookmark.setSentenceIndex(index);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Something went wrong when setting the sentence index", e);
 		}

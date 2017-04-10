@@ -151,7 +151,7 @@ public class DocumentReaderService {
 	}
 	
 	public void deleteDocument(String documentId) {
-		documentLibrary.deleteDocument(documentId);
+		documentLibrary.deleteDocumentById(documentId);
 	}
 	
 	public void resetCurrentDocumentBookmark() {

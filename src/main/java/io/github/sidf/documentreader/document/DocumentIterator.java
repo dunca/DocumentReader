@@ -2,11 +2,11 @@ package io.github.sidf.documentreader.document;
 
 import java.util.Iterator;
 
-public class DocumentIterator implements Iterator<DocumentPage> {
+public class DocumentIterator implements Iterator<Page> {
 	private Document document;
 	private boolean firstIteration = true;
 	
-	public DocumentIterator(Document document) {
+	DocumentIterator(Document document) {
 		this.document = document;
 	}
 	
@@ -20,8 +20,8 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 		return document.getBookmark().getPageIndex() < lastPageIndex;
 	}
 
-	public DocumentPage next() {
-		DocumentPage page = null;
+	public Page next() {
+		Page page = null;
 		
 		int pageIndex = document.getBookmark().getPageIndex();
 		int sentenceIndex = document.getBookmark().getSentenceIndex();
@@ -34,7 +34,7 @@ public class DocumentIterator implements Iterator<DocumentPage> {
 			page = document.updateBookmarkPage(pageIndex, sentenceIndex);
 		} catch (Exception e) {
 			e.printStackTrace();
-			new RuntimeException(String.format("Could not fetch page from %s", document.getDocumentName()));
+			new RuntimeException(String.format("Could not fetch page from %s", document.getName()));
 		}
 		
 		firstIteration = false;

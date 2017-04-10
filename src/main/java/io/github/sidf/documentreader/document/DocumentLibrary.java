@@ -52,8 +52,8 @@ public class DocumentLibrary {
 				}
 				
 				documents.add(document);
-				logger.info(String.format("Document %s with id %s was added to the library", document.getDocumentName(), 
-										  document.getDocumentId()));
+				logger.info(String.format("Document %s with id %s was added to the library", document.getName(), 
+										  document.getId()));
 			}
 		}
 		
@@ -73,7 +73,7 @@ public class DocumentLibrary {
 
 	public Document getDocumentById(String id) throws IOException {
 		for (Document document : documents) {
-			if (document.getDocumentId().equals(id)) {
+			if (document.getId().equals(id)) {
 				return document;
 			}
 		}
@@ -84,27 +84,23 @@ public class DocumentLibrary {
 		throw new IOException(message);
 	}
 	
-	public File getLibraryPath() {
-		return libraryPath;
-	}
-	
 	public Map<String, String> getDocumentMap() {
 		Map<String, String> map = new HashMap<>();
 		
 		documents.forEach(new Consumer<Document>() {
 			@Override
 			public void accept(Document document) {
-				map.put(document.getDocumentId(), document.getDocumentName());
+				map.put(document.getId(), document.getName());
 			}
 		});
 		
 		return map;
 	}
 	
-	public void deleteDocument(String documentId) {
+	public void deleteDocumentById(String documentId) {
 		Document documentToRemove = null;
 		for (Document document : documents) {
-			if (document.getDocumentId().equals(documentId)) {
+			if (document.getId().equals(documentId)) {
 				documentToRemove = document;
 				document.delete();
 				break;

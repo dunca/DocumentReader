@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.document.Document;
-import io.github.sidf.documentreader.document.DocumentPage;
+import io.github.sidf.documentreader.document.Page;
 import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.util.enums.Language;
@@ -68,7 +68,7 @@ public abstract class Reader implements Runnable {
 		int pageIndex = 0;
 		
 		outerLoop:
-		for (DocumentPage page : document) {
+		for (Page page : document) {
 			logger.info(String.format("Reading page with the session index of %d", pageIndex));
 			for (String sentence : page) {
 				try {
