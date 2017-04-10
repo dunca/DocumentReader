@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class CommandUtil {
-	private static Logger logger = Logger.getLogger(StreamUtil.class.getName());
+	private static Logger logger = Logger.getLogger(CommandUtil.class.getName());
 	
 	private CommandUtil() {
 		

@@ -252,7 +252,7 @@ class RootRoute implements Route {
 			try {
 				service.startReading(config.getFeatureDetection().equals("on"));
 				isReading = true;
-			} catch (IOException e) {
+			} catch (Exception e) {
 				errorMessage = "Coult not start the reader";
 			}
 			break;
@@ -271,21 +271,13 @@ class RootRoute implements Route {
 			break;
 		case "btn_set_language":
 			String selectedReaderLanguage = RequestUtil.parseBodyString(request.body(), "set_language");
-			try {
-				service.setCurrentReaderLanguage(selectedReaderLanguage);
-				config.setReaderLanguage(selectedReaderLanguage);
-			} catch (IOException e) {
-				errorMessage = "Could not set the reader's language" + e.getMessage();
-			}
+			service.setCurrentReaderLanguage(selectedReaderLanguage);
+			config.setReaderLanguage(selectedReaderLanguage);
 			break;
 		case "btn_set_reading_speed":
 			String selectedReaderSpeed = RequestUtil.parseBodyString(request.body(), "set_reading_speed");
-			try {
-				service.setCurrentReaderSpeed(selectedReaderSpeed);
-				config.setReaderSpeed(selectedReaderSpeed);
-			} catch (IOException e) {
-				errorMessage = "Could not set the reader's speed";
-			}
+			service.setCurrentReaderSpeed(selectedReaderSpeed);
+			config.setReaderSpeed(selectedReaderSpeed);
 			break;
 		case "btn_set_volume":
 			String selectedVolumeLevel = RequestUtil.parseBodyString(request.body(), "set_volume");

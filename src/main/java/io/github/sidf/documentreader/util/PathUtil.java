@@ -7,12 +7,12 @@ import java.io.InputStream;
 public class PathUtil {
 	private static ClassLoader classLoader;
 	
-	private PathUtil() {
-		
-	}
-	
 	static {
 		classLoader = PathUtil.class.getClassLoader();
+	}
+	
+	private PathUtil() {
+		
 	}
 	
 	public static String getResourcePath(String relativeResourcePath) {

@@ -8,11 +8,11 @@ import java.util.logging.Logger;
 import java.io.InputStreamReader;
 
 public class StreamUtil {
+	private static Logger logger = Logger.getLogger(StreamUtil.class.getName());
+	
 	private StreamUtil() {
 		
 	}
-	
-	private static Logger logger = Logger.getLogger(StreamUtil.class.getName());
 	
 	public static String inputStreamToString(InputStream inputStream) {
 		StringBuilder stringBuilder = new StringBuilder();

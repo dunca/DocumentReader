@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import io.github.sidf.documentreader.document.Document;
 import io.github.sidf.documentreader.document.Page;
 import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.util.enums.Speed;
+import io.github.sidf.documentreader.document.Document;
 import io.github.sidf.documentreader.util.enums.Language;
 
 public abstract class Reader implements Runnable {
@@ -17,42 +17,30 @@ public abstract class Reader implements Runnable {
 	private Document document;
 	private static Logger logger = Logger.getLogger(Reader.class.getName());
 	
-	public Reader(Document document) throws Exception {
+	Reader(Document document, Language language, Speed speed) throws IOException {
 		this.document = document;
-	}
-
-	public Document getDocument() {
-		return document;
-	}
-
-	public void setDocument(Document document) {
-		this.document = document;
-	}
-	
-	public Language getLanguage() {
-		return language;
-	}
-	
-	public void setLanguage(Language language) throws IOException {
+		
 		if (!ArrayUtil.arrayContains(getSupportedLanguages(), language.getDisplayName())) {
 			String message = String.format("The reader does not support %s", language.getDisplayName());
 			throw new IOException(message);
 		}
 		
 		this.language = language;
-	}
-	
-	public Speed getSpeed() {
-		return speed;
-	}
-	
-	public void setSpeed(Speed speed) throws IOException {
+		
 		if (!ArrayUtil.arrayContains(getSupportedSpeed(), speed.getDisplayName())) {
 			String message = String.format("The reader does not support %s speed", speed.getDisplayName());
 			throw new IOException(message);
 		}
 		
 		this.speed = speed;
+	}
+
+	public Language getLanguage() {
+		return language;
+	}
+	
+	public Speed getSpeed() {
+		return speed;
 	}
 
 	@Override
@@ -105,6 +93,6 @@ public abstract class Reader implements Runnable {
 	
 	public abstract String[] getSupportedSpeed();
 	public abstract String[] getSupportedLanguages();
-	public abstract void stopInternal() throws Exception;
-	public abstract void read(String text) throws Exception;
+	abstract void stopInternal() throws Exception;
+	abstract void read(String text) throws Exception;
 }

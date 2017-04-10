@@ -1,7 +1,7 @@
 package io.github.sidf.documentreader.util;
 
 import java.util.List;
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;;
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
 public class ClassPathUtil {
 	// http://stackoverflow.com/questions/7317179/scan-the-classpath-for-classes-with-custom-annotation

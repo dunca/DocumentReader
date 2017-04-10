@@ -8,20 +8,20 @@ import java.io.FileNotFoundException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import io.github.sidf.documentreader.reader.Reader;
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.system.Lighting;
 import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.document.Document;
 import io.github.sidf.documentreader.util.enums.Language;
+import io.github.sidf.documentreader.reader.ReaderFactory;
 import io.github.sidf.documentreader.document.DocumentLibrary;
 import io.github.sidf.documentreader.featuredetection.FeatureDetector;
-import io.github.sidf.documentreader.reader.Reader;
-import io.github.sidf.documentreader.reader.ReaderFactory;
 
 public class DocumentReaderService {
-	private static Reader readerInstance;
-	private static Lighting lightingInstance;
-	private static FeatureDetector featureDetectorInstance;
+	private static String readerName;
+	private static Speed readerSpeed;
+	private static Language readerLanguage;
 	
 	private static Document document;
 	private static DocumentLibrary documentLibrary;
@@ -30,27 +30,28 @@ public class DocumentReaderService {
 	private static Thread lightingThread;
 	private static Thread featureDetectionThread;
 	
+	private static Reader readerInstance;
+	private static Lighting lightingInstance;
+	private static FeatureDetector featureDetectorInstance;
+	
 	public DocumentReaderService(File libraryPath, File bookmarkFilePath) throws FileNotFoundException {
 		documentLibrary = new DocumentLibrary(libraryPath, bookmarkFilePath);
 	}
 	
-	public void setDocument(String documentId) throws Exception {
+	public void setDocument(String documentId) throws IOException {
 		document = documentLibrary.getDocumentById(documentId);
-		
-		if (readerInstance != null) {
-			readerInstance.setDocument(document);
-		}
 	}
 	
 	public Map<String, String> getDocumentMap() {
 		return documentLibrary.getDocumentMap();
 	}
 	
-	public void setCurrentReader(String readerName) throws Exception {
-		readerInstance = ReaderFactory.getInstance(readerName, document);
+	public void setCurrentReader(String readerName) {
+		DocumentReaderService.readerName = readerName;
 	}
 	
-	public void startReading(boolean featureDetectionEnabled) throws IOException {
+	public void startReading(boolean featureDetectionEnabled) throws Exception {
+		readerInstance = ReaderFactory.getInstance(readerName, document, readerLanguage, readerSpeed);
 		readerThread = new Thread(readerInstance);
 		readerThread.start();
 		
@@ -103,12 +104,12 @@ public class DocumentReaderService {
 		return Device.getVolume();
 	}
 	
-	public void setCurrentReaderSpeed(String speed) throws IOException {
-		readerInstance.setSpeed(Speed.fromString(speed));
+	public void setCurrentReaderSpeed(String speed) {
+		readerSpeed = Speed.fromString(speed);
 	}
 	
-	public void setCurrentReaderLanguage(String language) throws IOException {
-		readerInstance.setLanguage(Language.fromString(language));
+	public void setCurrentReaderLanguage(String language) {
+		readerLanguage = Language.fromString(language);
 	}
 	
 	public String[] getReaderProviders() {

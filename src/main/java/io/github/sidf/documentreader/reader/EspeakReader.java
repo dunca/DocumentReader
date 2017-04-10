@@ -3,9 +3,9 @@ package io.github.sidf.documentreader.reader;
 import java.util.Map;
 import java.util.HashMap;
 
+import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.document.Document;
-import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.enums.Language;
 
 public class EspeakReader extends Reader {
@@ -14,8 +14,8 @@ public class EspeakReader extends Reader {
 	private Map<Language, String> languageMap = new HashMap<>();
 	private static final String espeakCommandTemplate =  "/usr/bin/espeak -s %s -v %s \"%s\" --stdout | aplay";
 	
-	public EspeakReader(Document document) throws Exception {
-		super(document);
+	EspeakReader(Document document, Language language, Speed speed) throws Exception {
+		super(document, language, speed);
 		
 		speedMap.put(Speed.FAST, "200");
 		speedMap.put(Speed.MEDIUM, "150");
@@ -29,7 +29,7 @@ public class EspeakReader extends Reader {
 	}
 
 	@Override
-	public void read(String text) throws Exception {
+	void read(String text) throws Exception {
 		String espeakCommand = String.format(espeakCommandTemplate, speedMap.get(getSpeed()), languageMap.get(getLanguage()), text);
 		Process process = Runtime.getRuntime().exec(new String[] {shellPath, "-c", espeakCommand});
 		process.waitFor();
@@ -46,7 +46,7 @@ public class EspeakReader extends Reader {
 	}
 
 	@Override
-	public void stopInternal() throws Exception {
+	void stopInternal() throws Exception {
 		CommandUtil.quitUnixProcess("espeak");
 	}
 }

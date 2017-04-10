@@ -98,7 +98,7 @@ public class AccessPoint {
 		}
 	}
 	
-	public void updateConfigFile() throws IOException {
+	private void updateConfigFile() throws IOException {
 		String content = FileUtil.fileToString(new File(hostapdConfigPath));
 		content = content.replaceFirst("(?<=interface\\=).*", wlanInterface);
 		content = content.replaceFirst("(?<=wpa_passphrase\\=).*", password);
