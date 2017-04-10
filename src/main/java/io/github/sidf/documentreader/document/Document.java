@@ -19,7 +19,6 @@ public abstract class Document implements Iterable<DocumentPage> {
 	private String documentName;
 	private static Ini bookmarkIni;
 	private DocumentBookmark bookmark;
-	private static Map<String, String[]> bookmarkIniMap;
 	private static Logger logger = Logger.getLogger(Document.class.getName());
 	
 	public Document(File file, File bookmarkIniFilePath) throws Exception {
@@ -37,18 +36,15 @@ public abstract class Document implements Iterable<DocumentPage> {
 			bookmarkIni = new Ini(bookmarkIniFilePath);
 		}
 		
-		bookmarkIniMap = parseBookmarkIniFile();
-		
 		documentPath = file.getPath();
 		documentName = file.getName();
 		documentId = FileUtil.getMd5Hash(documentPath);
 		
 		int pageIndex = 0;
 		int sentenceIndex = 0;
-		if (bookmarkIniMap.containsKey(documentId)) {
-			String[] info = bookmarkIniMap.get(documentId);
-			pageIndex = Integer.valueOf(info[0]);
-			sentenceIndex = Integer.valueOf(info[1]);
+		if (bookmarkIni.containsKey(documentId)) {
+			pageIndex = Integer.valueOf(bookmarkIni.get(documentId, "pageIndex"));
+			sentenceIndex = Integer.valueOf(bookmarkIni.get(documentId, "sentenceIndex"));
 		}
 		
 		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIni, this);
@@ -103,16 +99,6 @@ public abstract class Document implements Iterable<DocumentPage> {
 		bookmark.setSentenceIndex(sentenceIndex);
 		
 		return page;
-	}
-	
-	private static Map<String, String[]> parseBookmarkIniFile() {
-		Map<String, String[]> map = new HashMap<>();
-		
-		for (String hash : bookmarkIni.keySet()) {
-			map.put(hash, new String[] { bookmarkIni.get(hash, "pageIndex"), bookmarkIni.get(hash, "sentenceIndex") });
-		}
-		
-		return map;
 	}
 	
 	private void wrapBookmark() throws Exception {
