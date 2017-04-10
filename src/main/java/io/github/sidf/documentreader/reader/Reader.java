@@ -1,9 +1,11 @@
-package io.github.sidf.documentreader.document;
+package io.github.sidf.documentreader.reader;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import io.github.sidf.documentreader.document.Document;
+import io.github.sidf.documentreader.document.DocumentPage;
 import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.util.enums.Language;

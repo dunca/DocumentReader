@@ -1,6 +1,8 @@
-package io.github.sidf.documentreader.document;
+package io.github.sidf.documentreader.reader;
 
 import java.lang.reflect.Constructor;
+
+import io.github.sidf.documentreader.document.Document;
 import io.github.sidf.documentreader.util.ClassPathUtil;
 
 public class ReaderFactory {

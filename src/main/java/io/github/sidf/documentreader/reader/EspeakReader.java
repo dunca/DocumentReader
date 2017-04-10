@@ -1,9 +1,10 @@
-package io.github.sidf.documentreader.document;
+package io.github.sidf.documentreader.reader;
 
 import java.util.Map;
 import java.util.HashMap;
 
 import io.github.sidf.documentreader.util.enums.Speed;
+import io.github.sidf.documentreader.document.Document;
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.enums.Language;
 

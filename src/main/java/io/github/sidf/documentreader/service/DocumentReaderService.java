@@ -10,13 +10,13 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.system.Lighting;
-import io.github.sidf.documentreader.document.Reader;
 import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.document.Document;
 import io.github.sidf.documentreader.util.enums.Language;
-import io.github.sidf.documentreader.document.ReaderFactory;
 import io.github.sidf.documentreader.document.DocumentLibrary;
 import io.github.sidf.documentreader.featuredetection.FeatureDetector;
+import io.github.sidf.documentreader.reader.Reader;
+import io.github.sidf.documentreader.reader.ReaderFactory;
 
 public class DocumentReaderService {
 	private static Reader readerInstance;
