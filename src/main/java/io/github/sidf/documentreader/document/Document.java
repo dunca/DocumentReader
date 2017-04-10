@@ -64,14 +64,6 @@ public abstract class Document implements Iterable<DocumentPage> {
 		return bookmark;
 	}
 	
-	public void setBookmark(DocumentBookmark bookmark) {
-		this.bookmark = bookmark;
-	}
-	
-	public File getFile() {
-		return file;
-	}
-	
 	public void delete() {
 		resetBookmark();
 		file.delete();

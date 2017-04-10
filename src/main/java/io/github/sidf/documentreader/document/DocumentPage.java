@@ -21,11 +21,6 @@ public class DocumentPage implements Iterable<String> {
 		return content;
 	}
 	
-	public void setContent(String content) {
-		this.content = content;
-		this.length = content.length();
-	}
-
 	public Iterator<String> iterator() {
 		return new DocumentPageSentenceIterator(sourceDocumentBookmark, this);
 	}
