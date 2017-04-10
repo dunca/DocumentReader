@@ -19,10 +19,6 @@ import io.github.sidf.documentreader.document.DocumentLibrary;
 import io.github.sidf.documentreader.featuredetection.FeatureDetector;
 
 public class DocumentReaderService {
-	private static String readerName;
-	private static Speed readerSpeed;
-	private static Language readerLanguage;
-	
 	private static Document document;
 	private static DocumentLibrary documentLibrary;
 	
@@ -46,12 +42,14 @@ public class DocumentReaderService {
 		return documentLibrary.getDocumentMap();
 	}
 	
-	public void setCurrentReader(String readerName) {
-		DocumentReaderService.readerName = readerName;
+	public void setCurrentReader(String readerName) throws Exception {
+		if (readerInstance != null && readerInstance.getClass().getName().equals(readerName)) {
+			return;
+		}
+		readerInstance = ReaderFactory.getInstance(readerName, document);
 	}
 	
-	public void startReading(boolean featureDetectionEnabled) throws Exception {
-		readerInstance = ReaderFactory.getInstance(readerName, document, readerLanguage, readerSpeed);
+	public void startReading(boolean featureDetectionEnabled) throws IOException {
 		readerThread = new Thread(readerInstance);
 		readerThread.start();
 		
@@ -104,12 +102,12 @@ public class DocumentReaderService {
 		return Device.getVolume();
 	}
 	
-	public void setCurrentReaderSpeed(String speed) {
-		readerSpeed = Speed.fromString(speed);
+	public void setCurrentReaderSpeed(String speed) throws IOException {
+		readerInstance.setSpeed(Speed.fromString(speed));
 	}
 	
-	public void setCurrentReaderLanguage(String language) {
-		readerLanguage = Language.fromString(language);
+	public void setCurrentReaderLanguage(String language) throws IOException {
+		readerInstance.setLanguage(Language.fromString(language));;
 	}
 	
 	public String[] getReaderProviders() {

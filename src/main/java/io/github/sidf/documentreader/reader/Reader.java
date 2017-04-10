@@ -17,16 +17,20 @@ public abstract class Reader implements Runnable {
 	private Document document;
 	private static Logger logger = Logger.getLogger(Reader.class.getName());
 	
-	Reader(Document document, Language language, Speed speed) throws IOException {
+	Reader(Document document) throws IOException {
 		this.document = document;
-		
+	}
+	
+	public void setLanguage(Language language) throws IOException {
 		if (!ArrayUtil.arrayContains(getSupportedLanguages(), language.getDisplayName())) {
 			String message = String.format("The reader does not support %s", language.getDisplayName());
 			throw new IOException(message);
 		}
 		
 		this.language = language;
-		
+	}
+	
+	public void setSpeed(Speed speed) throws IOException {
 		if (!ArrayUtil.arrayContains(getSupportedSpeed(), speed.getDisplayName())) {
 			String message = String.format("The reader does not support %s speed", speed.getDisplayName());
 			throw new IOException(message);

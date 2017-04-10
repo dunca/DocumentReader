@@ -14,8 +14,8 @@ public class EspeakReader extends Reader {
 	private Map<Language, String> languageMap = new HashMap<>();
 	private static final String espeakCommandTemplate =  "/usr/bin/espeak -s %s -v %s \"%s\" --stdout | aplay";
 	
-	EspeakReader(Document document, Language language, Speed speed) throws Exception {
-		super(document, language, speed);
+	public EspeakReader(Document document) throws Exception {
+		super(document);
 		
 		speedMap.put(Speed.FAST, "200");
 		speedMap.put(Speed.MEDIUM, "150");
