@@ -21,6 +21,7 @@ import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import io.github.sidf.documentreader.util.FileUtil;
+import io.github.sidf.documentreader.util.StreamUtil;
 import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.web.util.ConfigUtil;
 import io.github.sidf.documentreader.web.util.RequestUtil;
@@ -130,7 +131,7 @@ class RootRoute implements Route {
 			if (uploadedFile != null && uploadedFile.getSize() != 0) {
 			    String fileName = uploadedFile.getSubmittedFileName();
 			    try (InputStream inputStream = uploadedFile.getInputStream()) {
-			    	FileUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
+			    	StreamUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
 			    	service.updateDocumentLibrary();
 			    	availableDocuments = service.getDocumentMap();
 			    	infoMessage = "Successful upload";

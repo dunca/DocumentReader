@@ -46,11 +46,8 @@ public class FileUtil {
 			}
 		}
 		
+		sb.deleteCharAt(sb.length() - 1);
 		return sb.toString();
-	}
-	
-	public static void inputStreamToFile(InputStream is, String locationPath) throws IOException {
-		Files.copy(is, Paths.get(locationPath), StandardCopyOption.REPLACE_EXISTING);
 	}
 	
 	public static void stringToFile(String source, String locationPath) throws FileNotFoundException {

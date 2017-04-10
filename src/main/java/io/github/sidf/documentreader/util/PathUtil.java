@@ -22,7 +22,7 @@ public class PathUtil {
 	public static String resourcePathToFile(String relativeResourcePath) throws IOException {
 		InputStream inputStream = classLoader.getResourceAsStream(relativeResourcePath);
 		String filePath = "/tmp/" + getRandomFileName(null);
-		FileUtil.inputStreamToFile(inputStream, filePath);
+		StreamUtil.inputStreamToFile(inputStream, filePath);
 		return filePath;
 	}
 	
