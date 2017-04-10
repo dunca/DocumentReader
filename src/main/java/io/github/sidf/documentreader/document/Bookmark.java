@@ -26,7 +26,7 @@ public class Bookmark {
 		return page;
 	}
 
-	void setPage(Page page) throws IOException {
+	void setPage(Page page) {
 		this.page = page;
 	}
 
@@ -36,7 +36,7 @@ public class Bookmark {
 	
 	void setPageIndex(int pageIndex) throws IOException {
 		this.pageIndex = pageIndex;
-		setSentenceIndex(0);
+		updateBookmarkIni();
 	}
 	
 	int getSentenceIndex() {
@@ -44,11 +44,6 @@ public class Bookmark {
 	}
 	
 	void setSentenceIndex(int sentenceIndex) throws IOException {
-		if (this.sentenceIndex == sentenceIndex && 
-			(bookmarkIni.get(sourceDocument.getId(), "pageIndex") == String.valueOf(pageIndex))) {
-			return;
-		}
-		
 		this.sentenceIndex = sentenceIndex;
 		updateBookmarkIni();
 	}
