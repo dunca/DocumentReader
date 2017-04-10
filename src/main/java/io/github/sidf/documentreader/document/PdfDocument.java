@@ -8,10 +8,12 @@ import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.CommandResult;
 
 public class PdfDocument extends Document {
+	private int pageCount;
+	
 	public PdfDocument(File file, File bookmarkIniFilePath) throws Exception {
 		super(file, bookmarkIniFilePath);
 		
-		setPageCount(fetchPageCount());
+		pageCount = fetchPageCount();
 	}
 
 	@Override
@@ -29,5 +31,15 @@ public class PdfDocument extends Document {
 		CommandResult commandResult = CommandUtil.launchNonBlockingCommand(String.format("pdfinfo \"%s\" | grep Pages", getDocumentPath()));
 		int pageCount = Integer.valueOf(commandResult.getStdout().split("\\s+")[1]);
 		return pageCount;
+	}
+
+	@Override
+	public int getPageCount() {
+		return pageCount;
+	}
+
+	@Override
+	public void setPageCount(int pageCount) {
+		this.pageCount = pageCount;
 	}
 }

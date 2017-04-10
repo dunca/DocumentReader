@@ -14,7 +14,6 @@ import io.github.sidf.documentreader.util.FileUtil;
 
 public abstract class Document implements Iterable<DocumentPage> {
 	private File file;
-	private int pageCount;
 	private String documentId;
 	private String documentPath;
 	private String documentName;
@@ -54,15 +53,7 @@ public abstract class Document implements Iterable<DocumentPage> {
 		
 		bookmark = new DocumentBookmark(null, pageIndex, sentenceIndex, bookmarkIni, this);
 	}
-	
-	public int getPageCount() {
-		return pageCount;
-	}
-	
-	public void setPageCount(int pageCount) {
-		this.pageCount = pageCount;
-	}
-	
+		
 	public String getDocumentId() {
 		return documentId;
 	}
@@ -146,5 +137,7 @@ public abstract class Document implements Iterable<DocumentPage> {
 		}
 	}
 	
+	public abstract int getPageCount();
+	public abstract void setPageCount(int pageCount);
 	public abstract DocumentPage fetchPage(int index) throws Exception;
 }
