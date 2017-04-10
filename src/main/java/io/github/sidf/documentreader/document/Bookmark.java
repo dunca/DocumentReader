@@ -4,7 +4,6 @@ import org.ini4j.Ini;
 import java.io.IOException;
 import java.text.BreakIterator;
 import java.util.logging.Logger;
-import org.ini4j.InvalidFileFormatException;
 
 public class Bookmark {
 	private Page page;
@@ -15,7 +14,7 @@ public class Bookmark {
 	
 	private static Logger logger = Logger.getLogger(Bookmark.class.getName());
 	
-	Bookmark(Page page, int pageIndex, int sentenceIndex, Ini ini, Document sourceDocument) throws InvalidFileFormatException, IOException {
+	Bookmark(Page page, int pageIndex, int sentenceIndex, Ini ini, Document sourceDocument) {
 		this.page = page;
 		this.bookmarkIni = ini;
 		this.pageIndex = pageIndex;
