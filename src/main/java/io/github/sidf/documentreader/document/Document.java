@@ -1,9 +1,7 @@
 package io.github.sidf.documentreader.document;
 
 import java.io.File;
-import java.util.Map;
 import org.ini4j.Ini;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
