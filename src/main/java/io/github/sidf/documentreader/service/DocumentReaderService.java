@@ -17,6 +17,7 @@ import io.github.sidf.documentreader.document.DocumentLibrary;
 import io.github.sidf.documentreader.featuredetection.FeatureDetector;
 
 public class DocumentReaderService {
+	private static Document document;
 	private static DocumentLibrary documentLibrary;
 	
 	private static Thread readerThread;
@@ -32,7 +33,8 @@ public class DocumentReaderService {
 	}
 	
 	public void setDocument(String documentId) throws IOException {
-		readerInstance.setDocument(documentLibrary.getDocumentById(documentId));
+		document = documentLibrary.getDocumentById(documentId);
+		readerInstance.setDocument(document);
 	}
 	
 	public Map<String, String> getDocumentMap() {
@@ -44,6 +46,7 @@ public class DocumentReaderService {
 			return;
 		}
 		readerInstance = ReaderFactory.getInstance(readerName);
+		readerInstance.setDocument(document);
 	}
 	
 	public void startReading(boolean featureDetectionEnabled) throws IOException {
