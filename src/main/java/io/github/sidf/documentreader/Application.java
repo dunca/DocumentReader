@@ -12,13 +12,14 @@ import io.github.sidf.documentreader.util.HtmlLogFormatter;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
 public class Application {
-	private static final int requiredFileCount = 2;
+	private static final String configName = "config.ini";
 	private static String logPath;
 	private static Logger logger;
 	
 	static {
 		String packageName = Application.class.getPackage().getName();
 		logger = Logger.getLogger(packageName);
+		
 		logPath = String.format("%s-log.html", packageName.substring(packageName.lastIndexOf('.') + 1));
 		removeOldLogFiles();
 	}
@@ -28,10 +29,10 @@ public class Application {
 		htmlHandler.setFormatter(new HtmlLogFormatter());
 		logger.addHandler(htmlHandler);
 		
-		if (!areArgsValid(args)) {
-			logger.severe("This app requires some arguments in this exact order:\n"
-					+ "a path to the document library directory\n"
-					+ "a path to the general configuration file (config.ini)\n"
+		if (!isValidStart(args)) {
+			logger.severe("Cannot start application:\n"
+					+ "Make sure that you specify the document library directory as an argument\n"
+					+ "and that you have a valid configuration file called " + configName + "\n"
 					);
 			return;
 		}
@@ -45,7 +46,7 @@ public class Application {
 //			return;
 //		}
 		
-		Ini ini = new Ini(new File(args[1]));
+		Ini ini = new Ini(new File(configName));
 		
 		String ssid =  ini.get("Access point", "ssid");
 		String password =  ini.get("Access point", "password");
@@ -58,18 +59,8 @@ public class Application {
 		webInterface.start();
 	}
 	
-	private static boolean areArgsValid(String[] args) {
-		if (args.length != requiredFileCount) {
-			return false;
-		}
-		
-		for (String arg : args) {
-			if (!new File(arg).exists()) {
-				return false;
-			}
-		}
-		
-		return true;
+	private static boolean isValidStart(String[] args) {
+		return args.length == 1 && new File(args[0]).isDirectory() && new File(configName).isFile();
 	}
 	
 	private static void removeOldLogFiles() {
