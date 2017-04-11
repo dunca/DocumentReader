@@ -65,4 +65,9 @@ public class Bookmark {
 		
 		logger.info(String.format("Updated bookmark history file with pageIndex: %d and sentenceIndex: %d", pageIndex, sentenceIndex));
 	}
+	
+	void delete() throws IOException {
+		bookmarkIni.remove(sourceDocument.getId());
+		bookmarkIni.store();
+	}
 }

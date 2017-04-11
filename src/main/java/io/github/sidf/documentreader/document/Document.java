@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import io.github.sidf.documentreader.util.FileUtil;
 
@@ -61,7 +62,11 @@ public abstract class Document implements Iterable<Page> {
 	}
 	
 	public void delete() {
-		resetBookmark();
+		try {
+			bookmark.delete();
+		} catch (IOException e) {
+			logger.log(Level.WARNING, "Couldn't delete bookmark information", e);
+		}
 		file.delete();
 	}
 	
