@@ -3,7 +3,6 @@ package io.github.sidf.documentreader.system;
 import java.io.File;
 import java.util.HashMap;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,10 +13,11 @@ import io.github.sidf.documentreader.util.ValidatableCommand;
 
 public class AccessPoint {
 	private static Logger logger = Logger.getLogger(AccessPoint.class.getName());
-
+	
 	private static String ssid;
 	private static String password;
 	private String hostapdConfigPath;
+	private static int retryCount = 3;
 	private static String flushCommand;
 	private static String wlanInterface;
 	private static final String[] wlanInterfacePatterns = { "wlan", "wlp" };
@@ -89,8 +89,13 @@ public class AccessPoint {
 			if (!command.runs()) {
 				String message = String.format("Command %s did not run as intended", command.getCommand());
 				logger.severe(message);
-				cleanup();
+
+				if (retryCount-- > 0) {
+					logger.info("Retrying to set up access point");
+					start();
+				}
 				
+				cleanup();
 				throw new IOException(message);
 			}
 		}
