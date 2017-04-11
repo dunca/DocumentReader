@@ -3,10 +3,10 @@ package io.github.sidf.documentreader.document;
 import java.io.File;
 import org.ini4j.Ini;
 import java.util.Iterator;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import io.github.sidf.documentreader.util.FileUtil;
 

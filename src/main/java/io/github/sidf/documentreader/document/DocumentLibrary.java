@@ -9,13 +9,13 @@ import java.util.HashSet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
-import java.util.function.Consumer;
 import java.io.FileNotFoundException;
 
 public class DocumentLibrary {
 	private File libraryFile;
 	private File bookmarkFile;
 	private List<Document> documents = new ArrayList<Document>();
+	private Map<String, String> documentMap = new HashMap<String, String>();
 	private static Logger logger = Logger.getLogger(DocumentLibrary.class.getName());
 	
 	public DocumentLibrary(String libraryPath) throws Exception {
@@ -36,6 +36,7 @@ public class DocumentLibrary {
 	
 	public void clear() {
 		documents.clear();
+		documentMap.clear();
 	}
 	
 	public void update() {
@@ -56,6 +57,7 @@ public class DocumentLibrary {
 				}
 				
 				documents.add(document);
+				documentMap.put(document.getId(), document.getName());
 				logger.info(String.format("Document %s with id %s was added to the library", document.getName(), 
 										  document.getId()));
 			}
@@ -73,6 +75,8 @@ public class DocumentLibrary {
 		for (Document document : documents) {
 			document.delete();
 		}
+		
+		clear();
 	}
 
 	public Document getDocumentById(String id) throws IOException {
@@ -89,16 +93,7 @@ public class DocumentLibrary {
 	}
 	
 	public Map<String, String> getDocumentMap() {
-		Map<String, String> map = new HashMap<>();
-		
-		documents.forEach(new Consumer<Document>() {
-			@Override
-			public void accept(Document document) {
-				map.put(document.getId(), document.getName());
-			}
-		});
-		
-		return map;
+		return documentMap;
 	}
 	
 	public void deleteDocumentById(String documentId) {
@@ -112,6 +107,7 @@ public class DocumentLibrary {
 		}
 		
 		if (documentToRemove != null) {
+			documentMap.remove(documentId);
 			documents.remove(documentToRemove);
 		}
 	}
