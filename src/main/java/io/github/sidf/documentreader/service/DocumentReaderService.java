@@ -123,6 +123,10 @@ public class DocumentReaderService {
 	}
 	
 	public Integer getCurrentDocumentPageCount() {
+		if (readerInstance.getDocument() == null) {
+			return null;
+		}
+		
 		return readerInstance.getDocument().getPageCount();
 	}
 	
