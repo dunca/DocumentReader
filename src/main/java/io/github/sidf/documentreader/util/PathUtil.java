@@ -1,6 +1,6 @@
 package io.github.sidf.documentreader.util;
 
-import java.util.UUID;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,13 +21,10 @@ public class PathUtil {
 	
 	public static String resourcePathToFile(String relativeResourcePath) throws IOException {
 		InputStream inputStream = classLoader.getResourceAsStream(relativeResourcePath);
-		String filePath = "/tmp/" + getRandomFileName(null);
+		File file = File.createTempFile("temp", null);
+		String filePath = file.getPath();
+		
 		StreamUtil.inputStreamToFile(inputStream, filePath);
 		return filePath;
-	}
-	
-	public static String getRandomFileName(String suffix) {
-		String uuid = UUID.randomUUID().toString().replace('-', '_');
-		return uuid += suffix == null ? ".tmp" : suffix;
 	}
 }
