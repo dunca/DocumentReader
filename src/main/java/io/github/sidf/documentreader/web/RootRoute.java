@@ -176,13 +176,13 @@ class RootRoute implements Route {
 			config.setContent("on");
 		}
 		
-		updateDocumentInfo(config.getDocumentHash());
-		
 		String provider = config.getReaderProvider();
 		if (!ArrayUtil.arrayContains(availableReaderProviders, provider)) {
 			provider = availableReaderProviders[0];
 		} 
 		updateReaderInfo(provider);
+		
+		updateDocumentInfo(config.getDocumentHash());
 		
 		config.store();
 	}

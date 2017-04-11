@@ -38,6 +38,14 @@ public abstract class Reader implements Runnable {
 		
 		this.speed = speed;
 	}
+	
+	public void setDocument(Document document) {
+		this.document = document;
+	}
+	
+	public Document getDocument() {
+		return document;
+	}
 
 	public Language getLanguage() {
 		return language;
