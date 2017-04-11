@@ -3,10 +3,12 @@ package io.github.sidf.documentreader.system;
 import java.io.File;
 import java.util.HashMap;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.util.FileUtil;
+import io.github.sidf.documentreader.util.PathUtil;
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.ValidatableCommand;
 
@@ -22,16 +24,12 @@ public class AccessPoint {
 	private static final String wlanSearchCommandTemplate = "ls /sys/class/net | grep %s";
 	private static final HashMap<String, ValidatableCommand> nonBlockingCommands = new HashMap<>();
 	
-	public AccessPoint(String ipAddress, String password, String ssid, String hostapdConfigPath) throws Exception {
-		if (!(new File(hostapdConfigPath).exists())) {
-			String message = String.format("File % does not exit", hostapdConfigPath);
-			logger.severe(message);
-			throw new IOException(message);
-		}
-		
+	public AccessPoint(String ipAddress, String password, String ssid) throws Exception {
 		AccessPoint.ssid = ssid;
 		AccessPoint.password = password;
-		this.hostapdConfigPath = hostapdConfigPath;
+		
+		hostapdConfigPath = PathUtil.resourcePathToFile("hostapd/hostapd.ini");
+		
 		wlanInterface = getWlanInterfaceName();
 		updateConfigFile();
 		

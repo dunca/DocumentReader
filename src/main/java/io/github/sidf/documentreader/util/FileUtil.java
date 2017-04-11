@@ -5,7 +5,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -56,5 +55,9 @@ public class FileUtil {
 		} catch (UnsupportedEncodingException e) {
 			// ignore
 		}
+	}
+	
+	public static void copyFile(String sourcePath, String destinationPath) throws IOException {
+		Files.copy(Paths.get(sourcePath), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
 	}
 }

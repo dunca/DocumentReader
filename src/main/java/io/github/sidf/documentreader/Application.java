@@ -12,7 +12,7 @@ import io.github.sidf.documentreader.util.HtmlLogFormatter;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
 public class Application {
-	private static final int requiredFileCount = 3;
+	private static final int requiredFileCount = 2;
 	private static String logPath;
 	private static Logger logger;
 	
@@ -32,7 +32,6 @@ public class Application {
 			logger.severe("This app requires some arguments in this exact order:\n"
 					+ "a path to the document library directory\n"
 					+ "a path to the general configuration file (config.ini)\n"
-					+ "a path to the hostapd application configuration file (hostapd.ini)\n"
 					);
 			return;
 		}
@@ -51,7 +50,7 @@ public class Application {
 		String ssid =  ini.get("Access point", "ssid");
 		String password =  ini.get("Access point", "password");
 		String ipAddress = ini.get("Access point", "ipAddress");
-		AccessPoint accessPoint = new AccessPoint(ipAddress, password, ssid, args[2]);
+		AccessPoint accessPoint = new AccessPoint(ipAddress, password, ssid);
 		accessPoint.start();
 		
 		DocumentReaderService service = new DocumentReaderService(args[0]);
