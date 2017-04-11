@@ -18,15 +18,18 @@ public class DocumentLibrary {
 	private List<Document> documents = new ArrayList<Document>();
 	private static Logger logger = Logger.getLogger(DocumentLibrary.class.getName());
 	
-	public DocumentLibrary(String libraryPath, String bookmarkPath) throws Exception {
+	public DocumentLibrary(String libraryPath) throws Exception {
 		libraryFile = new File(libraryPath);
-		bookmarkFile = new File(bookmarkPath);
 		
 		if (!libraryFile.isDirectory()) {
 			throw new FileNotFoundException(String.format("%s does not exist as a directory", libraryPath));
-		} else if (!bookmarkFile.isFile()) {
-			throw new FileNotFoundException(String.format("%s does not exist as a file", bookmarkPath));
 		} 
+		
+		bookmarkFile = new File(String.join(File.separator, libraryPath, "bookmarks.ini"));
+		
+		if (!bookmarkFile.isFile()) {
+			bookmarkFile.createNewFile();
+		}
 		
 		update();
 	}

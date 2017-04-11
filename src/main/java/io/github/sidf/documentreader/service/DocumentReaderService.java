@@ -28,8 +28,8 @@ public class DocumentReaderService {
 	private static Lighting lightingInstance;
 	private static FeatureDetector featureDetectorInstance;
 	
-	public DocumentReaderService(String libraryPath, String bookmarkPath) throws Exception {
-		documentLibrary = new DocumentLibrary(libraryPath, bookmarkPath);
+	public DocumentReaderService(String libraryPath) throws Exception {
+		documentLibrary = new DocumentLibrary(libraryPath);
 	}
 	
 	public void setDocument(String documentId) throws IOException {

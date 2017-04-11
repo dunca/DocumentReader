@@ -12,7 +12,7 @@ import io.github.sidf.documentreader.util.HtmlLogFormatter;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
 public class Application {
-	private static final int requiredFileCount = 4;
+	private static final int requiredFileCount = 3;
 	private static String logPath;
 	private static Logger logger;
 	
@@ -33,7 +33,6 @@ public class Application {
 					+ "a path to the document library directory\n"
 					+ "a path to the general configuration file (config.ini)\n"
 					+ "a path to the hostapd application configuration file (hostapd.ini)\n"
-					+ "a path to the bookmark database file (bookmark.ini)"
 					);
 			return;
 		}
@@ -55,7 +54,7 @@ public class Application {
 		AccessPoint accessPoint = new AccessPoint(ipAddress, password, ssid, args[2]);
 		accessPoint.start();
 		
-		DocumentReaderService service = new DocumentReaderService(args[0], args[3]);
+		DocumentReaderService service = new DocumentReaderService(args[0]);
 		WebInterface webInterface = new WebInterface(args[0], ini, logPath, service);
 		webInterface.start();
 	}
