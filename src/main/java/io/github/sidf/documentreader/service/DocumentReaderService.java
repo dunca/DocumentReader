@@ -17,7 +17,6 @@ import io.github.sidf.documentreader.document.DocumentLibrary;
 import io.github.sidf.documentreader.featuredetection.FeatureDetector;
 
 public class DocumentReaderService {
-	private static Document document;
 	private static DocumentLibrary documentLibrary;
 	
 	private static Thread readerThread;
@@ -33,8 +32,7 @@ public class DocumentReaderService {
 	}
 	
 	public void setDocument(String documentId) throws IOException {
-		document = documentLibrary.getDocumentById(documentId);
-		readerInstance.setDocument(document);
+		readerInstance.setDocument(documentLibrary.getDocumentById(documentId));
 	}
 	
 	public Map<String, String> getDocumentMap() {
@@ -45,7 +43,7 @@ public class DocumentReaderService {
 		if (readerInstance != null && readerInstance.getClass().getName().equals(readerName)) {
 			return;
 		}
-		readerInstance = ReaderFactory.getInstance(readerName, document);
+		readerInstance = ReaderFactory.getInstance(readerName);
 	}
 	
 	public void startReading(boolean featureDetectionEnabled) throws IOException {
@@ -122,18 +120,15 @@ public class DocumentReaderService {
 	}
 	
 	public Integer getCurrentDocumentPageCount() {
-		if (document == null) {
-			return null;
-		}
-		return document.getPageCount();
+		return readerInstance.getDocument().getPageCount();
 	}
 	
 	public String getCurrentPageContent() {
-		return document.getCurrentPageContent();
+		return readerInstance.getDocument().getCurrentPageContent();
 	}
 	
 	public int getCurrentPageNumber() {
-		return document.getCurrentPageIndex() + 1;
+		return readerInstance.getDocument().getCurrentPageIndex() + 1;
 	}
 
 	public void updateDocumentLibrary() {
@@ -153,7 +148,7 @@ public class DocumentReaderService {
 	}
 	
 	public void resetCurrentDocumentBookmark() {
-		document.resetBookmark();
+		readerInstance.getDocument().resetBookmark();
 	}
 	
 	public boolean isReading() {

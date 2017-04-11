@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.enums.Speed;
-import io.github.sidf.documentreader.document.Document;
 import io.github.sidf.documentreader.util.enums.Language;
 
 public class EspeakReader extends Reader {
@@ -14,8 +13,8 @@ public class EspeakReader extends Reader {
 	private Map<Language, String> languageMap = new HashMap<>();
 	private static final String espeakCommandTemplate =  "/usr/bin/espeak -s %s -v %s \"%s\" --stdout | aplay";
 	
-	public EspeakReader(Document document) throws Exception {
-		super(document);
+	public EspeakReader() {
+		super();
 		
 		speedMap.put(Speed.FAST, "200");
 		speedMap.put(Speed.MEDIUM, "150");
