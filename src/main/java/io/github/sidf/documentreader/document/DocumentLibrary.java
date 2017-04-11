@@ -65,8 +65,10 @@ public class DocumentLibrary {
 		
 		if (!brokenDocuments.isEmpty()) {
 			for (File file : brokenDocuments) {
-				logger.warning(String.format("No document provider was able to initialize %s, deleting", file.getPath()));
-				file.delete();
+				if (!file.equals(bookmarkFile)) {
+					logger.warning(String.format("No document provider was able to initialize %s, deleting", file.getPath()));
+					file.delete();
+				}
 			}
 		}
 	}
