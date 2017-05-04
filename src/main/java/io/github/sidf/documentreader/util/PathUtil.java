@@ -15,11 +15,11 @@ public class PathUtil {
 		
 	}
 	
-	public static String getResourcePath(String relativeResourcePath) {
-		return classLoader.getResource(relativeResourcePath).getPath();
-	}
+//	public static String getAbsoluteResourcePath(String relativeResourcePath) {
+//		return classLoader.getResource(relativeResourcePath).getPath();
+//	}
 	
-	public static String resourcePathToFile(String relativeResourcePath) throws IOException {
+	public static String resourcePathToTempFilePath(String relativeResourcePath) throws IOException {
 		InputStream inputStream = classLoader.getResourceAsStream(relativeResourcePath);
 		File file = File.createTempFile("temp", null);
 		String filePath = file.getPath();

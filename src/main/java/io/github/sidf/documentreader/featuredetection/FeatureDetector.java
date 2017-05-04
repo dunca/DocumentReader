@@ -49,9 +49,9 @@ public class FeatureDetector implements Runnable {
 		disableAutofocus();
 		
 		if (faceClassifier == null) {
-			leftEyeClassifier = new CascadeClassifier(PathUtil.resourcePathToFile("cascades/left_eye_lbp.xml"));
-			rightEyeClassifier = new CascadeClassifier(PathUtil.resourcePathToFile("cascades/right_eye_lbp.xml"));
-			faceClassifier = new CascadeClassifier(PathUtil.resourcePathToFile("cascades/lbpcascade_frontalface.xml"));
+			leftEyeClassifier = new CascadeClassifier(PathUtil.resourcePathToTempFilePath("cascades/left_eye_lbp.xml"));
+			rightEyeClassifier = new CascadeClassifier(PathUtil.resourcePathToTempFilePath("cascades/right_eye_lbp.xml"));
+			faceClassifier = new CascadeClassifier(PathUtil.resourcePathToTempFilePath("cascades/lbpcascade_frontalface.xml"));
 		}
 	}
 		
