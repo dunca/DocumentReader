@@ -3,7 +3,6 @@ package io.github.sidf.documentreader.web;
 
 import spark.Route;
 import spark.Spark;
-import java.io.File;
 import org.ini4j.Ini;
 import spark.Request;
 import spark.Response;
@@ -45,7 +44,7 @@ public class WebInterface {
 		Spark.get("/log", new Route() {
 			@Override
 			public Object handle(Request request, Response response) throws Exception {
-				return FileUtil.fileToString(new File(logPath));
+				return FileUtil.fileToString(logPath);
 			}
 		});
 		

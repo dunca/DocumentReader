@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
@@ -16,6 +17,12 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
 public class FileUtil {
+	private static ClassLoader classLoader;
+	
+	static {
+		classLoader = FileUtil.class.getClassLoader();
+	}
+	
 	private FileUtil() {
 		
 	}
@@ -34,14 +41,13 @@ public class FileUtil {
 		return DatatypeConverter.printHexBinary(md5Hash);
 	}
 	
-	public static String fileToString(File file) throws IOException {
+	public static String fileToString(String filePath) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file)))) {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)))) {
 			String line = null;
 			while ((line = reader.readLine()) != null) {
-				sb.append(line);
-				sb.append("\n");
+				sb.append(String.format("%s%n", line));
 			}
 		}
 		
@@ -53,11 +59,20 @@ public class FileUtil {
 		try(PrintWriter writer = new PrintWriter(locationPath, "UTF-8")) {
 			writer.print(source);
 		} catch (UnsupportedEncodingException e) {
-			// ignore
+			//
 		}
 	}
 	
 	public static void copyFile(String sourcePath, String destinationPath) throws IOException {
 		Files.copy(Paths.get(sourcePath), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
+	}
+	
+	public static String resourcePathToFile(String relativeResourcePath) throws IOException {
+		InputStream inputStream = classLoader.getResourceAsStream(relativeResourcePath);
+		File file = File.createTempFile("temp", null);
+		String filePath = file.getPath();
+		
+		StreamUtil.inputStreamToFile(inputStream, filePath);
+		return filePath;
 	}
 }

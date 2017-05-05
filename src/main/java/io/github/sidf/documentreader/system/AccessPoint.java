@@ -1,6 +1,5 @@
 package io.github.sidf.documentreader.system;
 
-import java.io.File;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.io.IOException;
@@ -9,13 +8,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.util.FileUtil;
-import io.github.sidf.documentreader.util.PathUtil;
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.ValidatableCommand;
 
 public class AccessPoint {
 	private static Logger logger = Logger.getLogger(AccessPoint.class.getName());
-	
+	 
 	private static String ssid;
 	private static String password;
 	private static String flushCommand;
@@ -31,7 +29,7 @@ public class AccessPoint {
 		AccessPoint.ssid = ssid;
 		AccessPoint.password = password;
 		
-		tempHostapdConfigPath = PathUtil.resourcePathToTempFilePath("hostapd/hostapd.ini");
+		tempHostapdConfigPath = FileUtil.resourcePathToFile("hostapd/hostapd.ini");
 		
 		wlanInterfaceName = getWlanInterfaceName();
 		updateHostapdConfigFile();
@@ -108,7 +106,7 @@ public class AccessPoint {
 	}
 	
 	private void updateHostapdConfigFile() throws IOException {
-		String content = FileUtil.fileToString(new File(tempHostapdConfigPath));
+		String content = FileUtil.fileToString(tempHostapdConfigPath);
 		content = content.replaceFirst("(?<=interface\\=).*", wlanInterfaceName);
 		content = content.replaceFirst("(?<=wpa_passphrase\\=).*", password);
 		content = content.replaceFirst("(?<=ssid\\=).*", ssid);

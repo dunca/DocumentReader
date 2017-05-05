@@ -20,10 +20,9 @@ public class PdfDocument extends Document {
 	Page fetchPage(int index) throws Exception {
 		File tempFile = File.createTempFile("tempContent", null);
 		CommandUtil.executeCommand(String.format("pdftotext -layout -nopgbrk -f %d -l %d \"%s\" %s", index + 1, index + 1,
-														   getPath(), tempFile.getPath()));
+												 getPath(), tempFile.getPath()));
 		
-		Page page = new Page(getBookmark(), FileUtil.fileToString(tempFile));
-		tempFile.delete();
+		Page page = new Page(getBookmark(), FileUtil.fileToString(tempFile.getPath()));
 		return page;
 	}
 	
