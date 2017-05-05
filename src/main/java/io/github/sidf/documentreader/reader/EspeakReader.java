@@ -1,9 +1,9 @@
 package io.github.sidf.documentreader.reader;
 
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.HashMap;
 import java.util.List;
+import java.util.HashMap;
+import java.util.stream.Collectors;
 
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.enums.Speed;

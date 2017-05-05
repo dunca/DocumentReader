@@ -1,7 +1,7 @@
 package io.github.sidf.documentreader.reader;
 
-import java.io.IOException;
 import java.util.List;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
