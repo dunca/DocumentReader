@@ -16,7 +16,7 @@ public class Device {
 	private static Logger logger = Logger.getLogger(Device.class.getName());
 	private static final Pattern volumePattern = Pattern.compile("(?<=\\[)\\d+(?=%\\])");
 	private static String[] dependecies = { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", "poppler-utils",
-											"psmisc", "grep", "iproute2", "uvcdynctrl"};
+											"psmisc", "grep", "iproute2", "uvcdynctrl", "procps"};
 	
 	private Device() {
 		

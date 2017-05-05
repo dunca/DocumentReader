@@ -32,21 +32,18 @@ public class CommandUtil {
 	
 	public static void terminateProcess(String processName) throws Exception {
 		if (!isProcessRunning(processName)) {
-			logger.info(String.format("Can't terminate %s. It's not running", processName));
+			logger.info(String.format("Can't terminate %s. It isn't running", processName));
 		}
 		
 		try {
-			executeCommand(String.format("pkill %s", processName));
-		} catch (IOException | InterruptedException e) {
-			logger.log(Level.SEVERE, String.format("Could not quit %s", processName), e);
-			if (isProcessRunning(processName)) {
-				throw e;
-			}
+			executeCommand(String.format("killall %s", processName));
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, String.format("Couldn't gracefully terminate %s", processName), e);
 		}
 	}
 	
 	public static boolean isProcessRunning(String processName) throws Exception {
-		CommandResult commandResult = executeCommand(String.format("ps aux | grep -v grep | grep %s", processName));
-		return commandResult.getStdout().trim().length() != 0;
+		CommandResult commandResult = executeCommand(String.format("pgrep %s", processName));
+		return commandResult.getExitValue() == 0;
 	}
 }
