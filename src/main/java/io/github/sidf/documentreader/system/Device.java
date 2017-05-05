@@ -12,30 +12,34 @@ import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.CommandResult;
 
 public class Device {
-	private static final String debianPackageCheckTemplate = "dpkg -s %s";
 	private static Logger logger = Logger.getLogger(Device.class.getName());
+	
+	private static final String debianPackageCheckTemplate = "dpkg -s %s";
 	private static final Pattern volumePattern = Pattern.compile("(?<=\\[)\\d+(?=%\\])");
-	private static String[] dependecies = { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", "poppler-utils",
-											"psmisc", "grep", "iproute2", "uvcdynctrl", "procps"};
+	private static String[] dependecies = new String[] { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", 
+														 "poppler-utils", "psmisc", "grep", "iproute2", "uvcdynctrl", "procps"};
 	
 	private Device() {
 		
 	}
 	
-	private static boolean isOsSupported() {
-		return new File("/etc/debian_version").exists();
-	}
-	
-	public static boolean isSupported() {
-		boolean isRooted = false;
+	public static boolean meetsRequirements() {
+		boolean runsAsRoot = false;
+		boolean dependenciesSatisfied = false;
 		
 		try {
-			runsAsRoot();
+			runsAsRoot = runsAsRoot();
 		} catch (Exception e) {
-			isRooted = false;
+			//
 		}
 		
-		return isOsSupported() && isRooted;
+		try {
+			dependenciesSatisfied = dependenciesSatisfied();
+		} catch (Exception e) {
+			//
+		}
+		
+		return osSupported() && runsAsRoot && dependenciesSatisfied;
 	}
 	
 	private static void togglePowerState(boolean reboot) throws IOException {
@@ -55,17 +59,17 @@ public class Device {
 	}
 	
 	public static Integer getVolume() throws Exception {
-		 CommandResult commandResult = CommandUtil.executeCommand("amixer get PCM | tail -1");
-		
+		CommandResult commandResult = CommandUtil.executeCommand("amixer get PCM | tail -1");
 		Matcher matcher = volumePattern.matcher(commandResult.getStdout());
+		
 		if (!matcher.find()) {
-			throw new IOException("Could not parse the speaker's volume");
+			throw new IOException("Could not read the speaker's volume");
 		}
 		
 		return Integer.valueOf(matcher.group());
 	}
 	
-	public static boolean dependenciesAreSatisfied() throws Exception {
+	private static boolean dependenciesSatisfied() throws Exception {
 		List<String> unsatisfiedDependencies = new ArrayList<>();
 		
 		for (String dependency : dependecies) {
@@ -87,5 +91,9 @@ public class Device {
 	private static boolean runsAsRoot() throws Exception {
 		CommandResult commandResult = CommandUtil.executeCommand("whoami");
 		return commandResult.getStdout().equals("root");
+	}
+	
+	private static boolean osSupported() {
+		return new File("/etc/debian_version").exists();
 	}
 }

@@ -37,15 +37,11 @@ public class Application {
 			return;
 		}
 		
-//		if (!Device.isSupported()) {
+//		if (!Device.meetsRequirements()) {
 //			logger.severe("Your system is not supported");
 //			return;
 //		}
-//		
-//		if (!Device.dependenciesAreSatisfied()) {
-//			return;
-//		}
-		
+			
 		Ini ini = new Ini(new File(configName));
 		
 		String ssid =  ini.get("Access point", "ssid");
