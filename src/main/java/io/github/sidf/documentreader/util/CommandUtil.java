@@ -42,8 +42,7 @@ public class CommandUtil {
 		}
 	}
 	
-	public static boolean processRunning(String processName) throws Exception {
-		CommandResult commandResult = executeCommand(String.format("pgrep %s", processName));
-		return commandResult.getExitValue() == 0;
+	public static boolean processRunning(String processName) {
+		return new ValidatableCommand(String.format("pgrep %s", processName)).runs();
 	}
 }
