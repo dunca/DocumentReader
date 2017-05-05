@@ -31,7 +31,7 @@ public class CommandUtil {
 	}
 	
 	public static void terminateProcess(String processName) throws Exception {
-		if (!isProcessRunning(processName)) {
+		if (!processRunning(processName)) {
 			logger.info(String.format("Can't terminate %s. It isn't running", processName));
 		}
 		
@@ -42,7 +42,7 @@ public class CommandUtil {
 		}
 	}
 	
-	public static boolean isProcessRunning(String processName) throws Exception {
+	public static boolean processRunning(String processName) throws Exception {
 		CommandResult commandResult = executeCommand(String.format("pgrep %s", processName));
 		return commandResult.getExitValue() == 0;
 	}
