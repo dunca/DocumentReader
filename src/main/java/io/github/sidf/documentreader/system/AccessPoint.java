@@ -2,6 +2,7 @@ package io.github.sidf.documentreader.system;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
@@ -40,10 +41,10 @@ public class AccessPoint {
 		
 		ValidatableCommand staticIpCmd = new ValidatableCommand(String.format("ip addr add %s/24 broadcast %s.255 dev %s"
 																			  , ipAddress, ipAddressPart, wlanInterfaceName), 0);
-		ValidatableCommand hostapdCmd = new ValidatableCommand(String.format("hostapd -B %s", tempHostapdConfigPath), 0);
+		ValidatableCommand hostapdCmd = new ValidatableCommand(String.format("hostapd -B %s", tempHostapdConfigPath), true, 0);
 		ValidatableCommand dnsmasqCmd = new ValidatableCommand(String.format("dnsmasq --dhcp-authoritative --interface=%s "
 																			 + "--dhcp-range=%s.50,%s.100,255.255.255.0,6h"
-													   						 , wlanInterfaceName, ipAddressPart, ipAddressPart), 0);
+													   						 , wlanInterfaceName, ipAddressPart, ipAddressPart), true, 0);
 		validatableCommands.put("ip", staticIpCmd);
 		validatableCommands.put("hostapd", hostapdCmd);
 		validatableCommands.put("dnsmasq", dnsmasqCmd);
@@ -68,9 +69,13 @@ public class AccessPoint {
 	}
 
 	private void cleanup() throws Exception {
-		for (String command : validatableCommands.keySet()) {
+		for (Entry<String, ValidatableCommand> command : validatableCommands.entrySet()) {
+			if (!command.getValue().isBackground()) {
+				continue;
+			}
+			
 			try {
-				CommandUtil.quitUnixProcess(command);
+				CommandUtil.quitUnixProcess(command.getKey());
 			} catch (IOException e) {
 				throw e;
 			}
@@ -81,7 +86,6 @@ public class AccessPoint {
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Could not flush the wireless lan interface", e);
 		}
-		
 	}
 
 	public void start() throws Exception {
