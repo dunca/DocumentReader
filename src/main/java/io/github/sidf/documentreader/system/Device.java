@@ -22,11 +22,7 @@ public class Device {
 		
 	}
 	
-	public static boolean isOsSupported() {
-		if (System.getProperty("os.name").contains("Windows")) {
-			return false;
-		}
-		
+	private static boolean isOsSupported() {
 		return new File("/etc/debian_version").exists();
 	}
 	
