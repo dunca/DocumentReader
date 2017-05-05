@@ -2,6 +2,7 @@ package io.github.sidf.documentreader.document;
 
 import java.io.File;
 import java.util.List;
+import java.util.ArrayList;
 import java.lang.reflect.Constructor;
 
 import io.github.sidf.documentreader.util.ClassPathUtil;
@@ -21,6 +22,6 @@ public class DocumentFactory {
 	}
 	 
 	static List<String> getDocumentProviders() {
-		return documentProviders;
+		return new ArrayList<String>(documentProviders);
 	}
 }
