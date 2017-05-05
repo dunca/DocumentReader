@@ -30,7 +30,7 @@ public class Device {
 		boolean isRooted = false;
 		
 		try {
-			isRooted();
+			runsAsRoot();
 		} catch (Exception e) {
 			isRooted = false;
 		}
@@ -84,7 +84,7 @@ public class Device {
 		return true;
 	}
 	
-	public static boolean isRooted() throws Exception {
+	private static boolean runsAsRoot() throws Exception {
 		CommandResult commandResult = CommandUtil.executeCommand("whoami");
 		return commandResult.getStdout().equals("root");
 	}
