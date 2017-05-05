@@ -18,7 +18,7 @@ public abstract class Reader implements Runnable {
 	private static Logger logger = Logger.getLogger(Reader.class.getName());
 	
 	public void setLanguage(Language language) throws IOException {
-		if (getSupportedLanguages().contains(language.getDisplayName())) {
+		if (!getSupportedLanguages().contains(language.getDisplayName())) {
 			String message = String.format("The reader does not support %s", language.getDisplayName());
 			throw new IOException(message);
 		}
@@ -27,7 +27,7 @@ public abstract class Reader implements Runnable {
 	}
 	
 	public void setSpeed(Speed speed) throws IOException {
-		if (getSupportedSpeed().contains(speed.getDisplayName())) {
+		if (!getSupportedSpeed().contains(speed.getDisplayName())) {
 			String message = String.format("The reader does not support %s speed", speed.getDisplayName());
 			throw new IOException(message);
 		}
