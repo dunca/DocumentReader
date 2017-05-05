@@ -46,6 +46,6 @@ public class EspeakReader extends Reader {
 
 	@Override
 	void stopInternal() throws Exception {
-		CommandUtil.quitUnixProcess("espeak");
+		CommandUtil.terminateProcess("espeak");
 	}
 }

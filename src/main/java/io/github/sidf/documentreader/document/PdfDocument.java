@@ -19,7 +19,7 @@ public class PdfDocument extends Document {
 	@Override
 	Page fetchPage(int index) throws Exception {
 		File tempFile = File.createTempFile("tempContent", null);
-		CommandUtil.launchNonBlockingCommand(String.format("pdftotext -layout -nopgbrk -f %d -l %d \"%s\" %s", index + 1, index + 1,
+		CommandUtil.executeCommand(String.format("pdftotext -layout -nopgbrk -f %d -l %d \"%s\" %s", index + 1, index + 1,
 														   getPath(), tempFile.getPath()));
 		
 		Page page = new Page(getBookmark(), FileUtil.fileToString(tempFile));
@@ -28,7 +28,7 @@ public class PdfDocument extends Document {
 	}
 	
 	private int fetchPageCount() throws IOException, InterruptedException {
-		CommandResult commandResult = CommandUtil.launchNonBlockingCommand(String.format("pdfinfo \"%s\" | grep Pages", getPath()));
+		CommandResult commandResult = CommandUtil.executeCommand(String.format("pdfinfo \"%s\" | grep Pages", getPath()));
 		int pageCount = Integer.valueOf(commandResult.getStdout().split("\\s+")[1]);
 		return pageCount;
 	}

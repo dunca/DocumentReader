@@ -55,11 +55,11 @@ public class Device {
 	}
 	
 	public static void setVolume(int level) throws Exception {
-		CommandUtil.launchNonBlockingCommand(String.format("amixer sset PCM %d%%", level));
+		CommandUtil.executeCommand(String.format("amixer sset PCM %d%%", level));
 	}
 	
 	public static Integer getVolume() throws Exception {
-		 CommandResult commandResult = CommandUtil.launchNonBlockingCommand("amixer get PCM | tail -1");
+		 CommandResult commandResult = CommandUtil.executeCommand("amixer get PCM | tail -1");
 		
 		Matcher matcher = volumePattern.matcher(commandResult.getStdout());
 		if (!matcher.find()) {
@@ -73,7 +73,7 @@ public class Device {
 		List<String> unsatisfiedDependencies = new ArrayList<>();
 		
 		for (String dependency : dependecies) {
-			CommandResult commandResult = CommandUtil.launchNonBlockingCommand(String.format(debianPackageCheckTemplate, dependency));
+			CommandResult commandResult = CommandUtil.executeCommand(String.format(debianPackageCheckTemplate, dependency));
 			if (commandResult.getExitValue() != 0) {
 				unsatisfiedDependencies.add(dependency);
 			}
@@ -89,7 +89,7 @@ public class Device {
 	}
 	
 	public static boolean isRooted() throws Exception {
-		CommandResult commandResult = CommandUtil.launchNonBlockingCommand("whoami");
+		CommandResult commandResult = CommandUtil.executeCommand("whoami");
 		return commandResult.getStdout().equals("root");
 	}
 }

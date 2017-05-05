@@ -54,7 +54,7 @@ public class AccessPoint {
 		String iface = null;
 		
 		for (String pattern : wlanInterfaceNamePatterns) {
-			String stdout = CommandUtil.launchNonBlockingCommand(String.format(wlanInterfaceNameCommandTemplate, pattern)).getStdout();
+			String stdout = CommandUtil.executeCommand(String.format(wlanInterfaceNameCommandTemplate, pattern)).getStdout();
 			
 			if (stdout != null && (stdout = stdout.trim()) != "") {
 				iface = stdout.split("\n")[0];
@@ -75,14 +75,14 @@ public class AccessPoint {
 			}
 			
 			try {
-				CommandUtil.quitUnixProcess(command.getKey());
+				CommandUtil.terminateProcess(command.getKey());
 			} catch (IOException e) {
 				throw e;
 			}
 		}
 		
 		try {
-			CommandUtil.launchNonBlockingCommand(flushCommand);
+			CommandUtil.executeCommand(flushCommand);
 		} catch (IOException e) {
 			logger.log(Level.WARNING, "Could not flush the wireless lan interface", e);
 		}

@@ -192,7 +192,7 @@ public class FeatureDetector implements Runnable {
 		logger.info("Trying to disable autofocus");
 		for (String command : autofocusTweakCommands) {
 			try {
-				CommandUtil.launchNonBlockingCommand(command);
+				CommandUtil.executeCommand(command);
 			} catch (Exception e) {
 				logger.log(Level.WARNING, "Something went wrong while trying to disable autofocus", e);
 			}

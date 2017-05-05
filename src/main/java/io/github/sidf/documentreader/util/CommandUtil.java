@@ -11,7 +11,7 @@ public class CommandUtil {
 		
 	}
 	
-	public static CommandResult launchNonBlockingCommand(String command) throws IOException, InterruptedException {
+	public static CommandResult executeCommand(String command) throws IOException, InterruptedException {
 		String[] commandArray = null;
 		
 		if (command.contains("|") || command.contains("'") || command.contains("\"")) {
@@ -30,9 +30,9 @@ public class CommandUtil {
 		return new CommandResult(StreamUtil.inputStreamToString(process.getInputStream()), exitCode);
 	}
 	
-	public static void quitUnixProcess(String processName) throws Exception {
+	public static void terminateProcess(String processName) throws Exception {
 		try {
-			launchNonBlockingCommand(String.format("killall %s", processName));
+			executeCommand(String.format("killall %s", processName));
 		} catch (IOException | InterruptedException e) {
 			logger.log(Level.SEVERE, String.format("Could not quit %s", processName), e);
 			if (isProcessRunning(processName)) {
@@ -42,7 +42,7 @@ public class CommandUtil {
 	}
 	
 	public static boolean isProcessRunning(String processName) throws Exception {
-		CommandResult commandResult = launchNonBlockingCommand(String.format("ps aux | grep -v grep | grep %s", processName));
+		CommandResult commandResult = executeCommand(String.format("ps aux | grep -v grep | grep %s", processName));
 		return commandResult.getStdout().trim().length() != 0;
 	}
 }
