@@ -38,6 +38,7 @@ public class HtmlLogFormatter extends Formatter {
 		return stringBuilder.toString();
 	}
 	
+	@Override
 	public String getHead(Handler h) {
 		return "<!DOCTYPE html>\n"
                 + "<head>\n</head>\n"
@@ -46,6 +47,7 @@ public class HtmlLogFormatter extends Formatter {
                 + "<hr />\n";
 	}
 	
+	@Override
     public String getTail(Handler h) {
         return "</table>\n</body>\n</html>";
     }
