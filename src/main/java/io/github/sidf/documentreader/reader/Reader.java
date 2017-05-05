@@ -1,11 +1,11 @@
 package io.github.sidf.documentreader.reader;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.document.Page;
-import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.document.Document;
 import io.github.sidf.documentreader.util.enums.Language;
@@ -18,7 +18,7 @@ public abstract class Reader implements Runnable {
 	private static Logger logger = Logger.getLogger(Reader.class.getName());
 	
 	public void setLanguage(Language language) throws IOException {
-		if (!ArrayUtil.arrayContains(getSupportedLanguages(), language.getDisplayName())) {
+		if (getSupportedLanguages().contains(language.getDisplayName())) {
 			String message = String.format("The reader does not support %s", language.getDisplayName());
 			throw new IOException(message);
 		}
@@ -27,7 +27,7 @@ public abstract class Reader implements Runnable {
 	}
 	
 	public void setSpeed(Speed speed) throws IOException {
-		if (!ArrayUtil.arrayContains(getSupportedSpeed(), speed.getDisplayName())) {
+		if (getSupportedSpeed().contains(speed.getDisplayName())) {
 			String message = String.format("The reader does not support %s speed", speed.getDisplayName());
 			throw new IOException(message);
 		}
@@ -99,8 +99,8 @@ public abstract class Reader implements Runnable {
 		return reading;
 	}
 	
-	public abstract String[] getSupportedSpeed();
-	public abstract String[] getSupportedLanguages();
+	public abstract List<String> getSupportedSpeed();
+	public abstract List<String> getSupportedLanguages();
 	abstract void stopInternal() throws Exception;
 	abstract void read(String text) throws Exception;
 }

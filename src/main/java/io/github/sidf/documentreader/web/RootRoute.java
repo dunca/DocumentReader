@@ -11,6 +11,7 @@ import spark.ModelAndView;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
@@ -19,7 +20,6 @@ import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
 
 import io.github.sidf.documentreader.util.StreamUtil;
-import io.github.sidf.documentreader.util.ArrayUtil;
 import io.github.sidf.documentreader.web.util.ConfigUtil;
 import io.github.sidf.documentreader.web.util.RequestUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
@@ -34,9 +34,9 @@ class RootRoute implements Route {
 	private String errorMessage;
 	
 	private boolean isReading;
-	private String[] supportedReaderSpeed;
-	private String[] availableReaderProviders;
-	private String[] supportedReaderLanguages;
+	private List<String> supportedReaderSpeed;
+	private List<String> availableReaderProviders;
+	private List<String> supportedReaderLanguages;
 	
 	private static final Map<String, String> supportedVolumeLevels = new LinkedHashMap<>();
 	
@@ -174,8 +174,8 @@ class RootRoute implements Route {
 		}
 		
 		String provider = config.getReaderProvider();
-		if (!ArrayUtil.arrayContains(availableReaderProviders, provider)) {
-			provider = availableReaderProviders[0];
+		if (availableReaderProviders.contains(provider)) {
+			provider = availableReaderProviders.get(0);
 		} 
 		updateReaderInfo(provider);
 		
@@ -204,8 +204,8 @@ class RootRoute implements Route {
 		try {
 			updateReaderSettings();
 		} catch (Exception e) {
-			config.setReaderSpeed(supportedReaderSpeed[0]);
-			config.setReaderLanguage(supportedReaderLanguages[0]);
+			config.setReaderSpeed(supportedReaderSpeed.get(0));
+			config.setReaderLanguage(supportedReaderLanguages.get(0));
 			
 			try {
 				updateReaderSettings();

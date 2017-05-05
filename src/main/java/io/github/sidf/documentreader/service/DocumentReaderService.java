@@ -1,5 +1,6 @@
 package io.github.sidf.documentreader.service;
 
+import java.util.List;
 import java.util.Map;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -110,15 +111,15 @@ public class DocumentReaderService {
 		readerInstance.setLanguage(Language.fromString(language));;
 	}
 	
-	public String[] getReaderProviders() {
+	public List<String> getReaderProviders() {
 		return ReaderFactory.getReaderProviders();
 	}
 
-	public String[] getCurrentSupportedLanguages() {
+	public List<String> getCurrentSupportedLanguages() {
 		return readerInstance.getSupportedLanguages();
 	}
 	
-	public String[] getCurrentSupportedSpeed() {
+	public List<String> getCurrentSupportedSpeed() {
 		return readerInstance.getSupportedSpeed();
 	}
 	
