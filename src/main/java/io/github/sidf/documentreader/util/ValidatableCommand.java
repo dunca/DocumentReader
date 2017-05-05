@@ -2,24 +2,24 @@ package io.github.sidf.documentreader.util;
 
 public class ValidatableCommand {
 	private final String command;
-	private final boolean background;
-	private final int successExitValue;
+	private final boolean backgroundApp;
 	private final String outputOnSuccess;
 	private final String substringOnSuccess;
+	
+	private static final int successExitValue = 0;
 
-	public ValidatableCommand(String command, Boolean background, int successExitValue) {
-		this(command, background, null, null, successExitValue);
+	public ValidatableCommand(String command) {
+		this(command, false);
 	}
 	
-	public ValidatableCommand(String command, int successExitValue) {
-		this(command, false, null, null, successExitValue);
+	public ValidatableCommand(String command, Boolean background) {
+		this(command, background, null, null);
 	}
 	
-	public ValidatableCommand(String command, boolean background, String outputOnSuccess, String substringOnSuccess, int successExitValue) {
+	public ValidatableCommand(String command, boolean backgroundApp, String outputOnSuccess, String substringOnSuccess) {
 		this.command = command;
-		this.background = background;
+		this.backgroundApp = backgroundApp;
 		this.outputOnSuccess = outputOnSuccess;
-		this.successExitValue = successExitValue;
 		this.substringOnSuccess = substringOnSuccess;
 	}
 	
@@ -44,7 +44,7 @@ public class ValidatableCommand {
 		return command;
 	}
 	
-	public boolean isBackground() {
-		return background;
+	public boolean isBackgroundApp() {
+		return backgroundApp;
 	}
 }

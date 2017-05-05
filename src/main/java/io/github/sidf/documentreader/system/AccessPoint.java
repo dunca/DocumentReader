@@ -40,11 +40,11 @@ public class AccessPoint {
 		flushCommand = String.format("ip addr flush dev %s", wlanInterfaceName);
 		
 		ValidatableCommand staticIpCmd = new ValidatableCommand(String.format("ip addr add %s/24 broadcast %s.255 dev %s"
-																			  , ipAddress, ipAddressPart, wlanInterfaceName), 0);
-		ValidatableCommand hostapdCmd = new ValidatableCommand(String.format("hostapd -B %s", tempHostapdConfigPath), true, 0);
+																			  , ipAddress, ipAddressPart, wlanInterfaceName));
+		ValidatableCommand hostapdCmd = new ValidatableCommand(String.format("hostapd -B %s", tempHostapdConfigPath), true);
 		ValidatableCommand dnsmasqCmd = new ValidatableCommand(String.format("dnsmasq --dhcp-authoritative --interface=%s "
 																			 + "--dhcp-range=%s.50,%s.100,255.255.255.0,6h"
-													   						 , wlanInterfaceName, ipAddressPart, ipAddressPart), true, 0);
+													   						 , wlanInterfaceName, ipAddressPart, ipAddressPart), true);
 		validatableCommands.put("ip", staticIpCmd);
 		validatableCommands.put("hostapd", hostapdCmd);
 		validatableCommands.put("dnsmasq", dnsmasqCmd);
@@ -70,7 +70,7 @@ public class AccessPoint {
 
 	private void cleanup() throws Exception {
 		for (Entry<String, ValidatableCommand> command : validatableCommands.entrySet()) {
-			if (!command.getValue().isBackground()) {
+			if (!command.getValue().isBackgroundApp()) {
 				continue;
 			}
 			
