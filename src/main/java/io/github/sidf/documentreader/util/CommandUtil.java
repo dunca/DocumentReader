@@ -20,19 +20,23 @@ public class CommandUtil {
 			commandArray = command.split(" ");
 		}
 		
-		ProcessBuilder builder = new ProcessBuilder(commandArray);
-		builder.redirectErrorStream(true);
+		ProcessBuilder processBuilder = new ProcessBuilder(commandArray);
+		processBuilder.redirectErrorStream(true);
 		
 		logger.info(String.format("Trying to run command %s", command));
-		Process process = builder.start();
+		Process process = processBuilder.start();
 		
 		int exitCode = process.waitFor();
 		return new CommandResult(StreamUtil.inputStreamToString(process.getInputStream()), exitCode);
 	}
 	
 	public static void terminateProcess(String processName) throws Exception {
+		if (!isProcessRunning(processName)) {
+			logger.info(String.format("Can't terminate %s. It's not running", processName));
+		}
+		
 		try {
-			executeCommand(String.format("killall %s", processName));
+			executeCommand(String.format("pkill %s", processName));
 		} catch (IOException | InterruptedException e) {
 			logger.log(Level.SEVERE, String.format("Could not quit %s", processName), e);
 			if (isProcessRunning(processName)) {
