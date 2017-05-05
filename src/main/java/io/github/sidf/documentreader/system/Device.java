@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import io.github.sidf.documentreader.util.CommandUtil;
@@ -23,23 +24,8 @@ public class Device {
 		
 	}
 	
-	public static boolean meetsRequirements() {
-		boolean runsAsRoot = false;
-		boolean dependenciesSatisfied = false;
-		
-		try {
-			runsAsRoot = runsAsRoot();
-		} catch (Exception e) {
-			//
-		}
-		
-		try {
-			dependenciesSatisfied = dependenciesSatisfied();
-		} catch (Exception e) {
-			//
-		}
-		
-		return osSupported() && runsAsRoot && dependenciesSatisfied;
+	public static boolean meetsRequirements() {	
+		return osSupported() && runsAsRoot() && dependenciesSatisfied();
 	}
 	
 	private static void togglePowerState(boolean reboot) throws IOException {
@@ -69,11 +55,19 @@ public class Device {
 		return Integer.valueOf(matcher.group());
 	}
 	
-	private static boolean dependenciesSatisfied() throws Exception {
+	private static boolean dependenciesSatisfied() {
 		List<String> unsatisfiedDependencies = new ArrayList<>();
 		
 		for (String dependency : dependecies) {
-			CommandResult commandResult = CommandUtil.executeCommand(String.format(debianPackageCheckTemplate, dependency));
+			CommandResult commandResult = null;
+			
+			try {
+				commandResult = CommandUtil.executeCommand(String.format(debianPackageCheckTemplate, dependency));
+			} catch (Exception e) {
+				logger.log(Level.SEVERE, "Couldn't check if dependency is satisfied", e);
+				return false;
+			}
+			
 			if (commandResult.getExitValue() != 0) {
 				unsatisfiedDependencies.add(dependency);
 			}
@@ -88,8 +82,16 @@ public class Device {
 		return true;
 	}
 	
-	private static boolean runsAsRoot() throws Exception {
-		CommandResult commandResult = CommandUtil.executeCommand("whoami");
+	private static boolean runsAsRoot() {
+		CommandResult commandResult = null;
+		
+		try {
+			commandResult = CommandUtil.executeCommand("whoami");
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Couldn't check if the program is running as root", e);
+			return false;
+		} 
+		
 		return commandResult.getStdout().equals("root");
 	}
 	
