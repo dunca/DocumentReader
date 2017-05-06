@@ -69,7 +69,6 @@ class RootRoute implements Route {
 		this.map = new HashMap<>();
 
 		String requestMethod = request.requestMethod();
-		response.header("Accept-Charset", "utf-8");
 		
 		switch (requestMethod) {
 		case "GET":
