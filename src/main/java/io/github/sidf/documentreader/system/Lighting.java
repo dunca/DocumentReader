@@ -6,7 +6,6 @@ import com.pi4j.io.gpio.Pin;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.pi4j.io.gpio.GpioPin;
-import com.pi4j.io.gpio.GpioPinDigital;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.GpioFactory;
@@ -25,7 +24,7 @@ public class Lighting implements Runnable {
 	
 	private GpioPinDigitalInput sensorInputController;
 	private GpioPinDigitalOutput sensorOutputController;
-	private List<GpioPinDigital> pinControllers = new ArrayList<>();
+	private List<GpioPin> pinControllers = new ArrayList<>();
 	
 	private static final Pin sensorInputPin = RaspiPin.GPIO_00;
 	private static final Pin sensorOutputPin = RaspiPin.GPIO_01;
@@ -69,9 +68,9 @@ public class Lighting implements Runnable {
 		
 		while (isStillRunning) {
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(250);
 			} catch (InterruptedException e) {
-				logger.log(Level.WARNING, "Thread sleep interrupted", e);
+				logger.log(Level.WARNING, "Lighting thread sleep was interrupted", e);
 			}
 		}
 		
