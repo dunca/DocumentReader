@@ -84,8 +84,6 @@ class RootRoute implements Route {
 	}
 	
 	private Object handleGet() {
-		updateDocumentInfo(config.getDocumentHash());
-
 		map.put("infoMessage", infoMessage.toArray());
 		map.put("errorMessage", errorMessage.toArray());
 		
