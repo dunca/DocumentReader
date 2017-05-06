@@ -76,6 +76,7 @@ public class Lighting implements Runnable {
 			}
 		}
 		
+		unprovisionPins();
 		stop();
 	}
 	
@@ -84,7 +85,7 @@ public class Lighting implements Runnable {
 			try {
 				gpioController.unprovisionPin(pin);
 			} catch (GpioPinNotProvisionedException e) {
-				// ignore
+				logger.log(Level.WARNING, "Couldn't unprovision pin " + pin.getName(), e);
 			}
 		}
 	}
@@ -94,6 +95,5 @@ public class Lighting implements Runnable {
 		
 		// unnecessary if we unprovision https://github.com/Pi4J/pi4j/issues/220
 //		gpioController.shutdown();
-		unprovisionPins();
 	}
 }
