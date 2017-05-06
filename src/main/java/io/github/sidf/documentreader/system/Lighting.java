@@ -19,11 +19,30 @@ public class Lighting implements Runnable {
 	private static Logger logger = Logger.getLogger(Lighting.class.getName());
 	
 	private boolean isStillRunning;
+	
+	/**
+	 * Concrete GpioController instance that is used to provision / unprovision the GPIO pins
+	 */
 	private final GpioController gpioController =  GpioFactory.getInstance();
+	
+	/**
+	 * List of GpioSetStateTrigger that is used to sync the state of the led output pins with light sensor's output level
+	 */
 	private final List<GpioSetStateTrigger> triggers = new ArrayList<GpioSetStateTrigger>();
 	
+	/**
+	 * Controller of the pin that is connected to the light sensor's output
+	 */
 	private GpioPinDigitalInput sensorInputController;
+	
+	/**
+	 * Controller of the pin that is connected to the light sensor's input
+	 */
 	private GpioPinDigitalOutput sensorOutputController;
+	
+	/**
+	 * List that holds references to the sensor and led related pin controllers
+	 */
 	private List<GpioPin> pinControllers = new ArrayList<>();
 	
 	private static final Pin sensorInputPin = RaspiPin.GPIO_00;
@@ -31,6 +50,9 @@ public class Lighting implements Runnable {
 	private static final PinState[] pinStates = { PinState.LOW, PinState.HIGH };
 	private static final Pin[] ledInputPins = { RaspiPin.GPIO_02, RaspiPin.GPIO_03, RaspiPin.GPIO_04, RaspiPin.GPIO_05 };
 	
+	/**
+	 * Configures all input and output pins
+	 */
 	private void setupPins() {
 		setupOutputPins();
 		setupInputPins();
@@ -38,7 +60,11 @@ public class Lighting implements Runnable {
 		sensorOutputController.high();
 	}
 	
+	/**
+	 * Configures the pins that are meant to power the light sensor and the leds
+	 */
 	private void setupOutputPins() {
+		// provisioning seems to configure pins in LOW mode by default
 		sensorOutputController = gpioController.provisionDigitalOutputPin(sensorOutputPin);
 		pinControllers.add(sensorOutputController);
 		
@@ -51,8 +77,14 @@ public class Lighting implements Runnable {
 		}
 	}
 	
+	/**
+	 * Configures the pin that is tied to the light sensor's output
+	 */
 	private void setupInputPins() {
+		// provisioning seems to configure pins in LOW mode by default
 		sensorInputController = gpioController.provisionDigitalInputPin(sensorInputPin);
+		
+		// this will sync the state of the led output pins when it's state changes
 		sensorInputController.addTrigger(triggers);
 		pinControllers.add(sensorInputController);
 	}
@@ -62,6 +94,10 @@ public class Lighting implements Runnable {
 		start();
 	}
 	
+	/**
+	 * Calls {@link #setupPins()} and then calls {@link #cleanupPins()} if an exception occurs or 
+	 * the value of {@link #isStillRunning} becomes false
+	 */
 	private void start() {
 		setupPins();
 		isStillRunning = true;
@@ -78,7 +114,9 @@ public class Lighting implements Runnable {
 		stop();
 	}
 	
-	// should be ran from the same thread in which the pins were provisioned. Unprovisioning seems to fail otherwise
+	/**
+	 * Releases every pin referenced in {@link #pinControllers}
+	 */
 	private void cleanupPins() {
 		for (GpioPin pin : pinControllers) {
 			if (pin instanceof GpioPinDigitalOutput) {
@@ -97,6 +135,9 @@ public class Lighting implements Runnable {
 		}
 	}
 	
+	/**
+	 * Determines the stopping of the lighting functionality
+	 */
 	public void stop() {
 		isStillRunning = false;
 	}
