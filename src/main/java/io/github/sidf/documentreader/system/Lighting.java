@@ -6,6 +6,7 @@ import com.pi4j.io.gpio.Pin;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.pi4j.io.gpio.GpioPin;
+import com.pi4j.io.gpio.GpioPinDigital;
 import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.gpio.GpioFactory;
@@ -24,7 +25,8 @@ public class Lighting implements Runnable {
 	
 	private GpioPinDigitalInput sensorInputController;
 	private GpioPinDigitalOutput sensorOutputController;
-	private List<GpioPin> pinControllers = new ArrayList<>();
+	private List<GpioPinDigital> pinControllers = new ArrayList<>();
+	
 	private static final Pin sensorInputPin = RaspiPin.GPIO_00;
 	private static final Pin sensorOutputPin = RaspiPin.GPIO_01;
 	private static final PinState[] pinStates = { PinState.LOW, PinState.HIGH };
@@ -39,7 +41,6 @@ public class Lighting implements Runnable {
 	
 	private void setupOutputPins() {
 		sensorOutputController = gpioController.provisionDigitalOutputPin(sensorOutputPin);
-		sensorOutputController.setShutdownOptions(true, PinState.LOW);
 		pinControllers.add(sensorOutputController);
 		
 		for (Pin pin : ledInputPins) {
@@ -48,8 +49,6 @@ public class Lighting implements Runnable {
 			for (PinState state : pinStates) {
 				triggers.add(new GpioSetStateTrigger(state, ledController, state));
 			}
-			
-			ledController.setShutdownOptions(true, PinState.LOW);
 		}
 	}
 	
@@ -76,12 +75,20 @@ public class Lighting implements Runnable {
 			}
 		}
 		
-		unprovisionPins();
+		cleanupPins();
 		stop();
 	}
 	
-	private void unprovisionPins() {
+	// should be ran from the same thread in which the pins were provisioned. Unprovisioning seems to fail otherwise
+	private void cleanupPins() {
 		for (GpioPin pin : pinControllers) {
+			if (pin instanceof GpioPinDigitalOutput) {
+				GpioPinDigitalOutput pinDigitalOutput = (GpioPinDigitalOutput) pin;
+				if (pinDigitalOutput.isHigh()) {
+					pinDigitalOutput.low();
+				}
+			}
+			
 			try {
 				pin.unexport();
 				gpioController.unprovisionPin(pin);
@@ -93,8 +100,5 @@ public class Lighting implements Runnable {
 	
 	public void stop() {
 		isStillRunning = false;
-		
-		// unnecessary if we unprovision https://github.com/Pi4J/pi4j/issues/220
-//		gpioController.shutdown();
 	}
 }
