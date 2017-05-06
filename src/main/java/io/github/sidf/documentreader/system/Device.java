@@ -12,6 +12,10 @@ import java.util.logging.Logger;
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.CommandResult;
 
+/**
+ * Class that handles device related I/O 
+ * @author Esc
+ */
 public class Device {
 	private static Logger logger = Logger.getLogger(Device.class.getName());
 	
