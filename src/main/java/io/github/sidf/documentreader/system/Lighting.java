@@ -56,8 +56,6 @@ public class Lighting implements Runnable {
 	private void setupPins() {
 		setupOutputPins();
 		setupInputPins();
-		
-		sensorOutputController.high();
 	}
 	
 	/**
@@ -100,6 +98,8 @@ public class Lighting implements Runnable {
 	 */
 	private void start() {
 		setupPins();
+		sensorOutputController.high();
+		
 		isStillRunning = true;
 		
 		while (isStillRunning) {
