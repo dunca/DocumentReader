@@ -15,6 +15,10 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.trigger.GpioSetStateTrigger;
 import com.pi4j.io.gpio.exception.GpioPinNotProvisionedException;
 
+/**
+ * Class that handles the light sensor and the led lighting system
+ * @author Esc
+ */
 public class Lighting implements Runnable {
 	private static Logger logger = Logger.getLogger(Lighting.class.getName());
 	
