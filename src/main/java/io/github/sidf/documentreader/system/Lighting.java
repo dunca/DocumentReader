@@ -83,6 +83,7 @@ public class Lighting implements Runnable {
 	private void unprovisionPins() {
 		for (GpioPin pin : pinControllers) {
 			try {
+				pin.unexport();
 				gpioController.unprovisionPin(pin);
 			} catch (GpioPinNotProvisionedException e) {
 				logger.log(Level.WARNING, "Couldn't unprovision pin " + pin.getName(), e);
