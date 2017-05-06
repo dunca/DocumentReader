@@ -2,7 +2,7 @@ package io.github.sidf.documentreader.reader;
 
 import java.util.Map;
 import java.util.List;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 import io.github.sidf.documentreader.util.CommandUtil;
@@ -11,8 +11,8 @@ import io.github.sidf.documentreader.util.enums.Language;
 
 public class EspeakReader extends Reader {
 	private static final String shellPath = "/bin/sh";
-	private Map<Speed, String> speedMap = new HashMap<>();
-	private Map<Language, String> languageMap = new HashMap<>();
+	private Map<Speed, String> speedMap = new LinkedHashMap<>();
+	private Map<Language, String> languageMap = new LinkedHashMap<>();
 	private static final String espeakCommandTemplate =  "/usr/bin/espeak -s %s -v %s \"%s\" --stdout | aplay";
 	
 	public EspeakReader() {
@@ -22,8 +22,8 @@ public class EspeakReader extends Reader {
 		speedMap.put(Speed.MEDIUM, "150");
 		speedMap.put(Speed.SLOW, "100");
 		
-		languageMap.put(Language.HUNGARIAN, "hu");
 		languageMap.put(Language.ROMANIAN, "ro");
+		languageMap.put(Language.HUNGARIAN, "hu");
 		languageMap.put(Language.ENGLISH, "en");
 		languageMap.put(Language.SPANISH, "es");
 		languageMap.put(Language.FRENCH, "fr");
