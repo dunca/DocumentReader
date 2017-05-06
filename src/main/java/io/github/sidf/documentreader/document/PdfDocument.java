@@ -1,7 +1,6 @@
 package io.github.sidf.documentreader.document;
 
 import java.io.File;
-import java.io.IOException;
 
 import io.github.sidf.documentreader.util.FileUtil;
 import io.github.sidf.documentreader.util.CommandUtil;
