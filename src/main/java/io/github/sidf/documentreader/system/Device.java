@@ -17,8 +17,8 @@ public class Device {
 	
 	private static final String debianPackageCheckTemplate = "dpkg -s %s";
 	private static final Pattern volumePattern = Pattern.compile("(?<=\\[)\\d+(?=%\\])");
-	private static String[] dependecies = new String[] { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", 
-														 "poppler-utils", "psmisc", "grep", "iproute2", "uvcdynctrl", "procps"};
+	private static String[] dependecies = new String[] { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", "poppler-utils",
+														 "psmisc", "grep", "iproute2", "uvcdynctrl", "procps", "alsa-utils"};
 	
 	private Device() {
 		
