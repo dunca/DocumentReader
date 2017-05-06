@@ -119,12 +119,16 @@
 			<input id="${name}" name = "${name}" type="text" class="w3-input"/>
 		</#macro>
 
+
 		<div class="w3-container w3-center">
-		<#if infoMessage??>
-			<@messageMacro header="Info" message=infoMessage color="w3-blue"/>
-		<#elseif errorMessage??>
-			<@messageMacro header="Error" message=errorMessage color="w3-red"/>
-		</#if>
+
+		<#list infoMessage as message>
+			<@messageMacro header="Info" message=message color="w3-blue"/>
+		</#list>
+		
+		<#list errorMessage as message>
+			<@messageMacro header="Error" message=message color="w3-red"/>
+		</#list>
 
 		<p>Library size: ${availableDocuments?size}</p>
 

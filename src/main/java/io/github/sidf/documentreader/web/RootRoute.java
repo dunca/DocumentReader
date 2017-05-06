@@ -7,10 +7,12 @@ import java.util.Map;
 import spark.Request;
 import java.util.List;
 import spark.Response;
+
 import java.util.HashMap;
 import spark.ModelAndView;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,8 +32,8 @@ class RootRoute implements Route {
 	private String libraryPath;
 	private Map<String, Object> map;
 	
-	private String infoMessage;
-	private String errorMessage;
+	private List<String> infoMessage = new ArrayList<>();
+	private List<String> errorMessage = new ArrayList<>();
 	
 	private boolean isReading;
 	private List<String> supportedReaderSpeed;
@@ -84,8 +86,8 @@ class RootRoute implements Route {
 	private Object handleGet() {
 		updateDocumentInfo(config.getDocumentHash());
 
-		map.put("infoMessage", infoMessage);
-		map.put("errorMessage", errorMessage);
+		map.put("infoMessage", infoMessage.toArray());
+		map.put("errorMessage", errorMessage.toArray());
 		
 		map.put("isReading", isReading);
 		map.put("selectedLog", config.getLog());
@@ -108,7 +110,8 @@ class RootRoute implements Route {
 		map.put("selectedDocumentHash", config.getDocumentHash());
 		map.put("availableDocuments", service.getDocumentMap());
 		
-		infoMessage = errorMessage = null;
+		infoMessage.clear();
+		errorMessage.clear();
 		return new FreeMarkerEngine().render(new ModelAndView(map, "index.ftl"));
 	}
 	
@@ -119,7 +122,7 @@ class RootRoute implements Route {
 			try {
 				uploadedFile = request.raw().getPart("uploaded_file");
 			} catch (IOException e) {
-				errorMessage = "Could not retrieve the file";
+				errorMessage.add("Could not retrieve the file");
 			} catch (ServletException e) {
 				// ignore, since with actually check this manually
 			}
@@ -130,12 +133,12 @@ class RootRoute implements Route {
 			    	StreamUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
 			    	service.updateDocumentLibrary();
 			    	availableDocuments = service.getDocumentMap();
-			    	infoMessage = "Successful upload";
+			    	infoMessage.add("Successful upload");
 			    } catch (IOException e) {
-					errorMessage = "Could not save the file";
+					errorMessage.add("Could not save the file");
 			    }
 			} else {
-				errorMessage = "Select a file before trying to upload";
+				errorMessage.add("Select a file before trying to upload");
 			}
 	    } else {
 	    	Matcher matcher = buttonPattern.matcher(request.body());
@@ -193,7 +196,7 @@ class RootRoute implements Route {
 		try {
 			service.setCurrentReader(provider);
 		} catch (Exception e) {
-			errorMessage = "Could not update reader settings";
+			errorMessage.add("Could not update reader settings");
 			// TODO do something about it, otherwise the next 2 lines will probably fail too
 		}
 		
@@ -209,7 +212,7 @@ class RootRoute implements Route {
 			try {
 				updateReaderSettings();
 			} catch (IOException e1) {
-				errorMessage = "Could not update speed and / or language settings";
+				errorMessage.add("Could not update speed and / or language settings");
 			}
 		}
 	}
@@ -233,7 +236,7 @@ class RootRoute implements Route {
 		try {
 			service.setDocument(documentHash);
 		} catch (Exception e) {
-			errorMessage = "Could not set the document";
+			errorMessage.add("Could not set the document");
 		}
 	}
 	
@@ -250,7 +253,7 @@ class RootRoute implements Route {
 				service.startReading(config.getFeatureDetection().equals("on"));
 				isReading = true;
 			} catch (Exception e) {
-				errorMessage = "Coult not start the reader";
+				errorMessage.add("Coult not start the reader");
 			}
 			break;
 		case "btn_stop_reading":
@@ -272,7 +275,7 @@ class RootRoute implements Route {
 				service.setCurrentReaderLanguage(selectedReaderLanguage);
 				config.setReaderLanguage(selectedReaderLanguage);
 			} catch (IOException e) {
-				errorMessage = "Could not update the reader's language";
+				errorMessage.add("Could not update the reader's language");
 			}
 	
 			break;
@@ -282,7 +285,7 @@ class RootRoute implements Route {
 				service.setCurrentReaderSpeed(selectedReaderSpeed);
 				config.setReaderSpeed(selectedReaderSpeed);
 			} catch (IOException e) {
-				errorMessage = "Could not update the reader's speed";
+				errorMessage.add("Could not update the reader's speed");
 			}
 			
 			break;
@@ -292,7 +295,7 @@ class RootRoute implements Route {
 				service.setAudioVolume(Integer.parseInt(selectedVolumeLevel));
 				config.setVolume(selectedVolumeLevel);
 			} catch (Exception e) {
-				errorMessage = "Could not change the volume";
+				errorMessage.add("Could not change the volume");
 			}
 			break;
 		case "btn_set_feature_detection":
@@ -310,13 +313,13 @@ class RootRoute implements Route {
 				try {
 					service.rebootDevice();
 				} catch (IOException e) {
-					errorMessage = "Could not reboot the system";
+					errorMessage.add("Could not reboot the system");
 				}
 			} else {
 				try {
 					service.shutDownDevice();
 				} catch (IOException e) {
-					errorMessage = "Could not power off the system";
+					errorMessage.add("Could not power off the system");
 				}
 			}
 			break;
@@ -324,18 +327,18 @@ class RootRoute implements Route {
 			String ssid= RequestUtil.parseBodyString(request.body(), "set_ap_ssid");
 			if (ssid != null && ssid.matches("^\\p{ASCII}{1,32}$")) {
 				config.setApName(ssid);
-				infoMessage = "Access point name updated";
+				infoMessage.add("Access point name updated");
 			} else {
-				errorMessage = "The name should be between 1 and 32 ASCII characters long";
+				errorMessage.add("The name should be between 1 and 32 ASCII characters long");
 			}
 			break;
 		case "btn_set_ap_password":
 			String password = RequestUtil.parseBodyString(request.body(), "set_ap_password");
 			if (password != null && password.matches("^\\p{ASCII}{8,63}$")) {
 				config.setApPassword(password);
-				infoMessage = "Access point password updated";
+				infoMessage.add("Access point password updated");
 			} else {
-				errorMessage = "The password should be between 8 and 63 ASCII characters long";
+				errorMessage.add("The password should be between 8 and 63 ASCII characters long");
 			}
 			break;
 		default:
@@ -345,7 +348,7 @@ class RootRoute implements Route {
 		try {
 			config.store();
 		} catch (IOException e) {
-			errorMessage = "Could not store settings";
+			errorMessage.add("Could not store settings");
 		}
 	}
 	
