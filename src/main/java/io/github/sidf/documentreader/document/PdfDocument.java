@@ -26,7 +26,7 @@ public class PdfDocument extends Document {
 		return page;
 	}
 	
-	private int fetchPageCount() throws IOException, InterruptedException {
+	private int fetchPageCount() throws Exception {
 		CommandResult commandResult = CommandUtil.executeCommand(String.format("pdfinfo \"%s\" | grep Pages", getPath()));
 		int pageCount = Integer.valueOf(commandResult.getStdout().split("\\s+")[1]);
 		return pageCount;
