@@ -1,10 +1,19 @@
 package io.github.sidf.documentreader.util;
 
+/**
+ * Class that makes the evaluation of commands execution easier
+ * @author sidf
+ */
 public class ValidatableCommand {
 	private final String command;
+	
+	/**
+	 * Should be set to 'true' for long running background commands 
+	 */
 	private final boolean backgroundApp;
-	private final String outputOnSuccess;
-	private final String substringOnSuccess;
+	
+	private final String successStdout;
+	private final String successSubstring;
 	
 	private static final int successExitValue = 0;
 
@@ -16,13 +25,22 @@ public class ValidatableCommand {
 		this(command, background, null, null);
 	}
 	
-	public ValidatableCommand(String command, boolean backgroundApp, String outputOnSuccess, String substringOnSuccess) {
+	public ValidatableCommand(String command, boolean backgroundApp, String successStdout, String successSubstring) {
 		this.command = command;
 		this.backgroundApp = backgroundApp;
-		this.outputOnSuccess = outputOnSuccess;
-		this.substringOnSuccess = substringOnSuccess;
+		this.successStdout = successStdout;
+		this.successSubstring = successSubstring;
 	}
 	
+	/**
+	 * Runs the command
+	 * @return 'true', if any of the following is true:
+	 * <ul>
+	 * <li>the resulted stdout matches the stdout string specified in the constructor</li>
+	 * <li>the resulted stdout contains the substring specified in the constructor</li>
+	 * <li>the exit code is 0</li> 
+	 * </ul>
+	 */
 	public boolean runs() {
 		CommandResult commandResult = null;
 		
@@ -32,8 +50,8 @@ public class ValidatableCommand {
 			return false;
 		}
 		
-		if ((outputOnSuccess != null && commandResult.getStdout() == outputOnSuccess) || 
-			(substringOnSuccess != null && commandResult.getStdout().contains(substringOnSuccess))) {
+		if ((successStdout != null && commandResult.getStdout() == successStdout) || 
+			(successSubstring != null && commandResult.getStdout().contains(successSubstring))) {
 			return true;
 		}
 
