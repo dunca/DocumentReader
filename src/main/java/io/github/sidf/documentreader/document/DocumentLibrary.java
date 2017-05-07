@@ -44,6 +44,10 @@ public class DocumentLibrary {
 		Set<File> brokenDocuments = new HashSet<>();
 		
 		for (File file : libraryFile.listFiles()) {
+			if (file.equals(bookmarkFile)) {
+				continue;
+			}
+			
 			for (String documentProvider : DocumentFactory.getDocumentProviders()) {
 				Document document = null;
 				try {
@@ -65,10 +69,8 @@ public class DocumentLibrary {
 		
 		if (!brokenDocuments.isEmpty()) {
 			for (File file : brokenDocuments) {
-				if (!file.equals(bookmarkFile)) {
-					logger.warning(String.format("No document provider was able to initialize %s, deleting", file.getPath()));
-					file.delete();
-				}
+				logger.warning(String.format("No document provider was able to initialize %s, deleting", file.getPath()));
+				file.delete();
 			}
 		}
 	}
