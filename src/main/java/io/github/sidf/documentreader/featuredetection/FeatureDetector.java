@@ -114,7 +114,9 @@ public class FeatureDetector implements Runnable {
 				stop();
 			}
 		}
-
+		
+		captureDevice.release();
+		stop();
 	}
 	
 	private void managerSchedule(Mat eyeDetections) {
@@ -182,7 +184,6 @@ public class FeatureDetector implements Runnable {
 	public void stop() {
 		isStillRunning = false;
 		
-		captureDevice.release();
 		if (scheduledExecutorService != null) {
 			scheduledExecutorService.shutdown();
 		}
