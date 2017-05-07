@@ -49,8 +49,17 @@ public class WebUi {
 		// a route which returns the content of the HTML log file
 		Spark.get("/log", new Route() {
 			@Override
-			public Object handle(Request request, Response response) throws Exception {
-				return IoUtil.fileToString(logPath);
+			public Object handle(Request request, Response response) {
+				String logContent = null;
+				
+				try {
+					logContent = IoUtil.fileToString(logPath);
+				} catch (IOException e) {
+					// an exception like this will happen if we try to read the log right when it gets replaced
+					logContent = "";
+				}
+				
+				return logContent;
 			}
 		});
 		
