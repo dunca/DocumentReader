@@ -9,15 +9,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.security.MessageDigest;
-import java.io.FileNotFoundException;
-import javax.xml.bind.DatatypeConverter;
-import java.nio.file.StandardCopyOption;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.InputStreamReader;
+import java.io.FileNotFoundException;
+import java.nio.file.StandardCopyOption;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Class that provides static methods that deal with stream and file I/O operations
@@ -38,18 +35,6 @@ public class IoUtil {
 	 * @throws IOException if an I/O error occurs when reading the file's content
 	 */
 	public static String getMd5Hash(String filePath) throws Exception {
-//		byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
-//		byte[] md5Hash = null;
-//		
-//		try {
-//			 md5Hash = MessageDigest.getInstance("MD5").digest(fileContent);
-//		} catch (NoSuchAlgorithmException e) {
-//			
-//		}
-//		
-//		// http://stackoverflow.com/a/5470279
-//		return DatatypeConverter.printHexBinary(md5Hash);
-		
 		if (!new File(filePath).isFile()) {
 			throw new IOException(String.format(filePath + " does not exist as a file"));
 		}
