@@ -16,12 +16,16 @@ import javax.xml.bind.DatatypeConverter;
 import java.nio.file.StandardCopyOption;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Class that provides static methods that deal with stream and file I/O operations
  * @author sidf
  */
 public class IoUtil {
+	private static final Pattern md5sumPattern = Pattern.compile("(?<=^)\\w{32}(?=.+$)");
+	
 	private IoUtil() {
 		
 	}
@@ -30,20 +34,34 @@ public class IoUtil {
 	 * Calculates the MD5 hash of a file
 	 * @param filePath a string denoting the source file's path
 	 * @return a string denoting the MD5 hash of the file
+	 * @throws Exception 
 	 * @throws IOException if an I/O error occurs when reading the file's content
 	 */
-	public static String getMd5Hash(String filePath) throws IOException {
-		byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
-		byte[] md5Hash = null;
+	public static String getMd5Hash(String filePath) throws Exception {
+//		byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
+//		byte[] md5Hash = null;
+//		
+//		try {
+//			 md5Hash = MessageDigest.getInstance("MD5").digest(fileContent);
+//		} catch (NoSuchAlgorithmException e) {
+//			
+//		}
+//		
+//		// http://stackoverflow.com/a/5470279
+//		return DatatypeConverter.printHexBinary(md5Hash);
 		
-		try {
-			 md5Hash = MessageDigest.getInstance("MD5").digest(fileContent);
-		} catch (NoSuchAlgorithmException e) {
-			
+		if (!new File(filePath).isFile()) {
+			throw new IOException(String.format(filePath + " does not exist as a file"));
 		}
 		
-		// http://stackoverflow.com/a/5470279
-		return DatatypeConverter.printHexBinary(md5Hash);
+		CommandResult commandResult = CommandUtil.executeCommand("md5sum " + filePath);
+		Matcher matcher = md5sumPattern.matcher(commandResult.getStdout());	
+		
+		if (!matcher.find()) {
+			throw new IOException("Could not parse the MD5 hash for file " + filePath);
+		}
+		
+		return matcher.group();
 	}
 	
 	/**

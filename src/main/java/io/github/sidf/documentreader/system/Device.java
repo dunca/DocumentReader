@@ -32,8 +32,8 @@ public class Device {
 	/**
 	 * List of program packages that contain programs which are necessary for the application to function
 	 */
-	private static String[] dependecies = new String[] { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", "poppler-utils",
-														 "psmisc", "grep", "iproute2", "uvcdynctrl", "procps", "alsa-utils"};
+	private static String[] dependecies = { "espeak", "hostapd", "dnsmasq", "libopencv2.4-jni", "poppler-utils",
+											"psmisc", "grep", "iproute2", "uvcdynctrl", "procps", "alsa-utils", "coreutils"};
 	
 	private Device() {
 		
