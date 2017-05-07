@@ -263,13 +263,13 @@ class RootRoute implements Route {
 			service.resetCurrentDocumentBookmark();
 			break;
 		case "btn_set_document":
-			updateDocumentInfo(RequestUtil.parseBodyString(request.body(), "set_document"));
+			updateDocumentInfo(RequestUtil.getRequestParameterValue(request.body(), "set_document"));
 			break;
 		case "btn_set_reader":
-			updateReaderInfo(RequestUtil.parseBodyString(request.body(), "set_reader"));
+			updateReaderInfo(RequestUtil.getRequestParameterValue(request.body(), "set_reader"));
 			break;
 		case "btn_set_language":
-			String selectedReaderLanguage = RequestUtil.parseBodyString(request.body(), "set_language");
+			String selectedReaderLanguage = RequestUtil.getRequestParameterValue(request.body(), "set_language");
 			try {
 				service.setCurrentReaderLanguage(selectedReaderLanguage);
 				config.setReaderLanguage(selectedReaderLanguage);
@@ -279,7 +279,7 @@ class RootRoute implements Route {
 	
 			break;
 		case "btn_set_reading_speed":
-			String selectedReaderSpeed = RequestUtil.parseBodyString(request.body(), "set_reading_speed");
+			String selectedReaderSpeed = RequestUtil.getRequestParameterValue(request.body(), "set_reading_speed");
 			try {
 				service.setCurrentReaderSpeed(selectedReaderSpeed);
 				config.setReaderSpeed(selectedReaderSpeed);
@@ -289,7 +289,7 @@ class RootRoute implements Route {
 			
 			break;
 		case "btn_set_volume":
-			String selectedVolumeLevel = RequestUtil.parseBodyString(request.body(), "set_volume");
+			String selectedVolumeLevel = RequestUtil.getRequestParameterValue(request.body(), "set_volume");
 			try {
 				service.setAudioVolume(Integer.parseInt(selectedVolumeLevel));
 				config.setVolume(selectedVolumeLevel);
@@ -298,16 +298,16 @@ class RootRoute implements Route {
 			}
 			break;
 		case "btn_set_feature_detection":
-			config.setFeatureDetection(RequestUtil.parseBodyString(request.body(), "set_feature_detection"));
+			config.setFeatureDetection(RequestUtil.getRequestParameterValue(request.body(), "set_feature_detection"));
 			break;
 		case "btn_set_logs":
-			config.setLog(RequestUtil.parseBodyString(request.body(), "set_logs"));
+			config.setLog(RequestUtil.getRequestParameterValue(request.body(), "set_logs"));
 			break;
 		case "btn_set_page_content":
-			config.setContent(RequestUtil.parseBodyString(request.body(), "set_page_content"));
+			config.setContent(RequestUtil.getRequestParameterValue(request.body(), "set_page_content"));
 			break;
 		case "btn_set_device_state":
-			String action = RequestUtil.parseBodyString(request.body(), "set_device_state");
+			String action = RequestUtil.getRequestParameterValue(request.body(), "set_device_state");
 			if (action.equals("reboot")) {
 				try {
 					service.rebootDevice();
@@ -323,7 +323,7 @@ class RootRoute implements Route {
 			}
 			break;
 		case "btn_set_ap_ssid":
-			String ssid= RequestUtil.parseBodyString(request.body(), "set_ap_ssid");
+			String ssid= RequestUtil.getRequestParameterValue(request.body(), "set_ap_ssid");
 			if (ssid != null && ssid.matches("^\\p{ASCII}{1,32}$")) {
 				config.setApName(ssid);
 				infoMessage.add("Access point name updated");
@@ -332,7 +332,7 @@ class RootRoute implements Route {
 			}
 			break;
 		case "btn_set_ap_password":
-			String password = RequestUtil.parseBodyString(request.body(), "set_ap_password");
+			String password = RequestUtil.getRequestParameterValue(request.body(), "set_ap_password");
 			if (password != null && password.matches("^\\p{ASCII}{8,63}$")) {
 				config.setApPassword(password);
 				infoMessage.add("Access point password updated");

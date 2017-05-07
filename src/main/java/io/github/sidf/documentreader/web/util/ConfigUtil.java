@@ -3,7 +3,14 @@ package io.github.sidf.documentreader.web.util;
 import org.ini4j.Ini;
 import java.io.IOException;
 
+/**
+ * Class that does reading / writing operations on the main configuration file
+ * @author sidf
+ */
 public class ConfigUtil {
+	/**
+	 * Ini object that is tied to the main configuration file
+	 */
 	private Ini ini;
 	
 	public ConfigUtil(Ini ini) throws IOException {
@@ -94,6 +101,10 @@ public class ConfigUtil {
 		ini.put("Access point", "ssid", ssid);
 	}
 	
+	/**
+	 * Writes all changes to the underlying configuration file
+	 * @throws IOException if an I/O error occurs
+	 */
 	public void store() throws IOException {
 		ini.store();
 	}
