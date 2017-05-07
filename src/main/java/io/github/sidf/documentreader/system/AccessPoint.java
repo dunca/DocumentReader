@@ -47,7 +47,8 @@ public class AccessPoint {
 	/**
 	 * The maximum number of times the {@link #start} method with call itself in case errors during start occur
 	 */
-	private static int setupRetryCount = 3;
+	private static final int setupRetryCount = 3;
+	private static int retryCount = setupRetryCount;
 	
 	/**
 	 * Wlan adapter identifiers usually begin with any of these strings
@@ -149,18 +150,19 @@ public class AccessPoint {
 		
 		for (ValidatableCommand command : validatableCommands.values()) {
 			if (!command.runs()) {
-				String message = String.format("Command %s did not run as intended", command.getCommand());
-				logger.severe(message);
-
-				if (setupRetryCount-- > 0) {
+				if (retryCount-- > 0) {
 					logger.info("Retrying to set up access point");
 					start();
 				}
-				
-				cleanup();
-				throw new IOException(message);
+				else {
+					cleanup();
+					retryCount = setupRetryCount;
+					throw new Exception("Could not start the access point after " + setupRetryCount + " tries. Giving up");
+				}
 			}
 		}
+		
+		retryCount = setupRetryCount;
 	}
 	
 	/**
