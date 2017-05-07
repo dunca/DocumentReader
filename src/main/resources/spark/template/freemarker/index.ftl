@@ -13,6 +13,7 @@
 			<#assign contentDiv = "contentDiv">
 			<#assign isReadingUrl = "isReading">
 			<#assign currentPageUrl = "currentPage">
+			<#assign enablePageContent = selectedPageContent == "on" && isReading == true>
 
 			function changeText(elementId, text) {
 				document.getElementById(elementId+"Content").innerHTML = text;
@@ -60,10 +61,13 @@
 			<#if selectedLog == "on">
 			asyncRequest("${logUrl}");
 			</#if>
+			
+			<#if enablePageContent == true>
+			asyncRequest("${currentPageUrl}");
+			</#if>
 
 			<#if isReading == true>
 			asyncRequest("${isReadingUrl}");
-			asyncRequest("${currentPageUrl}");
 			</#if>
 		</script>
 	</head>
@@ -206,14 +210,13 @@
 	    	</div>
 	    </#if>
 
-	    <#if isReading==true>
+	    <#if enablePageContent == true>
     	    <div id="${contentDiv}" class="w3-half w3-pale-red">
 			  	<p><strong>Page content</strong></p>
 	    		<div id="${contentDiv}Content">
 				</div>
     		</div>
 	    </#if>
-
-
+	    
 	</body>
 </html>
