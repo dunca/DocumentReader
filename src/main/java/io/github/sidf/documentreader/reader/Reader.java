@@ -86,6 +86,10 @@ public abstract class Reader implements Runnable {
 	}
 	
 	public void stop() {
+		if (reading == false) {
+			return;
+		}
+		
 		reading = false;
 		
 		try {
