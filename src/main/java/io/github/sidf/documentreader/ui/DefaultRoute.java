@@ -173,7 +173,7 @@ class DefaultRoute implements Route {
 				// ignore, since with actually check if the request is "multipart/form-data"
 			}
 			
-			if (uploadedFilePart != null) {
+			if (uploadedFilePart.getSize() != 0) {
 			    String fileName = uploadedFilePart.getSubmittedFileName();
 			    
 			    // replace all spaces with underscores to avoid running in to issues later
@@ -208,6 +208,10 @@ class DefaultRoute implements Route {
 	 * @param buttonName the underlying name of a UI button
 	 */
 	private void handleButtonPress(String buttonName) {
+		// Since all buttons that submit forms with data fields follow the btn_<field_name> convention, we can call
+		// this only once. This will however return null for forms without data fields
+		String formFieldValue = RequestUtil.getRequestParameterValue(request.body(), buttonName.replace("btn_", ""));
+
 		switch (buttonName) {
 		case "btn_delete_document":
 			String documentHash = config.getDocumentHash();
@@ -231,54 +235,49 @@ class DefaultRoute implements Route {
 			service.resetCurrentDocumentBookmark();
 			break;
 		case "btn_set_document":
-			updateDocumentSettings(RequestUtil.getRequestParameterValue(request.body(), "set_document"));
+			updateDocumentSettings(formFieldValue);
 			break;
 		case "btn_set_reader":
-			updateReaderSettings(RequestUtil.getRequestParameterValue(request.body(), "set_reader"));
+			updateReaderSettings(formFieldValue);
 			break;
 		case "btn_set_language":
-			String selectedReaderLanguage = RequestUtil.getRequestParameterValue(request.body(), "set_language");
 			try {
-				service.setCurrentReaderLanguage(selectedReaderLanguage);
-				config.setReaderLanguage(selectedReaderLanguage);
+				service.setCurrentReaderLanguage(formFieldValue);
+				config.setReaderLanguage(formFieldValue);
 			} catch (IOException e) {
 				errorMessage.add("Could not set the reader's language");
 			}
 	
 			break;
 		case "btn_set_reading_speed":
-			String selectedReaderSpeed = RequestUtil.getRequestParameterValue(request.body(), "set_reading_speed");
 			try {
-				service.setCurrentReaderSpeed(selectedReaderSpeed);
-				config.setReaderSpeed(selectedReaderSpeed);
+				service.setCurrentReaderSpeed(formFieldValue);
+				config.setReaderSpeed(formFieldValue);
 			} catch (IOException e) {
 				errorMessage.add("Could not set the reader's speed");
 			}
 			
 			break;
 		case "btn_set_volume":
-			String selectedVolumeLevel = RequestUtil.getRequestParameterValue(request.body(), "set_volume");
 			try {
-				service.setAudioVolume(Integer.parseInt(selectedVolumeLevel));
-				config.setVolume(selectedVolumeLevel);
+				service.setAudioVolume(Integer.parseInt(formFieldValue));
+				config.setVolume(formFieldValue);
 			} catch (Exception e) {
 				errorMessage.add("Could not set the volume");
 			}
 			break;
 		case "btn_set_feature_detection":
-			config.setFeatureDetection(RequestUtil.getRequestParameterValue(request.body(), "set_feature_detection"));
+			config.setFeatureDetection(formFieldValue);
 			break;
 		case "btn_set_logs":
-			config.setLog(RequestUtil.getRequestParameterValue(request.body(), "set_logs"));
+			config.setLog(formFieldValue);
 			break;
 		case "btn_set_page_content":
-			config.setContent(RequestUtil.getRequestParameterValue(request.body(), "set_page_content"));
+			config.setContent(formFieldValue);
 			break;
 		case "btn_set_device_state":
-			String action = RequestUtil.getRequestParameterValue(request.body(), "set_device_state");
-			
 			try {
-				if (action.equals("reboot")) {
+				if (formFieldValue.equals("reboot")) {
 					service.rebootDevice();
 				} else {
 					service.shutDownDevice();
@@ -288,18 +287,16 @@ class DefaultRoute implements Route {
 			}
 			break;
 		case "btn_set_ap_ssid":
-			String ssid = RequestUtil.getRequestParameterValue(request.body(), "set_ap_ssid");
-			if (ssid != null && ssid.matches("^\\p{ASCII}{1,32}$")) {
-				config.setApName(ssid);
+			if (formFieldValue != null && formFieldValue.matches("^\\p{ASCII}{1,32}$")) {
+				config.setApName(formFieldValue);
 				infoMessage.add("Access point name updated");
 			} else {
 				errorMessage.add("The name should be between 1 and 32 ASCII characters long");
 			}
 			break;
 		case "btn_set_ap_password":
-			String password = RequestUtil.getRequestParameterValue(request.body(), "set_ap_password");
-			if (password != null && password.matches("^\\p{ASCII}{8,63}$")) {
-				config.setApPassword(password);
+			if (formFieldValue != null && formFieldValue.matches("^\\p{ASCII}{8,63}$")) {
+				config.setApPassword(formFieldValue);
 				infoMessage.add("Access point password updated");
 			} else {
 				errorMessage.add("The password should be between 8 and 63 ASCII characters long");
