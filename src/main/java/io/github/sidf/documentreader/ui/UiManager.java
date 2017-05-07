@@ -1,5 +1,4 @@
-package io.github.sidf.documentreader.web;
-
+package io.github.sidf.documentreader.ui;
 
 import spark.Route;
 import spark.Spark;
@@ -9,17 +8,17 @@ import spark.Response;
 import java.io.IOException;
 
 import io.github.sidf.documentreader.util.IoUtil;
-import io.github.sidf.documentreader.web.util.ConfigUtil;
+import io.github.sidf.documentreader.ui.util.ConfigUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
-public class WebInterface {
+public class UiManager {
 	private Ini ini;
 	private int port;
 	private String logPath;
 	private String libraryPath;
 	private static DocumentReaderService service;
 	
-	public WebInterface(String libraryPath, Ini ini, String logPath,
+	public UiManager(String libraryPath, Ini ini, String logPath,
 						DocumentReaderService documentReaderService) throws IOException {
 		ConfigUtil configUtil = new ConfigUtil(ini);
 		
@@ -35,11 +34,11 @@ public class WebInterface {
 		Spark.port(port);
 		Spark.ipAddress("0.0.0.0");
 		Spark.staticFileLocation("/spark/public");
-		RootRoute rootRoute = new RootRoute(libraryPath, ini, service);
+		DefaultRoute defaultRoute = new DefaultRoute(libraryPath, ini, service);
 		
-		Spark.get("/", rootRoute);
+		Spark.get("/", defaultRoute);
 		
-		Spark.post("/", rootRoute);
+		Spark.post("/", defaultRoute);
 		
 		Spark.get("/log", new Route() {
 			@Override
@@ -61,7 +60,7 @@ public class WebInterface {
 				boolean isReading = service.isReading();
 				
 				if (!service.isReading()) {
-					rootRoute.setIsReading(false);
+					defaultRoute.setIsReading(false);
 				}
 				
 				return isReading;

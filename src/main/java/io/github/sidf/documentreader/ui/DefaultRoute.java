@@ -1,4 +1,4 @@
-package io.github.sidf.documentreader.web;
+package io.github.sidf.documentreader.ui;
 
 import spark.Route;
 import spark.Spark;
@@ -20,13 +20,13 @@ import javax.servlet.http.Part;
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
-import io.github.sidf.documentreader.web.util.ConfigUtil;
-import io.github.sidf.documentreader.web.util.RequestUtil;
-import io.github.sidf.documentreader.service.DocumentReaderService;
 
 import io.github.sidf.documentreader.util.IoUtil;
+import io.github.sidf.documentreader.ui.util.ConfigUtil;
+import io.github.sidf.documentreader.ui.util.RequestUtil;
+import io.github.sidf.documentreader.service.DocumentReaderService;
 
-class RootRoute implements Route {
+class DefaultRoute implements Route {
 	private Request request;
 	private Response response;
 	private String libraryPath;
@@ -49,7 +49,7 @@ class RootRoute implements Route {
 	private static DocumentReaderService service;
 	private static final Pattern buttonPattern = Pattern.compile("btn_\\w+(?=\\=)");
 	
-	public RootRoute(String libraryPath, Ini ini, DocumentReaderService documentReaderService) throws Exception {
+	public DefaultRoute(String libraryPath, Ini ini, DocumentReaderService documentReaderService) throws Exception {
 		this.libraryPath = libraryPath;
 		service = documentReaderService;
 		config = new ConfigUtil(ini);

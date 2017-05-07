@@ -1,4 +1,4 @@
-package io.github.sidf.documentreader.web.util;
+package io.github.sidf.documentreader.ui.util;
 
 import java.net.URLDecoder;
 import java.util.regex.Matcher;
