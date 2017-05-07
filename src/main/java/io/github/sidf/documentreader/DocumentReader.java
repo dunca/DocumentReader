@@ -66,11 +66,6 @@ public class DocumentReader {
 		// instantiate the DocumentReaderService class using first startup argument as the document library path
 		DocumentReaderService service = new DocumentReaderService(args[0]);
 		
-		// instantiate the WebUi class using:
-		// * the library path - used to save the uploaded documents
-		// * the Ini instance - used to deal with the configuration file
-		// * the log path - used to load the log file in the UI
-		// * the DocumentReaderService instance -.
 		WebUi webUi = new WebUi(args[0], ini, logPath, service);
 		webUi.start();
 	}

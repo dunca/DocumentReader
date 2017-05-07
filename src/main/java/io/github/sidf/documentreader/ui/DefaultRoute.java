@@ -1,20 +1,18 @@
 package io.github.sidf.documentreader.ui;
 
+
 import spark.Route;
 import spark.Spark;
+import java.io.File;
 import org.ini4j.Ini;
 import java.util.Map;
 import spark.Request;
 import java.util.List;
 import spark.Response;
-
 import java.util.HashMap;
 import spark.ModelAndView;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import javax.servlet.http.Part;
@@ -34,6 +32,10 @@ import io.github.sidf.documentreader.service.DocumentReaderService;
 class DefaultRoute implements Route {
 	private Request request;
 	private Response response;
+	
+	/**
+	 * The path to the directory in which the uploaded files are saved
+	 */
 	private String libraryPath;
 	
 	/**
