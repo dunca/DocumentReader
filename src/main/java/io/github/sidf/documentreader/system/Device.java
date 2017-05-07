@@ -55,7 +55,7 @@ public class Device {
 	/**
 	 * Reboots or shuts down the device, depending on the value of the parameter
 	 * @param reboot if 'true', the device will be rebooted
-	 * @throws IOException if an I/O exception occurs while running the system command
+	 * @throws IOException if an I/O error occurs while running the system command
 	 */
 	private static void togglePowerState(boolean reboot) throws IOException {
 		Runtime.getRuntime().exec(reboot ? "reboot" : "poweroff");

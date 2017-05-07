@@ -1,5 +1,9 @@
 package io.github.sidf.documentreader.util.enums;
 
+/**
+ * Enum that represents the reading speed levels supported by {@link io.github.sidf.documentreader.reader.Reader} subclasses
+ * @author Esc
+ */
 public enum Speed {
 	FAST("fast"),
 	MEDIUM("medium"),

@@ -69,7 +69,7 @@ public class AccessPoint {
 		AccessPoint.ssid = ssid;
 		AccessPoint.password = password;
 		
-		tempHostapdConfigPath = FileUtil.resourcePathToFile("hostapd/hostapd.ini");
+		tempHostapdConfigPath = FileUtil.resourcePathToFile("/hostapd/hostapd.ini");
 		
 		wlanInterfaceName = getWlanInterfaceName();
 		updateHostapdConfigFile();

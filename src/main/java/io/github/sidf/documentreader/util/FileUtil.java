@@ -12,21 +12,24 @@ import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.io.FileNotFoundException;
 import javax.xml.bind.DatatypeConverter;
-import java.nio.file.StandardCopyOption;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * Class that provides static methods that deal with file reading/writing operations
+ * @author Esc
+ */
 public class FileUtil {
-	private static ClassLoader classLoader;
-	
-	static {
-		classLoader = FileUtil.class.getClassLoader();
-	}
-	
 	private FileUtil() {
 		
 	}
 	
+	/**
+	 * Calculates the MD5 hash of a file
+	 * @param filePath a string denoting the source file's path
+	 * @return a string denoting the MD5 hash of the file
+	 * @throws IOException if an I/O error occurs when reading the file's content
+	 */
 	public static String getMd5Hash(String filePath) throws IOException {
 		byte[] fileContent = Files.readAllBytes(Paths.get(filePath));
 		byte[] md5Hash = null;
@@ -34,13 +37,19 @@ public class FileUtil {
 		try {
 			 md5Hash = MessageDigest.getInstance("MD5").digest(fileContent);
 		} catch (NoSuchAlgorithmException e) {
-			// it won't reach here since MD5 is valid
+			
 		}
 		
-		// http://stackoverflow.com/questions/5470219/get-md5-string-from-message-digest
+		// http://stackoverflow.com/a/5470279
 		return DatatypeConverter.printHexBinary(md5Hash);
 	}
 	
+	/**
+	 * Gets the content of a file as a string
+	 * @param filePath a string denoting the source file's path
+	 * @return a string denoting the content of the file
+	 * @throws IOException if an I/O error occurs when reading the file's content
+	 */
 	public static String fileToString(String filePath) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		
@@ -55,20 +64,28 @@ public class FileUtil {
 		return sb.toString();
 	}
 	
-	public static void stringToFile(String source, String locationPath) throws FileNotFoundException {
-		try(PrintWriter writer = new PrintWriter(locationPath, "UTF-8")) {
-			writer.print(source);
+	/**
+	 * Updates the content of a file
+	 * @param content a string denoting the content source
+	 * @param targetFilePath a string denoting the path to the target file
+	 * @throws FileNotFoundException if the target file does not exist or it cannot be created
+	 */
+	public static void stringToFile(String content, String targetFilePath) throws FileNotFoundException {
+		try(PrintWriter writer = new PrintWriter(targetFilePath, "UTF-8")) {
+			writer.print(content);
 		} catch (UnsupportedEncodingException e) {
 			//
 		}
 	}
 	
-	public static void copyFile(String sourcePath, String destinationPath) throws IOException {
-		Files.copy(Paths.get(sourcePath), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
-	}
-	
-	public static String resourcePathToFile(String relativeResourcePath) throws IOException {
-		InputStream inputStream = classLoader.getResourceAsStream(relativeResourcePath);
+	/**
+	 * Reads the content of a resource that resides in the jar and writes it to a temporary file
+	 * @param absoluteResourcePath a string denoting the absolute path to a resource that resides in the jar file
+	 * @return a string denoting the path to the temporary file that will be updated with the resource's content
+	 * @throws IOException if an I/O error occurs
+	 */
+	public static String resourcePathToFile(String absoluteResourcePath) throws IOException {	
+		InputStream inputStream = FileUtil.class.getResourceAsStream(absoluteResourcePath);
 		File file = File.createTempFile("temp", null);
 		String filePath = file.getPath();
 		
