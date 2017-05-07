@@ -11,13 +11,13 @@ import io.github.sidf.documentreader.system.AccessPoint;
 import io.github.sidf.documentreader.util.HtmlLogFormatter;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
-public class Application {
+public class DocumentReader {
 	private static final String configName = "config.ini";
 	private static String logPath;
 	private static Logger logger;
 	
 	static {
-		String packageName = Application.class.getPackage().getName();
+		String packageName = DocumentReader.class.getPackage().getName();
 		logger = Logger.getLogger(packageName);
 		
 		logPath = String.format("%s-log.html", packageName.substring(packageName.lastIndexOf('.') + 1));
