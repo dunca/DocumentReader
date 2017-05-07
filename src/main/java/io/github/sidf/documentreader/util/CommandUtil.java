@@ -44,7 +44,7 @@ public class CommandUtil {
 		Process process = processBuilder.start();
 		
 		int exitCode = process.waitFor();
-		return new CommandResult(StreamUtil.inputStreamToString(process.getInputStream()), exitCode);
+		return new CommandResult(IoUtil.inputStreamToString(process.getInputStream()), exitCode);
 	}
 	
 	/**

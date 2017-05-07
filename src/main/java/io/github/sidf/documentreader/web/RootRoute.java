@@ -20,11 +20,11 @@ import javax.servlet.http.Part;
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
 import spark.template.freemarker.FreeMarkerEngine;
-
-import io.github.sidf.documentreader.util.StreamUtil;
 import io.github.sidf.documentreader.web.util.ConfigUtil;
 import io.github.sidf.documentreader.web.util.RequestUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
+
+import io.github.sidf.documentreader.util.IoUtil;
 
 class RootRoute implements Route {
 	private Request request;
@@ -128,7 +128,7 @@ class RootRoute implements Route {
 			if (uploadedFile != null && uploadedFile.getSize() != 0) {
 			    String fileName = uploadedFile.getSubmittedFileName();
 			    try (InputStream inputStream = uploadedFile.getInputStream()) {
-			    	StreamUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
+			    	IoUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
 			    	service.updateDocumentLibrary();
 			    	availableDocuments = service.getDocumentMap();
 			    	infoMessage.add("Successful upload");
