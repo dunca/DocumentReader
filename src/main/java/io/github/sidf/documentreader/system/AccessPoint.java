@@ -7,7 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import io.github.sidf.documentreader.util.FileUtil;
+import io.github.sidf.documentreader.util.IoUtil;
 import io.github.sidf.documentreader.util.CommandUtil;
 import io.github.sidf.documentreader.util.CommandResult;
 import io.github.sidf.documentreader.util.ValidatableCommand;
@@ -69,7 +69,7 @@ public class AccessPoint {
 		AccessPoint.ssid = ssid;
 		AccessPoint.password = password;
 		
-		tempHostapdConfigPath = FileUtil.resourcePathToFile("/hostapd/hostapd.ini");
+		tempHostapdConfigPath = IoUtil.resourcePathToFile("/hostapd/hostapd.ini");
 		
 		wlanInterfaceName = getWlanInterfaceName();
 		updateHostapdConfigFile();
@@ -168,10 +168,10 @@ public class AccessPoint {
 	 * @throws IOException if an I/O error occurs while trying to read/write the temporary hostapd config file
 	 */
 	private void updateHostapdConfigFile() throws IOException {
-		String content = FileUtil.fileToString(tempHostapdConfigPath);
+		String content = IoUtil.fileToString(tempHostapdConfigPath);
 		content = content.replaceFirst("(?<=interface\\=).*", wlanInterfaceName);
 		content = content.replaceFirst("(?<=wpa_passphrase\\=).*", password);
 		content = content.replaceFirst("(?<=ssid\\=).*", ssid);
-		FileUtil.stringToFile(content, tempHostapdConfigPath);
+		IoUtil.stringToFile(content, tempHostapdConfigPath);
 	}
 }

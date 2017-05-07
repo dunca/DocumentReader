@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.io.FileNotFoundException;
 
-import io.github.sidf.documentreader.util.FileUtil;
+import io.github.sidf.documentreader.util.IoUtil;
 
 public abstract class Document implements Iterable<Page> {
 	private String id;
@@ -33,7 +33,7 @@ public abstract class Document implements Iterable<Page> {
 		
 		path = filePath;
 		name = file.getName();
-		id = FileUtil.getMd5Hash(path);
+		id = IoUtil.getMd5Hash(path);
 		
 		int pageIndex = 0;
 		int sentenceIndex = 0;

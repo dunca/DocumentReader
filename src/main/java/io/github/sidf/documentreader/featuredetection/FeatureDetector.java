@@ -19,7 +19,7 @@ import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
 import org.opencv.objdetect.CascadeClassifier;
 
-import io.github.sidf.documentreader.util.FileUtil;
+import io.github.sidf.documentreader.util.IoUtil;
 import io.github.sidf.documentreader.util.CommandUtil;
 
 public class FeatureDetector implements Runnable {
@@ -49,9 +49,9 @@ public class FeatureDetector implements Runnable {
 		disableAutofocus();
 		
 		if (faceClassifier == null) {
-			leftEyeClassifier = new CascadeClassifier(FileUtil.resourcePathToFile("/cascades/left_eye_lbp.xml"));
-			rightEyeClassifier = new CascadeClassifier(FileUtil.resourcePathToFile("/cascades/right_eye_lbp.xml"));
-			faceClassifier = new CascadeClassifier(FileUtil.resourcePathToFile("/cascades/lbpcascade_frontalface.xml"));
+			leftEyeClassifier = new CascadeClassifier(IoUtil.resourcePathToFile("/cascades/left_eye_lbp.xml"));
+			rightEyeClassifier = new CascadeClassifier(IoUtil.resourcePathToFile("/cascades/right_eye_lbp.xml"));
+			faceClassifier = new CascadeClassifier(IoUtil.resourcePathToFile("/cascades/lbpcascade_frontalface.xml"));
 		}
 	}
 		

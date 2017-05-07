@@ -19,8 +19,8 @@ import java.security.NoSuchAlgorithmException;
  * Class that provides static methods that deal with file reading/writing operations
  * @author sidf
  */
-public class FileUtil {
-	private FileUtil() {
+public class IoUtil {
+	private IoUtil() {
 		
 	}
 	
@@ -85,7 +85,7 @@ public class FileUtil {
 	 * @throws IOException if an I/O error occurs
 	 */
 	public static String resourcePathToFile(String absoluteResourcePath) throws IOException {	
-		InputStream inputStream = FileUtil.class.getResourceAsStream(absoluteResourcePath);
+		InputStream inputStream = IoUtil.class.getResourceAsStream(absoluteResourcePath);
 		File file = File.createTempFile("temp", null);
 		String filePath = file.getPath();
 		

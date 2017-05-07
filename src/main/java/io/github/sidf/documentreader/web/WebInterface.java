@@ -8,7 +8,7 @@ import spark.Request;
 import spark.Response;
 import java.io.IOException;
 
-import io.github.sidf.documentreader.util.FileUtil;
+import io.github.sidf.documentreader.util.IoUtil;
 import io.github.sidf.documentreader.web.util.ConfigUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
@@ -44,7 +44,7 @@ public class WebInterface {
 		Spark.get("/log", new Route() {
 			@Override
 			public Object handle(Request request, Response response) throws Exception {
-				return FileUtil.fileToString(logPath);
+				return IoUtil.fileToString(logPath);
 			}
 		});
 		
