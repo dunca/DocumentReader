@@ -126,7 +126,8 @@ class RootRoute implements Route {
 			}
 			
 			if (uploadedFile != null && uploadedFile.getSize() != 0) {
-			    String fileName = uploadedFile.getSubmittedFileName();
+			    String fileName = uploadedFile.getSubmittedFileName().replaceAll("\\s", "_");
+			    
 			    try (InputStream inputStream = uploadedFile.getInputStream()) {
 			    	IoUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
 			    	service.updateDocumentLibrary();
