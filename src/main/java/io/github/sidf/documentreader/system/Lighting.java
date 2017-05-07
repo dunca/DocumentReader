@@ -122,6 +122,8 @@ public class Lighting implements Runnable {
 	 * Releases every pin referenced in {@link #pinControllers}
 	 */
 	private void cleanupPins() {
+		sensorInputController.removeAllTriggers();
+		
 		for (GpioPin pin : pinControllers) {
 			if (pin instanceof GpioPinDigitalOutput) {
 				GpioPinDigitalOutput pinDigitalOutput = (GpioPinDigitalOutput) pin;
