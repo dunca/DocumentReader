@@ -70,17 +70,11 @@ class RootRoute implements Route {
 		this.response = response;
 		this.map = new HashMap<>();
 
-		String requestMethod = request.requestMethod();
-		
-		switch (requestMethod) {
-		case "GET":
+		if (request.requestMethod().equals("GET")) {
 			return handleGet();
-		case "POST":
-			return handlePost();
-		default:
-			response.status(404);
-			return null;
 		}
+		
+		return handlePost();
 	}
 	
 	private Object handleGet() {
@@ -150,93 +144,6 @@ class RootRoute implements Route {
 
 		response.redirect("/");
 		return null;
-	}
-	
-	private void preconfiguration() throws Exception {
-		if (!supportedVolumeLevels.containsValue(config.getVolume())) {
-			String firstVolume = supportedVolumeLevels.keySet().iterator().next();
-			config.setVolume(firstVolume);
-			int volume = Integer.valueOf(firstVolume);
-			if (service.getAudioVolume() != volume) {
-				service.setAudioVolume(volume);
-			}
-		}
-		
-		if (config.getFeatureDetection() == null) {
-			config.setFeatureDetection("off");
-		}
-		
-		if (config.getLog() == null) {
-			config.setLog("on");
-		}
-		
-		if (config.getContent() == null) {
-			config.setContent("on");
-		}
-		
-		String provider = config.getReaderProvider();
-		if (availableReaderProviders.contains(provider)) {
-			provider = availableReaderProviders.get(0);
-		} 
-		updateReaderInfo(provider);
-		
-		updateDocumentInfo(config.getDocumentHash());
-		
-		config.store();
-	}
-	
-	private void updateReaderInfo(String provider) {
-		String currentProvider = config.getReaderProvider();
-		
-		if (!provider.equals(currentProvider)) {
-			config.setReaderProvider(provider);
-		}
-		
-		try {
-			service.setCurrentReader(provider);
-		} catch (Exception e) {
-			errorMessage.add("Could not update reader settings");
-			// TODO do something about it, otherwise the next 2 lines will probably fail too
-		}
-		
-		supportedReaderSpeed = service.getCurrentSupportedSpeed();
-		supportedReaderLanguages = service.getCurrentSupportedLanguages();
-		
-		try {
-			updateReaderSettings();
-		} catch (Exception e) {
-			config.setReaderSpeed(supportedReaderSpeed.get(0));
-			config.setReaderLanguage(supportedReaderLanguages.get(0));
-			
-			try {
-				updateReaderSettings();
-			} catch (IOException e1) {
-				errorMessage.add("Could not update speed and / or language settings");
-			}
-		}
-	}
-	
-	private void updateReaderSettings() throws IOException {
-		service.setCurrentReaderSpeed(config.getReaderSpeed());
-		service.setCurrentReaderLanguage(config.getReaderLanguage());
-	}
-	
-	private void updateDocumentInfo(String documentHash) {
-		if (!availableDocuments.containsKey(documentHash)) {
-			if (availableDocuments.size() != 0) {
-				documentHash = availableDocuments.keySet().iterator().next();
-			} else {
-				documentHash = null;
-			}
-		}
-		
-		config.setDocumentHash(documentHash);
-		
-		try {
-			service.setDocument(documentHash);
-		} catch (Exception e) {
-			errorMessage.add("Could not set the document");
-		}
 	}
 	
 	private void handleButtonPress(String buttonName, Request request) {
@@ -348,6 +255,93 @@ class RootRoute implements Route {
 			config.store();
 		} catch (IOException e) {
 			errorMessage.add("Could not store settings");
+		}
+	}
+	
+	private void preconfiguration() throws Exception {
+		if (!supportedVolumeLevels.containsValue(config.getVolume())) {
+			String firstVolume = supportedVolumeLevels.keySet().iterator().next();
+			config.setVolume(firstVolume);
+			int volume = Integer.valueOf(firstVolume);
+			if (service.getAudioVolume() != volume) {
+				service.setAudioVolume(volume);
+			}
+		}
+		
+		if (config.getFeatureDetection() == null) {
+			config.setFeatureDetection("off");
+		}
+		
+		if (config.getLog() == null) {
+			config.setLog("on");
+		}
+		
+		if (config.getContent() == null) {
+			config.setContent("on");
+		}
+		
+		String provider = config.getReaderProvider();
+		if (availableReaderProviders.contains(provider)) {
+			provider = availableReaderProviders.get(0);
+		} 
+		updateReaderInfo(provider);
+		
+		updateDocumentInfo(config.getDocumentHash());
+		
+		config.store();
+	}
+	
+	private void updateReaderInfo(String provider) {
+		String currentProvider = config.getReaderProvider();
+		
+		if (!provider.equals(currentProvider)) {
+			config.setReaderProvider(provider);
+		}
+		
+		try {
+			service.setCurrentReader(provider);
+		} catch (Exception e) {
+			errorMessage.add("Could not update reader settings");
+			// TODO do something about it, otherwise the next 2 lines will probably fail too
+		}
+		
+		supportedReaderSpeed = service.getCurrentSupportedSpeed();
+		supportedReaderLanguages = service.getCurrentSupportedLanguages();
+		
+		try {
+			updateReaderSettings();
+		} catch (Exception e) {
+			config.setReaderSpeed(supportedReaderSpeed.get(0));
+			config.setReaderLanguage(supportedReaderLanguages.get(0));
+			
+			try {
+				updateReaderSettings();
+			} catch (IOException e1) {
+				errorMessage.add("Could not update speed and / or language settings");
+			}
+		}
+	}
+	
+	private void updateReaderSettings() throws IOException {
+		service.setCurrentReaderSpeed(config.getReaderSpeed());
+		service.setCurrentReaderLanguage(config.getReaderLanguage());
+	}
+	
+	private void updateDocumentInfo(String documentHash) {
+		if (!availableDocuments.containsKey(documentHash)) {
+			if (availableDocuments.size() != 0) {
+				documentHash = availableDocuments.keySet().iterator().next();
+			} else {
+				documentHash = null;
+			}
+		}
+		
+		config.setDocumentHash(documentHash);
+		
+		try {
+			service.setDocument(documentHash);
+		} catch (Exception e) {
+			errorMessage.add("Could not set the document");
 		}
 	}
 	
