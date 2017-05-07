@@ -5,7 +5,7 @@ import org.ini4j.Ini;
 import java.util.logging.Logger;
 import java.util.logging.FileHandler;
 
-import io.github.sidf.documentreader.ui.UiManager;
+import io.github.sidf.documentreader.ui.WebUi;
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.system.AccessPoint;
 import io.github.sidf.documentreader.util.HtmlLogFormatter;
@@ -51,8 +51,8 @@ public class Application {
 		accessPoint.start();
 		
 		DocumentReaderService service = new DocumentReaderService(args[0]);
-		UiManager uiManager = new UiManager(args[0], ini, logPath, service);
-		uiManager.start();
+		WebUi webUi = new WebUi(args[0], ini, logPath, service);
+		webUi.start();
 	}
 	
 	private static boolean isValidStart(String[] args) {

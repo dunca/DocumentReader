@@ -11,14 +11,14 @@ import io.github.sidf.documentreader.util.IoUtil;
 import io.github.sidf.documentreader.ui.util.ConfigUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
-public class UiManager {
+public class WebUi {
 	private Ini ini;
 	private int port;
 	private String logPath;
 	private String libraryPath;
 	private static DocumentReaderService service;
 	
-	public UiManager(String libraryPath, Ini ini, String logPath,
+	public WebUi(String libraryPath, Ini ini, String logPath,
 						DocumentReaderService documentReaderService) throws IOException {
 		ConfigUtil configUtil = new ConfigUtil(ini);
 		
