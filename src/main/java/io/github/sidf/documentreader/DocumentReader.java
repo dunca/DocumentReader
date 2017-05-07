@@ -39,7 +39,7 @@ public class DocumentReader {
 		htmlHandler.setFormatter(new HtmlLogFormatter());
 		logger.addHandler(htmlHandler);
 		
-		if (!isValidStart(args)) {
+		if (!meetsStartRequirements(args)) {
 			logger.severe("Cannot start application:\n"
 					+ "Make sure that you specify the document library directory as an argument\n"
 					+ "and that you have a valid configuration file called " + configFileName + "\n"
@@ -51,21 +51,40 @@ public class DocumentReader {
 //			logger.severe("Your system is not supported");
 //			return;
 //		}
-			
+		
 		Ini ini = new Ini(new File(configFileName));
 		
 		String ssid =  ini.get("Access point", "ssid");
 		String password =  ini.get("Access point", "password");
+		
+		// IP address that will become the wlan adapter's static address
 		String ipAddress = ini.get("Access point", "ipAddress");
+		
 		AccessPoint accessPoint = new AccessPoint(ipAddress, password, ssid);
 		accessPoint.start();
 		
+		// instantiate the DocumentReaderService class using first startup argument as the document library path
 		DocumentReaderService service = new DocumentReaderService(args[0]);
+		
+		// instantiate the WebUi class using:
+		// * the library path - used to save the uploaded documents
+		// * the Ini instance - used to deal with the configuration file
+		// * the log path - used to load the log file in the UI
+		// * the DocumentReaderService instance -.
 		WebUi webUi = new WebUi(args[0], ini, logPath, service);
 		webUi.start();
 	}
 	
-	private static boolean isValidStart(String[] args) {
+	/**
+	 * Checks if:
+	 * <ul>
+	 * <li>the first (and only) parameter is an actual directory</li>
+	 * <li>the configuration file actually exists</li>
+	 * </ul>
+	 * @param args string array denoting the application's startup arguments
+	 * @return 'true' if all the startup requirements are met
+	 */
+	private static boolean meetsStartRequirements(String[] args) {
 		return args.length == 1 && new File(args[0]).isDirectory() && new File(configFileName).isFile();
 	}
 }

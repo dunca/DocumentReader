@@ -10,6 +10,8 @@ import java.io.UnsupportedEncodingException;
  * @author sidf
  */
 public class RequestUtil {
+	private static final Pattern buttonPattern = Pattern.compile("btn_\\w+(?=\\=)");
+	
 	private RequestUtil() {
 		
 	}
@@ -32,6 +34,21 @@ public class RequestUtil {
 		if (matcher.find()) {
 			return matcher.group();
 		}
+		return null;
+	}
+	
+	/**
+	 * Gets the name of the button pressed in a POST request
+	 * @param postRequestBody the body of a POST request
+	 * @return a string denoting the name of the button or null if the POST request body doesn't contain a button name
+	 */
+	public static String getPressedButtonName(String postRequestBody) {
+		Matcher matcher = buttonPattern.matcher(postRequestBody);
+		
+		if (matcher.find()) {
+			return matcher.group();
+		}
+		
 		return null;
 	}
 }

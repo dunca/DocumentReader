@@ -10,12 +10,13 @@ import spark.Response;
 
 import java.util.HashMap;
 import spark.ModelAndView;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.http.Part;
 import javax.servlet.ServletException;
 import javax.servlet.MultipartConfigElement;
@@ -26,28 +27,65 @@ import io.github.sidf.documentreader.ui.util.ConfigUtil;
 import io.github.sidf.documentreader.ui.util.RequestUtil;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
+/**
+ * The route that is tied to root url ("/")
+ * @author sidf
+ */
 class DefaultRoute implements Route {
 	private Request request;
 	private Response response;
 	private String libraryPath;
+	
+	/**
+	 * Mapping or variables that are evaluated in the UI's template
+	 */
 	private Map<String, Object> map;
 	
+	/**
+	 * List of info/error messages that will be displayed in the UI
+	 */
 	private List<String> infoMessage = new ArrayList<>();
 	private List<String> errorMessage = new ArrayList<>();
 	
+	/**
+	 * Variable that is set to 'true' when the user hits the reading button
+	 * This variable is evaluated in the UI's template in order to toggle certain functionality (mostly buttons)
+	 */
 	private boolean isReading;
+	
+	/**
+	 * Corresponds to the reading speeds supported by the selected reading provider
+	 */
 	private List<String> supportedReaderSpeed;
+	
+	/**
+	 * The fully qualified names of the existing reading providers
+	 */
 	private List<String> availableReaderProviders;
+	
+	/**
+	 * Corresponds to the reading languages supported by the selected reading provider
+	 */
 	private List<String> supportedReaderLanguages;
 	
 	private static final Map<String, String> supportedVolumeLevels = new LinkedHashMap<>();
 	
+	/**
+	 * Mapping of type <document id>:<document name> that is used to populate the UI's dropdown menu
+	 */
 	private Map<String, String> availableDocuments;
-	private static final String[] standardSwitchOptions = new String[] { "on", "off" };
+	
+	/**
+	 * Common options used in some of the UI's dropdown menus
+	 */
+	private static final List<String> standardSwitchOptions = new ArrayList<>();
 	
 	private static ConfigUtil config;
+	
+	/**
+	 *  Used to indirectly manage and query the reader and document instances, the library etc.
+	 */
 	private static DocumentReaderService service;
-	private static final Pattern buttonPattern = Pattern.compile("btn_\\w+(?=\\=)");
 	
 	public DefaultRoute(String libraryPath, Ini ini, DocumentReaderService documentReaderService) throws Exception {
 		this.libraryPath = libraryPath;
@@ -59,11 +97,15 @@ class DefaultRoute implements Route {
 		supportedVolumeLevels.put("25", "25 %");
 		supportedVolumeLevels.put("0", "0 %");
 		
-		availableReaderProviders = service.getReaderProviders();
-		availableDocuments = service.getDocumentMap();
+		standardSwitchOptions.add("off");
+		standardSwitchOptions.add("on");
+		
 		preconfiguration();
 	}
 	
+	/**
+	 * Called when the client accesses the root route
+	 */
 	@Override
 	public Object handle(Request request, Response response) throws Exception {
 		this.request = request;
@@ -77,6 +119,10 @@ class DefaultRoute implements Route {
 		return handlePost();
 	}
 	
+	/**
+	 * Handles GET requests. It updates the variable map using the current values, then passes it to the template
+	 * @return an object denoting the content that is set in the response
+	 */
 	private Object handleGet() {
 		map.put("infoMessage", infoMessage.toArray());
 		map.put("errorMessage", errorMessage.toArray());
@@ -107,59 +153,72 @@ class DefaultRoute implements Route {
 		return new FreeMarkerEngine().render(new ModelAndView(map, "index.ftl"));
 	}
 	
+	/**
+	 * Handles POST requests
+	 * @return a null reference
+	 */
 	private Object handlePost() {
+		// handles file uploads
 	    if (request.contentType().startsWith("multipart/form-data")) {
 	    	request.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/tmp"));
-		    Part uploadedFile = null;
+	    	
+		    Part uploadedFilePart = null;
 			try {
-				uploadedFile = request.raw().getPart("uploaded_file");
+				uploadedFilePart = request.raw().getPart("uploaded_file");
 			} catch (IOException e) {
 				errorMessage.add("Could not retrieve the file");
 			} catch (ServletException e) {
-				// ignore, since with actually check this manually
+				// ignore, since with actually check if the request is "multipart/form-data"
 			}
 			
-			if (uploadedFile != null && uploadedFile.getSize() != 0) {
-			    String fileName = uploadedFile.getSubmittedFileName().replaceAll("\\s", "_");
+			if (uploadedFilePart != null) {
+			    String fileName = uploadedFilePart.getSubmittedFileName();
 			    
-			    try (InputStream inputStream = uploadedFile.getInputStream()) {
-			    	IoUtil.inputStreamToFile(inputStream, libraryPath + "/" + fileName);
+			    // replace all spaces with underscores to avoid running in to issues later
+			    String secureFileName = fileName.replaceAll("\\s", "_");
+			    
+			    try (InputStream inputStream = uploadedFilePart.getInputStream()) {
+			    	IoUtil.inputStreamToFile(inputStream, libraryPath + File.separator + secureFileName);
+			    	
 			    	service.updateDocumentLibrary();
 			    	availableDocuments = service.getDocumentMap();
-			    	infoMessage.add("Successful upload");
+			    	infoMessage.add("Successfully uploaded " + fileName);
 			    } catch (IOException e) {
-					errorMessage.add("Could not save the file");
+					errorMessage.add("Could not upload " + fileName);
 			    }
 			} else {
-				errorMessage.add("Select a file before trying to upload");
+				errorMessage.add("Select a file to upload");
 			}
 	    } else {
-	    	Matcher matcher = buttonPattern.matcher(request.body());
+	    	String pressedButtonName = RequestUtil.getPressedButtonName(request.body());
 	    	
-			if (matcher.find()) {
-				String pressedButton = matcher.group();
-				handleButtonPress(pressedButton, request);
+			if (pressedButtonName != null) {
+				handleButtonPress(pressedButtonName);
 			}
 	    }
 
 		response.redirect("/");
-		return null;
+		return null; // necessary, but it won't change anything since the response will be already updated
 	}
 	
-	private void handleButtonPress(String buttonName, Request request) {
+	/**
+	 * Handles different button presses
+	 * @param buttonName the underlying name of a UI button
+	 */
+	private void handleButtonPress(String buttonName) {
 		switch (buttonName) {
 		case "btn_delete_document":
 			String documentHash = config.getDocumentHash();
 			service.deleteDocument(documentHash);
 			availableDocuments.remove(documentHash);
-			updateDocumentInfo(null);
+			updateDocumentSettings(null);
 			break;
 		case "btn_start_reading":
 			try {
 				service.startReading(config.getFeatureDetection().equals("on"));
 				isReading = true;
 			} catch (Exception e) {
-				errorMessage.add("Coult not start the reader");
+				errorMessage.add("Could not start the reader");
 			}
 			break;
 		case "btn_stop_reading":
@@ -170,10 +229,10 @@ class DefaultRoute implements Route {
 			service.resetCurrentDocumentBookmark();
 			break;
 		case "btn_set_document":
-			updateDocumentInfo(RequestUtil.getRequestParameterValue(request.body(), "set_document"));
+			updateDocumentSettings(RequestUtil.getRequestParameterValue(request.body(), "set_document"));
 			break;
 		case "btn_set_reader":
-			updateReaderInfo(RequestUtil.getRequestParameterValue(request.body(), "set_reader"));
+			updateReaderSettings(RequestUtil.getRequestParameterValue(request.body(), "set_reader"));
 			break;
 		case "btn_set_language":
 			String selectedReaderLanguage = RequestUtil.getRequestParameterValue(request.body(), "set_language");
@@ -181,7 +240,7 @@ class DefaultRoute implements Route {
 				service.setCurrentReaderLanguage(selectedReaderLanguage);
 				config.setReaderLanguage(selectedReaderLanguage);
 			} catch (IOException e) {
-				errorMessage.add("Could not update the reader's language");
+				errorMessage.add("Could not set the reader's language");
 			}
 	
 			break;
@@ -191,7 +250,7 @@ class DefaultRoute implements Route {
 				service.setCurrentReaderSpeed(selectedReaderSpeed);
 				config.setReaderSpeed(selectedReaderSpeed);
 			} catch (IOException e) {
-				errorMessage.add("Could not update the reader's speed");
+				errorMessage.add("Could not set the reader's speed");
 			}
 			
 			break;
@@ -201,7 +260,7 @@ class DefaultRoute implements Route {
 				service.setAudioVolume(Integer.parseInt(selectedVolumeLevel));
 				config.setVolume(selectedVolumeLevel);
 			} catch (Exception e) {
-				errorMessage.add("Could not change the volume");
+				errorMessage.add("Could not set the volume");
 			}
 			break;
 		case "btn_set_feature_detection":
@@ -215,22 +274,19 @@ class DefaultRoute implements Route {
 			break;
 		case "btn_set_device_state":
 			String action = RequestUtil.getRequestParameterValue(request.body(), "set_device_state");
-			if (action.equals("reboot")) {
-				try {
+			
+			try {
+				if (action.equals("reboot")) {
 					service.rebootDevice();
-				} catch (IOException e) {
-					errorMessage.add("Could not reboot the system");
-				}
-			} else {
-				try {
+				} else {
 					service.shutDownDevice();
-				} catch (IOException e) {
-					errorMessage.add("Could not power off the system");
 				}
+			} catch (IOException e) {
+				errorMessage.add("Could not reboot/shutdown the device");
 			}
 			break;
 		case "btn_set_ap_ssid":
-			String ssid= RequestUtil.getRequestParameterValue(request.body(), "set_ap_ssid");
+			String ssid = RequestUtil.getRequestParameterValue(request.body(), "set_ap_ssid");
 			if (ssid != null && ssid.matches("^\\p{ASCII}{1,32}$")) {
 				config.setApName(ssid);
 				infoMessage.add("Access point name updated");
@@ -254,80 +310,86 @@ class DefaultRoute implements Route {
 		try {
 			config.store();
 		} catch (IOException e) {
-			errorMessage.add("Could not store settings");
+			errorMessage.add("Could not store the settings");
 		}
 	}
 	
+	/**
+	 * Makes sure that configuration file values are valid then indirectly updates reader and document related settings 
+	 * @throws Exception if an error occurs
+	 */
 	private void preconfiguration() throws Exception {
+		availableReaderProviders = service.getReaderProviders();
+		availableDocuments = service.getDocumentMap();
+		
 		if (!supportedVolumeLevels.containsValue(config.getVolume())) {
-			String firstVolume = supportedVolumeLevels.keySet().iterator().next();
-			config.setVolume(firstVolume);
-			int volume = Integer.valueOf(firstVolume);
-			if (service.getAudioVolume() != volume) {
-				service.setAudioVolume(volume);
+			String volume = supportedVolumeLevels.keySet().iterator().next();
+			
+			int intVolume = Integer.valueOf(volume);
+			if (service.getAudioVolume() != intVolume) {
+				service.setAudioVolume(intVolume);
 			}
+			
+			config.setVolume(volume);
 		}
 		
-		if (config.getFeatureDetection() == null) {
+		if (!standardSwitchOptions.contains(config.getFeatureDetection())) {
 			config.setFeatureDetection("off");
 		}
 		
-		if (config.getLog() == null) {
+		if (!standardSwitchOptions.contains(config.getLog())) {
 			config.setLog("on");
 		}
 		
-		if (config.getContent() == null) {
+		if (!standardSwitchOptions.contains(config.getContent())) {
 			config.setContent("on");
 		}
 		
-		String provider = config.getReaderProvider();
-		if (availableReaderProviders.contains(provider)) {
-			provider = availableReaderProviders.get(0);
-		} 
-		updateReaderInfo(provider);
-		
-		updateDocumentInfo(config.getDocumentHash());
+		updateReaderSettings(config.getReaderProvider());
+		updateDocumentSettings(config.getDocumentHash());
 		
 		config.store();
 	}
 	
-	private void updateReaderInfo(String provider) {
-		String currentProvider = config.getReaderProvider();
+	/**
+	 * Updates the reader provider's settings and the list of supported speeds and languages presented in the UI
+	 * @param provider a string denoting the full name of a supported reading provider
+	 */
+	private void updateReaderSettings(String provider) {
+		if (!availableReaderProviders.contains(provider)) {
+			provider = availableReaderProviders.get(0);
+		} 
 		
-		if (!provider.equals(currentProvider)) {
-			config.setReaderProvider(provider);
-		}
+		config.setReaderProvider(provider);
 		
 		try {
 			service.setCurrentReader(provider);
 		} catch (Exception e) {
-			errorMessage.add("Could not update reader settings");
-			// TODO do something about it, otherwise the next 2 lines will probably fail too
+			errorMessage.add("Could not set the current reader");
+			return;
 		}
 		
 		supportedReaderSpeed = service.getCurrentSupportedSpeed();
 		supportedReaderLanguages = service.getCurrentSupportedLanguages();
 		
+		config.setReaderSpeed(supportedReaderSpeed.get(0));
+		config.setReaderLanguage(supportedReaderLanguages.get(0));
+		
 		try {
-			updateReaderSettings();
+			service.setCurrentReaderSpeed(config.getReaderSpeed());
+			service.setCurrentReaderLanguage(config.getReaderLanguage());
 		} catch (Exception e) {
-			config.setReaderSpeed(supportedReaderSpeed.get(0));
-			config.setReaderLanguage(supportedReaderLanguages.get(0));
-			
-			try {
-				updateReaderSettings();
-			} catch (IOException e1) {
-				errorMessage.add("Could not update speed and / or language settings");
-			}
+			errorMessage.add("Could not update reader settings");
 		}
 	}
 	
-	private void updateReaderSettings() throws IOException {
-		service.setCurrentReaderSpeed(config.getReaderSpeed());
-		service.setCurrentReaderLanguage(config.getReaderLanguage());
-	}
-	
-	private void updateDocumentInfo(String documentHash) {
+	/**
+	 * Updates the underlying document to make it point to the currently selected document
+	 * @param documentHash a string denoting the hash of an existing document. If the value is null null
+	 * and there are documents available, the underlying document will be set to the first document in the document list,
+	 * otherwise, the document will remain unset
+	 */
+	private void updateDocumentSettings(String documentHash) {
 		if (!availableDocuments.containsKey(documentHash)) {
 			if (availableDocuments.size() != 0) {
 				documentHash = availableDocuments.keySet().iterator().next();
