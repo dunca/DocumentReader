@@ -27,6 +27,21 @@ public class CommandUtil {
 	 * waiting for the process to finish its execution
 	 */
 	public static CommandResult executeCommand(String command) throws Exception {
+		CommandResult commandResult = null;
+		logger.info(String.format("Trying to execute '%s'", command));
+		try {
+			commandResult = executeCommandInternal(command);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, String.format("An error occured while trying to execute '%s'" , command), e);
+			throw e;
+		}
+		return commandResult;
+	}
+	
+	/**
+	 * See {@link #executeCommand(String)}
+	 */
+	private static CommandResult executeCommandInternal(String command) throws Exception {
 		String[] commandArray = null;
 		
 		if (command.contains("|") || command.contains("'") || command.contains("\"")) {
@@ -40,7 +55,6 @@ public class CommandUtil {
 		// will redirect stderr to stdout so we can capture both using the same input stream
 		processBuilder.redirectErrorStream(true);
 		
-		logger.info(String.format("Trying to run command %s", command));
 		Process process = processBuilder.start();
 		
 		int exitCode = process.waitFor();
