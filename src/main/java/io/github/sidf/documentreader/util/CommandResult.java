@@ -2,7 +2,7 @@ package io.github.sidf.documentreader.util;
 
 /**
  * Represents the information resulted from a command's execution 
- * @author Esc
+ * @author sidf
  */
 public class CommandResult {
 	private String stdout;

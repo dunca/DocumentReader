@@ -5,7 +5,7 @@ import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
 
 /**
  * Class that provides methods that deal with the Java classpath
- * @author Esc
+ * @author sidf
  */
 public class ClassPathUtil {
 	private ClassPathUtil() {

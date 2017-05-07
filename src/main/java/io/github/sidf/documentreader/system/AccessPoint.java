@@ -14,7 +14,7 @@ import io.github.sidf.documentreader.util.ValidatableCommand;
 
 /**
  * Represents a wireless access point
- * @author Esc
+ * @author sidf
  */
 public class AccessPoint {
 	private static Logger logger = Logger.getLogger(AccessPoint.class.getName());

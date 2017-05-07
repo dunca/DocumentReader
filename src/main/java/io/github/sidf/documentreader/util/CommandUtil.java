@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 
 /**
  * A set of utility methods that deal with commands and processes
- * @author Esc
+ * @author sidf
  */
 public class CommandUtil {
 	private static Logger logger = Logger.getLogger(CommandUtil.class.getName());

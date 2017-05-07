@@ -10,7 +10,7 @@ import java.nio.file.StandardCopyOption;
 
 /**
  * Class that provides static methods that deal with input / output streams
- * @author Esc
+ * @author sidf
  */
 public class StreamUtil {
 	private StreamUtil() {

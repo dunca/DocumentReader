@@ -17,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * Class that provides static methods that deal with file reading/writing operations
- * @author Esc
+ * @author sidf
  */
 public class FileUtil {
 	private FileUtil() {

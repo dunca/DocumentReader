@@ -14,7 +14,7 @@ import io.github.sidf.documentreader.util.CommandResult;
 
 /**
  * Class that handles device related I/O 
- * @author Esc
+ * @author sidf
  */
 public class Device {
 	private static Logger logger = Logger.getLogger(Device.class.getName());
