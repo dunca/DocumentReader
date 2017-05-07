@@ -10,10 +10,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import io.github.sidf.documentreader.reader.Reader;
 import io.github.sidf.documentreader.system.Device;
 import io.github.sidf.documentreader.system.Lighting;
-import io.github.sidf.documentreader.util.enums.Speed;
 import io.github.sidf.documentreader.document.Document;
-import io.github.sidf.documentreader.util.enums.Language;
+import io.github.sidf.documentreader.reader.enums.Speed;
 import io.github.sidf.documentreader.reader.ReaderFactory;
+import io.github.sidf.documentreader.reader.enums.Language;
 import io.github.sidf.documentreader.document.DocumentLibrary;
 import io.github.sidf.documentreader.featuredetection.FeatureDetector;
 

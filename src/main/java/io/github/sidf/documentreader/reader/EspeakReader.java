@@ -6,8 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 
 import io.github.sidf.documentreader.util.CommandUtil;
-import io.github.sidf.documentreader.util.enums.Speed;
-import io.github.sidf.documentreader.util.enums.Language;
+import io.github.sidf.documentreader.reader.enums.Speed;
+import io.github.sidf.documentreader.reader.enums.Language;
 
 public class EspeakReader extends Reader {
 	private static final String shellPath = "/bin/sh";

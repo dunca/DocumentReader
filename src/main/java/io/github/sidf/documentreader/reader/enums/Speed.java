@@ -1,4 +1,4 @@
-package io.github.sidf.documentreader.util.enums;
+package io.github.sidf.documentreader.reader.enums;
 
 /**
  * Enum that represents the reading speed levels supported by {@link io.github.sidf.documentreader.reader.Reader} subclasses
