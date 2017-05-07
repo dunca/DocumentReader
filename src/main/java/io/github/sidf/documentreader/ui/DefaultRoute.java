@@ -148,7 +148,7 @@ class DefaultRoute implements Route {
 		map.put("supportedReaderLanguages", supportedReaderLanguages);
 		
 		map.put("selectedDocumentHash", config.getDocumentHash());
-		map.put("availableDocuments", service.getDocumentMap());
+		map.put("availableDocuments", availableDocuments);
 		
 		infoMessage.clear();
 		errorMessage.clear();
@@ -215,8 +215,12 @@ class DefaultRoute implements Route {
 		switch (buttonName) {
 		case "btn_delete_document":
 			String documentHash = config.getDocumentHash();
+			String documentName = availableDocuments.get(documentHash);
+			
 			service.deleteDocument(documentHash);
 			availableDocuments.remove(documentHash);
+			infoMessage.add("Deleted " + documentName);
+			
 			updateDocumentSettings(null);
 			break;
 		case "btn_start_reading":
@@ -233,17 +237,21 @@ class DefaultRoute implements Route {
 			break;
 		case "btn_reset_bookmark":
 			service.resetCurrentDocumentBookmark();
+			infoMessage.add("Reset bookmark information");
 			break;
 		case "btn_set_document":
 			updateDocumentSettings(formFieldValue);
+			infoMessage.add("Selected " + availableDocuments.get(formFieldValue));
 			break;
 		case "btn_set_reader":
 			updateReaderSettings(formFieldValue);
+			infoMessage.add("Updated reader");
 			break;
 		case "btn_set_language":
 			try {
 				service.setCurrentReaderLanguage(formFieldValue);
 				config.setReaderLanguage(formFieldValue);
+				infoMessage.add("Reader language set to " + formFieldValue);
 			} catch (IOException e) {
 				errorMessage.add("Could not set the reader's language");
 			}
@@ -253,6 +261,7 @@ class DefaultRoute implements Route {
 			try {
 				service.setCurrentReaderSpeed(formFieldValue);
 				config.setReaderSpeed(formFieldValue);
+				infoMessage.add("Reader speed set to " + formFieldValue);
 			} catch (IOException e) {
 				errorMessage.add("Could not set the reader's speed");
 			}
@@ -262,18 +271,22 @@ class DefaultRoute implements Route {
 			try {
 				service.setAudioVolume(Integer.parseInt(formFieldValue));
 				config.setVolume(formFieldValue);
+				infoMessage.add("Volume set to " + supportedVolumeLevels.get(formFieldValue));
 			} catch (Exception e) {
 				errorMessage.add("Could not set the volume");
 			}
 			break;
 		case "btn_set_feature_detection":
 			config.setFeatureDetection(formFieldValue);
+			infoMessage.add("Toggled feature detection");
 			break;
 		case "btn_set_logs":
 			config.setLog(formFieldValue);
+			infoMessage.add("Toggled logging");
 			break;
 		case "btn_set_page_content":
 			config.setContent(formFieldValue);
+			infoMessage.add("Toggled page content");
 			break;
 		case "btn_set_device_state":
 			try {
@@ -291,7 +304,7 @@ class DefaultRoute implements Route {
 				config.setApName(formFieldValue);
 				infoMessage.add("Access point name updated");
 			} else {
-				errorMessage.add("The name should be between 1 and 32 ASCII characters long");
+				errorMessage.add("The access point name should be between 1 and 32 ASCII characters long");
 			}
 			break;
 		case "btn_set_ap_password":
@@ -299,7 +312,7 @@ class DefaultRoute implements Route {
 				config.setApPassword(formFieldValue);
 				infoMessage.add("Access point password updated");
 			} else {
-				errorMessage.add("The password should be between 8 and 63 ASCII characters long");
+				errorMessage.add("The access point password should be between 8 and 63 ASCII characters long");
 			}
 			break;
 		default:
@@ -384,7 +397,7 @@ class DefaultRoute implements Route {
 	
 	/**
 	 * Updates the underlying document to make it point to the currently selected document
-	 * @param documentHash a string denoting the hash of an existing document. If the value is null null
+	 * @param documentHash a string denoting the hash of an existing document. If the value is null
 	 * and there are documents available, the underlying document will be set to the first document in the document list,
 	 * otherwise, the document will remain unset
 	 */
