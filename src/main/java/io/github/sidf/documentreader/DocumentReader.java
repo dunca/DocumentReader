@@ -11,8 +11,19 @@ import io.github.sidf.documentreader.system.AccessPoint;
 import io.github.sidf.documentreader.util.HtmlLogFormatter;
 import io.github.sidf.documentreader.service.DocumentReaderService;
 
+/**
+ * This class represents entry point of the application
+ * @author sidf
+ */
 public class DocumentReader {
-	private static final String configName = "config.ini";
+	/**
+	 * The name of the application's configuration file
+	 */
+	private static final String configFileName = "config.ini";
+	
+	/**
+	 * The path to the HTML formatted log file that will be loaded in the web UI
+	 */
 	private static String logPath;
 	private static Logger logger;
 	
@@ -21,7 +32,6 @@ public class DocumentReader {
 		logger = Logger.getLogger(packageName);
 		
 		logPath = String.format("%s-log.html", packageName.substring(packageName.lastIndexOf('.') + 1));
-		removeOldLogFiles();
 	}
 	
 	public static void main(String[] args) throws Exception {
@@ -32,7 +42,7 @@ public class DocumentReader {
 		if (!isValidStart(args)) {
 			logger.severe("Cannot start application:\n"
 					+ "Make sure that you specify the document library directory as an argument\n"
-					+ "and that you have a valid configuration file called " + configName + "\n"
+					+ "and that you have a valid configuration file called " + configFileName + "\n"
 					);
 			return;
 		}
@@ -42,7 +52,7 @@ public class DocumentReader {
 //			return;
 //		}
 			
-		Ini ini = new Ini(new File(configName));
+		Ini ini = new Ini(new File(configFileName));
 		
 		String ssid =  ini.get("Access point", "ssid");
 		String password =  ini.get("Access point", "password");
@@ -56,14 +66,6 @@ public class DocumentReader {
 	}
 	
 	private static boolean isValidStart(String[] args) {
-		return args.length == 1 && new File(args[0]).isDirectory() && new File(configName).isFile();
-	}
-	
-	private static void removeOldLogFiles() {
-		for (File file : new File(".").listFiles()) {
-			if (file.getName().startsWith(logPath)) {
-				file.delete();
-			}
-		}
+		return args.length == 1 && new File(args[0]).isDirectory() && new File(configFileName).isFile();
 	}
 }
