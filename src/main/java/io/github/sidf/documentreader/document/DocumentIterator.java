@@ -23,22 +23,21 @@ public class DocumentIterator implements Iterator<Page> {
 	public Page next() {
 		Page page = null;
 		
-		int pageIndex = document.getBookmark().getPageIndex();
-		int sentenceIndex = document.getBookmark().getSentenceIndex();
+		int nextPageIndex = document.getBookmark().getPageIndex();
 		
-		if (!firstIteration && sentenceIndex == 0) {
-			pageIndex++;
+		if (!firstIteration) {
+			nextPageIndex++;
 		}
 		
 		try {
-			page = document.updateBookmarkPage(pageIndex, sentenceIndex);
+			document.getBookmark().setPageIndex(nextPageIndex);
+			page = document.getBookmark().getPage();
 		} catch (Exception e) {
 			e.printStackTrace();
 			new RuntimeException(String.format("Could not fetch page from %s", document.getName()));
 		}
 		
 		firstIteration = false;
-		
 		return page;
 	}
 }

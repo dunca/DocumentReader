@@ -12,53 +12,57 @@ public class Bookmark {
 	private int sentenceIndex;
 	private Document sourceDocument;
 	
+	private BreakIterator breakIterator = BreakIterator.getSentenceInstance();
+	
 	private static Logger logger = Logger.getLogger(Bookmark.class.getName());
 	
-	Bookmark(Page page, int pageIndex, int sentenceIndex, Ini ini, Document sourceDocument) {
-		this.page = page;
+	Bookmark(Ini ini, Document sourceDocument) throws Exception {
 		this.bookmarkIni = ini;
-		this.pageIndex = pageIndex;
-		this.sentenceIndex = sentenceIndex;
 		this.sourceDocument = sourceDocument;
+		
+		String documentId = sourceDocument.getId();
+		
+		// try to get the actual progress made on the given document
+		if (bookmarkIni.containsKey(documentId)) {
+			int storedPageIndex = Integer.valueOf(bookmarkIni.get(documentId, "pageIndex"));
+			int storedSentenceIndex = Integer.valueOf(bookmarkIni.get(documentId, "sentenceIndex"));
+			updatePosition(storedPageIndex, storedSentenceIndex);
+		} else {
+			reset();
+		}
 	}
 	
 	Page getPage() {
 		return page;
 	}
 
-	void setPage(Page page) {
-		this.page = page;
-	}
-
 	int getPageIndex() {
 		return pageIndex;
-	}
-	
-	void setPageIndex(int pageIndex) throws IOException {
-		this.pageIndex = pageIndex;
-		updateBookmarkIni();
 	}
 	
 	int getSentenceIndex() {
 		return sentenceIndex;
 	}
 	
-	void setSentenceIndex(int sentenceIndex) throws IOException {
-		this.sentenceIndex = sentenceIndex;
-		updateBookmarkIni();
+	/**
+	 * @return 'true' if the bookmark points to last page and sentence
+	 */
+	private boolean isEndReached() {
+		return islastPage() && breakIterator.preceding(breakIterator.last()) == sentenceIndex;
 	}
 	
-	boolean endReached() {
-		BreakIterator iterator = BreakIterator.getSentenceInstance();
-		iterator.setText(page.getContent());
-		return onLastPage() && iterator.preceding(iterator.last()) == sentenceIndex;
-	}
-	
-	boolean onLastPage() {
+	/**
+	 * @return 'true' if the bookmark points to the last page of the document
+	 */
+	private boolean islastPage() {
 		return pageIndex == sourceDocument.getPageCount() - 1;
 	}
 	
-	private void updateBookmarkIni() throws IOException {
+	/**
+	 * Syncs the underlying bookmark file with the current position
+	 * @throws IOException if an I/O error occurs
+	 */
+	private void updateBookmarkFile() throws IOException {
 		bookmarkIni.put(sourceDocument.getId(), "pageIndex", pageIndex);
 		bookmarkIni.put(sourceDocument.getId(), "sentenceIndex", sentenceIndex);
 		bookmarkIni.store();
@@ -66,8 +70,67 @@ public class Bookmark {
 		logger.info(String.format("Updated bookmark history file with pageIndex: %d and sentenceIndex: %d", pageIndex, sentenceIndex));
 	}
 	
-	void delete() throws IOException {
+	/**
+	 * Resets the bookmark information and deletes the entry from the bookmark file
+	 * @throws IOException
+	 */
+	void delete() throws Exception {
+		reset();
 		bookmarkIni.remove(sourceDocument.getId());
 		bookmarkIni.store();
+	}
+	
+	/**
+	 * Updates the bookmark's position. It also updates the {@link Bookmark#page} property
+	 * @param index the zero-based index of the page the bookmark should point to
+	 * @param sentenceIndex the zero-based index of the sentence the bookmark should point to
+	 * @throws Exception if an error occurs
+	 */
+	private void updatePosition(int pageIndex, int sentenceIndex) throws Exception {
+		// we always want this when pageIndex is 0, since it's called from the constructor
+		if (this.pageIndex == 0 || this.pageIndex != pageIndex) {
+			this.page = sourceDocument.fetchPage(pageIndex);
+			breakIterator.setText(page.getContent());
+			this.pageIndex = pageIndex;
+		}
+		
+		this.sentenceIndex = sentenceIndex;
+		updateBookmarkFile();
+	}
+	
+	/**
+	 * Advances the bookmark to the page determined by the index parameter
+	 * @param pageIndex the index of the page
+	 * @throws Exception if an error occurs
+	 */
+	void setPageIndex(int pageIndex) throws Exception {
+		updatePosition(pageIndex, 0);
+	}
+	
+	/**
+	 * Advances the bookmark to the sentence determined by the index parameter, while leaving the page index unchanged
+	 * @param sentenceIndex the index of the sentence
+	 * @throws Exception if an error occurs
+	 */
+	void setSentenceIndex(int sentenceIndex) throws Exception {
+		updatePosition(pageIndex, sentenceIndex);
+	}
+	
+	/**
+	 * Points the bookmark to the start of the document
+	 * @throws Exception if an error occurs
+	 */
+	void reset() throws Exception {
+		updatePosition(0, 0);
+	}
+	
+	/**
+	 * If the end of the document has been reached it resets the bookmark
+	 * @throws Exception
+	 */
+	void wrapAround() throws Exception {
+		if (isEndReached()) {
+			reset();
+		}
 	}
 }

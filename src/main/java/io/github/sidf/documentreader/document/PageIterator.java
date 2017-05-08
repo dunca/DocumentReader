@@ -1,7 +1,6 @@
 package io.github.sidf.documentreader.document;
 
 import java.util.Iterator;
-import java.io.IOException;
 import java.text.BreakIterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,13 +27,7 @@ public class PageIterator implements Iterator<String> {
 	
 	public boolean hasNext() {
 		endBoundaryIndex = breakIterator.next();
-		boolean hasNext = endBoundaryIndex != BreakIterator.DONE;
-		
-		if (!hasNext && !sourceBookmark.onLastPage()) {
-			setSentenceIndex(0);
-		}
-		
-		return hasNext;
+		return endBoundaryIndex != BreakIterator.DONE;
 	}
 
 	public String next() {
@@ -47,7 +40,7 @@ public class PageIterator implements Iterator<String> {
 	private void setSentenceIndex(int index) {
 		try {
 			sourceBookmark.setSentenceIndex(index);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.log(Level.WARNING, "Something went wrong when setting the sentence index", e);
 		}
 	}
